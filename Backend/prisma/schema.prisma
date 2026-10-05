@@ -412,3 +412,15 @@ model VolunteerApplication {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 }
+
+/// Privacy-friendly page view (no IP or cookies stored; visitorKey is a daily-rotating hash).
+model PageView {
+  id         String   @id @default(uuid())
+  path       String
+  lang       String
+  device     String
+  visitorKey String
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+}

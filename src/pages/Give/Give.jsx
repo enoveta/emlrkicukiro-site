@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FaMobileAlt, FaUniversity } from 'react-icons/fa';
-import { usePublicData, useSettings } from '../../api/usePublicData';
+import { usePublicData } from '../../api/usePublicData';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { localized } from '../../i18n/translations';
 import PageHeader from '../../components/ui/PageHeader';
@@ -39,14 +39,12 @@ function MomoPay({ code, t }) {
 /** Donation purposes and their real accounts, managed in Dashboard → Giving accounts. */
 function Give() {
   const { data: accounts } = usePublicData('/giving', []);
-  const settings = useSettings();
   const { t, lang } = useLanguage();
   usePageMeta(t('give.title'), t('give.subtitle'));
   const list = accounts || [];
   const [purpose, setPurpose] = useState(null);
   const [method, setMethod] = useState('mobile');
   const selected = list.find((a) => a.purposeKey === purpose) || list[0];
-  const phone = settings.phone || '+250 788 524 792';
   const hasMobile = Boolean(selected?.momoCode || selected?.mtnNumber || selected?.airtelNumber);
   const hasBank = Boolean(selected?.accountNumber);
   const activeMethod = method === 'mobile' && !hasMobile ? 'bank' : method === 'bank' && !hasBank ? 'mobile' : method;
@@ -140,9 +138,6 @@ function Give() {
         ) : null}
 
         <blockquote className="mt-10 text-center text-lg italic text-gray-700 max-w-2xl mx-auto">{t('give.verse')}</blockquote>
-        <p className="mt-6 text-center text-gray-600">
-          {t('give.questions', { phone })}
-        </p>
       </div>
     </div>
   );

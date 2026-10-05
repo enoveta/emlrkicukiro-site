@@ -2,7 +2,7 @@
  * Saves the public website content into src/data/snapshot.json before each build.
  * The site shows this copy instantly and falls back to it whenever the API is unreachable.
  *
- *   SNAPSHOT_API=https://emlrkicukiro.rw npm run snapshot
+ *   SNAPSHOT_API=https://emlrkicukiroparish.org npm run snapshot
  *
  * If the API cannot be reached, the existing snapshot is kept and the build continues.
  */

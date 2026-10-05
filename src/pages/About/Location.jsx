@@ -20,7 +20,7 @@ function Location() {
   const { t } = useLanguage();
   const settings = useSettings();
   usePageMeta(t('location.title'), t('location.subtitle'));
-  const email = settings.email || 'info@emlrkicukiro.rw';
+  const email = settings.email || 'info@emlrkicukiroparish.org';
   const address = settings.address || 'Kicukiro, Kigali, Rwanda';
 
   return (

@@ -1,11 +1,11 @@
 /**
  * Writes public/robots.txt and public/sitemap.xml for the production domain.
- *   SITE_URL=https://emlrkicukiro.rw npm run build
+ *   SITE_URL=https://emlrkicukiroparish.org npm run build
  */
 const fs = require('fs');
 const path = require('path');
 
-const SITE = (process.env.SITE_URL || 'https://emlrkicukiro.rw').replace(/\/$/, '');
+const SITE = (process.env.SITE_URL || 'https://emlrkicukiroparish.org').replace(/\/$/, '');
 const PUBLIC = path.join(__dirname, '..', 'public');
 const snapshot = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'data', 'snapshot.json'), 'utf8') || '{}');
 

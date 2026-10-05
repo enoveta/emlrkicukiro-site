@@ -17,7 +17,7 @@ export const env = {
   databaseUrl: required("DATABASE_URL"),
   jwtSecret: required("JWT_SECRET"),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "7d",
-  /** Comma-separated list of allowed browser origins, e.g. https://emlrkicukiro.rw,https://www.emlrkicukiro.rw */
+  /** Comma-separated list of allowed browser origins, e.g. https://emlrkicukiroparish.org,https://www.emlrkicukiroparish.org */
   corsOrigins: (process.env.CORS_ORIGINS ?? "")
     .split(",")
     .map((s) => s.trim())

@@ -14,6 +14,6 @@ cd ..
 
 echo "→ Frontend (snapshot of live content is bundled for offline fallback)"
 npm ci
-SNAPSHOT_API=http://127.0.0.1:5050 SITE_URL="${SITE_URL:-https://emlrkicukiro.rw}" npm run build
+SNAPSHOT_API=http://127.0.0.1:5050 SITE_URL="${SITE_URL:-https://emlrkicukiroparish.org}" npm run build
 
 echo "✓ Deployed"

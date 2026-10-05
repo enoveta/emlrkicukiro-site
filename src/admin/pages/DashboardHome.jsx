@@ -2,6 +2,44 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { adminApi } from '../../api/client';
 import { Skeleton, StatusPill } from '../ui/StatusPill';
+import { BarList, SERIES, ShareBar, StatTile, TrendChart } from '../charts/Charts';
+
+const PERIODS = [7, 30, 90];
+
+/** Friendly names for website paths in the "Top pages" list. */
+const PAGE_NAMES = {
+  '/': 'Home',
+  '/amatangazo': 'Amatangazo & programme',
+  '/events': 'Events (Ibikorwa)',
+  '/news': 'News (Amakuru)',
+  '/give': 'Donate',
+  '/tv': 'EMLR TV',
+  '/gallery': 'Photo gallery',
+  '/ministries': 'Ministries',
+  '/about': 'About us',
+  '/about/location': 'Location & contacts',
+  '/about/team': 'Pastoral team',
+  '/about/leadership': 'Church structure',
+  '/about/mission-vision': 'Mission & vision',
+  '/prayer-requests': 'Prayer requests',
+  '/volunteer': 'Serve with us',
+};
+const pageName = (path) =>
+  PAGE_NAMES[path] ||
+  (path.startsWith('/ministries/') ? `Ministry: ${path.split('/')[2].replace(/-/g, ' ')}` : path.startsWith('/news/') ? 'News article' : path);
+
+const LANG_COLORS = { en: SERIES[0], rw: SERIES[1] };
+const LANG_LABELS = { en: 'English', rw: 'Kinyarwanda' };
+const DEVICE_COLORS = { mobile: SERIES[0], desktop: SERIES[1], tablet: SERIES[2] };
+const DEVICE_LABELS = { mobile: 'Phone', desktop: 'Computer', tablet: 'Tablet' };
+
+const Card = ({ title, subtitle, children, className = '' }) => (
+  <section className={`bg-white rounded-2xl border border-slate-200 p-5 md:p-6 ${className}`}>
+    <h2 className="font-semibold text-[#0b2540]">{title}</h2>
+    {subtitle ? <p className="text-sm text-slate-500 mt-0.5">{subtitle}</p> : null}
+    <div className="mt-5">{children}</div>
+  </section>
+);
 
 const QUICK = [
   { to: '/admin/hero', title: 'Home slides', desc: 'Edit hero carousel media & CTAs', tone: 'from-[#001d3a] to-[#0a4a7a]' },
@@ -18,6 +56,22 @@ export default function DashboardHome() {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [days, setDays] = useState(30);
+  const [stats, setStats] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setStatsLoading(true);
+    adminApi
+      .get(`/analytics?days=${days}`, { cache: false })
+      .then((res) => !cancelled && setStats(res))
+      .catch((err) => !cancelled && setError(err.message))
+      .finally(() => !cancelled && setStatsLoading(false));
+    return () => {
+      cancelled = true;
+    };
+  }, [days]);
 
   useEffect(() => {
     let cancelled = false;
@@ -44,39 +98,109 @@ export default function DashboardHome() {
     ? Object.values(data.content).reduce((sum, item) => sum + (item.DRAFT || 0), 0)
     : 0;
 
+  const periodLabel = `${days} days`;
+  const series = stats?.daily || [];
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold text-[#001d3a] tracking-tight">Dashboard</h1>
-          <p className="text-slate-500 mt-1">Live overview of website content and incoming requests.</p>
+          <p className="text-slate-500 mt-1">Website visits, requests and content at a glance.</p>
         </div>
-        <Link
-          to="/admin/hero"
-          className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-[#001d3a] text-white text-sm font-medium hover:bg-[#5fb9e2] transition"
-        >
-          Manage home slides
-        </Link>
+        <div className="inline-flex bg-white border border-slate-200 rounded-xl p-1 self-start" role="tablist" aria-label="Period">
+          {PERIODS.map((p) => (
+            <button
+              key={p}
+              type="button"
+              role="tab"
+              aria-selected={days === p}
+              onClick={() => setDays(p)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                days === p ? 'bg-[#001d3a] text-white' : 'text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              Last {p} days
+            </button>
+          ))}
+        </div>
       </div>
 
       {error ? <p className="text-red-600 text-sm">{error}</p> : null}
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {loading ? (
-          <>
-            <Skeleton className="h-28" />
-            <Skeleton className="h-28" />
-            <Skeleton className="h-28" />
-            <Skeleton className="h-28" />
-          </>
-        ) : (
-          <>
-            <StatCard label="Published items" value={publishedTotal} hint="Live on website" />
-            <StatCard label="Drafts" value={draftTotal} hint="Not published yet" />
-            <StatCard label="New prayers" value={data?.inbox?.prayerNew || 0} hint={`${data?.inbox?.prayerTotal || 0} total`} />
-            <StatCard label="New volunteers" value={data?.inbox?.volunteerNew || 0} hint={`${data?.inbox?.volunteerTotal || 0} total`} />
-          </>
-        )}
+      <div className={`space-y-6 transition-opacity ${statsLoading && stats ? 'opacity-60' : ''}`}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          {!stats ? (
+            [0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-36" />)
+          ) : (
+            <>
+              <StatTile label="Page views" value={stats.totals.views} previous={stats.previous.views} trend={series.map((d) => d.views)} periodLabel={periodLabel} />
+              <StatTile label="Visitors" value={stats.totals.visitors} previous={stats.previous.visitors} trend={series.map((d) => d.visitors)} periodLabel={periodLabel} />
+              <StatTile label="Prayer requests" value={stats.totals.prayers} previous={stats.previous.prayers} trend={series.map((d) => d.prayers)} periodLabel={periodLabel} />
+              <StatTile label="Volunteer applications" value={stats.totals.volunteers} previous={stats.previous.volunteers} trend={series.map((d) => d.volunteers)} periodLabel={periodLabel} />
+            </>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <Card title="Website visits" subtitle={`Per day, last ${periodLabel}`} className="xl:col-span-2">
+            {stats ? (
+              <TrendChart
+                data={series}
+                series={[
+                  { key: 'views', label: 'Page views', color: SERIES[0] },
+                  { key: 'visitors', label: 'Visitors', color: SERIES[1] },
+                ]}
+              />
+            ) : (
+              <Skeleton className="h-64" />
+            )}
+          </Card>
+          <Card title="Most visited pages" subtitle="Page views in this period">
+            {stats ? (
+              <BarList items={(stats.topPages || []).map((p) => ({ key: p.key, label: pageName(p.key), count: p.count }))} empty="No visits recorded yet" />
+            ) : (
+              <Skeleton className="h-64" />
+            )}
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <Card title="Language" subtitle="Language visitors read in">
+            {stats ? (
+              <ShareBar items={(stats.languages || []).map((l) => ({ key: l.key, label: LANG_LABELS[l.key] || l.key, count: l.count }))} colors={LANG_COLORS} empty="No visits recorded yet" />
+            ) : (
+              <Skeleton className="h-28" />
+            )}
+          </Card>
+          <Card title="Devices" subtitle="What visitors use">
+            {stats ? (
+              <ShareBar items={(stats.devices || []).map((d) => ({ key: d.key, label: DEVICE_LABELS[d.key] || d.key, count: d.count }))} colors={DEVICE_COLORS} empty="No visits recorded yet" />
+            ) : (
+              <Skeleton className="h-28" />
+            )}
+          </Card>
+          <Card title="Website content" subtitle="Published and waiting">
+            {loading ? (
+              <Skeleton className="h-28" />
+            ) : (
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div className="rounded-xl bg-slate-50 py-4">
+                  <p className="text-2xl font-semibold text-[#0b2540]">{publishedTotal}</p>
+                  <p className="text-xs text-slate-500 mt-1">Published</p>
+                </div>
+                <div className="rounded-xl bg-slate-50 py-4">
+                  <p className="text-2xl font-semibold text-[#0b2540]">{draftTotal}</p>
+                  <p className="text-xs text-slate-500 mt-1">Drafts</p>
+                </div>
+                <div className="rounded-xl bg-slate-50 py-4">
+                  <p className="text-2xl font-semibold text-[#0b2540]">{(data?.inbox?.prayerNew || 0) + (data?.inbox?.volunteerNew || 0)}</p>
+                  <p className="text-xs text-slate-500 mt-1">New in inbox</p>
+                </div>
+              </div>
+            )}
+          </Card>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -92,29 +216,7 @@ export default function DashboardHome() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <section className="bg-white rounded-2xl border border-slate-200 p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-[#001d3a]">Content health</h2>
-          </div>
-          {loading ? (
-            <Skeleton className="h-40" />
-          ) : (
-            <div className="space-y-3">
-              {Object.entries(data?.content || {}).map(([key, counts]) => (
-                <div key={key} className="flex items-center justify-between gap-3 text-sm">
-                  <span className="capitalize text-slate-700">{key}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-emerald-700 text-xs">{counts.PUBLISHED} live</span>
-                    <span className="text-slate-400 text-xs">{counts.DRAFT} draft</span>
-                    <span className="text-amber-700 text-xs">{counts.IN_REVIEW} review</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-
+      <div className="grid grid-cols-1 gap-6">
         <section className="bg-white rounded-2xl border border-slate-200 p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-[#001d3a]">Recent inbox</h2>
@@ -151,16 +253,6 @@ export default function DashboardHome() {
           )}
         </section>
       </div>
-    </div>
-  );
-}
-
-function StatCard({ label, value, hint }) {
-  return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-      <div className="text-xs uppercase tracking-wide text-slate-500">{label}</div>
-      <div className="text-3xl font-bold text-[#001d3a] mt-2">{value}</div>
-      <div className="text-xs text-slate-400 mt-1">{hint}</div>
     </div>
   );
 }

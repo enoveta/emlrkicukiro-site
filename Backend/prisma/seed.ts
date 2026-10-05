@@ -24,7 +24,7 @@ const CHANNEL = "https://www.youtube.com/@emlrparoissekicukiro";
 const settings: Record<string, string> = {
   churchName: "EMLR Kicukiro",
   phone: "+250 788 524 792",
-  email: "info@emlrkicukiro.rw",
+  email: "info@emlrkicukiroparish.org",
   address: "Kicukiro, Kigali, Rwanda",
   sundayService1: "8:00 AM",
   sundayService1Rw: "saa mbiri za mu gitondo",
@@ -153,8 +153,8 @@ const news = [
 
 const stats = [
   { number: "1345+", label: "Church Members", labelRw: "Abakristo", sortOrder: 0 },
-  { number: "15", label: "Ministries", labelRw: "Ibyiciro", sortOrder: 1 },
-  { number: "11", label: "Weekly Gatherings", labelRw: "Amateraniro", sortOrder: 2 },
+  { number: "15+", label: "Ministries", labelRw: "Ibyiciro", sortOrder: 1 },
+  { number: "11+", label: "Weekly Gatherings", labelRw: "Amateraniro", sortOrder: 2 },
   { number: "25+", label: "Cell Groups", labelRw: "Amatsinda", sortOrder: 3 }
 ];
 

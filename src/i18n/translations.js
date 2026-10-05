@@ -172,7 +172,7 @@ export const translations = {
       bank: 'Bank',
       accountName: 'Account name',
       accountNumber: 'Account number',
-      verse: '“Each of you should give what you have decided in your heart to give… for God loves a cheerful giver.” (2 Corinthians 9:7)',
+      verse: '“Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver.” (2 Corinthians 9:7)',
       questions: 'Questions about giving? Call {phone}.',
     },
     prayer: {
@@ -207,7 +207,7 @@ export const translations = {
       success: 'Thank you! We will contact you soon.',
     },
     footer: {
-      blurb: 'Eglise Methodiste Libre au Rwanda, Kicukiro Parish, a family of believers worshipping God and serving others.',
+      blurb: 'Eglise Methodiste Libre au Rwanda, Kicukiro Parish, a family of believers worshipping and serving God.',
       quickLinks: 'Quick Links',
       resources: 'Get Involved',
       contactUs: 'Contact Us',
@@ -500,7 +500,7 @@ export const translations = {
       bank: 'Banki',
       accountName: 'Izina rya konti',
       accountNumber: 'Nimero ya konti',
-      verse: '“Umuntu wese atange nk’uko yabigambiriye mu mutima we… kuko Imana ikunda utanga anezerewe.” (2 Abakorinto 9:7)',
+      verse: '“Umuntu wese atange nk’uko yagambiriye mu mutima we, atinuba kandi adahatwa, kuko Imana ikunda utanga anezerewe.” (2 Abakorinto 9:7)',
       questions: 'Ufite ikibazo? Hamagara {phone}.',
     },
     prayer: {
@@ -535,7 +535,7 @@ export const translations = {
       success: 'Murakoze! Tuzabavugisha vuba.',
     },
     footer: {
-      blurb: 'Itorero Methodiste Libre mu Rwanda, Paruwasi ya Kicukiro, umuryango w’abakristo baramya Imana kandi bagakorera abandi.',
+      blurb: 'Itorero Methodiste Libre mu Rwanda, Paruwasi ya Kicukiro, umuryango w’abakristo baramya kandi bagakorera Imana.',
       quickLinks: 'Amahuza',
       resources: 'Ifatanye natwe',
       contactUs: 'Twandikire',

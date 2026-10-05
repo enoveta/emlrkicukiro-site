@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { ToastProvider } from './ui/Toast';
+import logo from '../assets/emlr/logo1.png';
 
 const NAV = [
   {
@@ -56,10 +57,14 @@ export default function AdminLayout() {
 
   const NavBody = (
     <>
-      <div className="px-5 py-5 border-b border-white/10">
-        <div className="text-xs uppercase tracking-[0.2em] text-[#5fb9e2]">EMLR CMS</div>
-        <div className="font-bold text-lg mt-1">Content Studio</div>
-        <div className="text-xs text-white/50 mt-1 truncate">{user.email || 'Admin'}</div>
+      <div className="px-5 py-5 border-b border-white/10 flex items-center gap-3">
+        <span className="w-11 h-11 rounded-full bg-white flex items-center justify-center shrink-0">
+          <img src={logo} alt="" className="w-8 h-8 object-contain" />
+        </span>
+        <div>
+          <div className="font-bold text-lg leading-tight">EMLR Kicukiro</div>
+          <div className="text-xs text-white/60">Dashboard</div>
+        </div>
       </div>
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
         {NAV.map((group) => (
@@ -129,10 +134,7 @@ export default function AdminLayout() {
               >
                 Menu
               </button>
-              <div>
-                <div className="text-sm font-semibold text-[#001d3a]">Church content management</div>
-                <div className="text-xs text-slate-500">Publish once · updates the live website</div>
-              </div>
+              <div className="text-base font-semibold text-[#001d3a]">Dashboard</div>
             </div>
             <div className="flex items-center gap-2">
               <span className="hidden sm:inline text-xs px-2.5 py-1 rounded-full bg-[#e8f5fb] text-[#003366] font-medium">

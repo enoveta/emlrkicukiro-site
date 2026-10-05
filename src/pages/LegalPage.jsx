@@ -6,7 +6,7 @@ import usePageMeta from '../hooks/usePageMeta';
 export default function LegalPage({ title, content, updated }) {
   const { lang } = useLanguage();
   const settings = useSettings();
-  const email = settings.email || 'info@emlrkicukiro.rw';
+  const email = settings.email || 'info@emlrkicukiroparish.org';
   usePageMeta(title);
   const sections = content[lang] || content.en;
 

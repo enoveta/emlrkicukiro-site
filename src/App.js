@@ -5,6 +5,7 @@ import { LanguageProvider } from './i18n/LanguageContext';
 import Header from './components/Header1';
 import Footer from './components/Footer1';
 import ErrorBoundary from './components/ui/ErrorBoundary';
+import API_BASE from './api/client';
 import Home from './pages/Home';
 
 // Every page except Home is split into its own file and loaded on demand.
@@ -41,10 +42,29 @@ function ScrollToTop() {
   return null;
 }
 
+/** Counts a page view (no cookies, no personal data). Failures are ignored. */
+function usePageViews(pathname) {
+  useEffect(() => {
+    let lang = 'en';
+    try {
+      lang = localStorage.getItem('emlr_lang') === 'rw' ? 'rw' : 'en';
+    } catch {
+      /* ignore */
+    }
+    fetch(`${API_BASE}/api/public/track`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path: pathname, lang }),
+      keepalive: true,
+    }).catch(() => {});
+  }, [pathname]);
+}
+
 function PublicLayout() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === '/';
+  usePageViews(location.pathname);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 100);

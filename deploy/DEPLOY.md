@@ -1,6 +1,6 @@
 # Deploying EMLR Kicukiro to a VPS
 
-Target: Ubuntu 22.04/24.04 VPS, one domain (examples use `emlrkicukiro.rw`; replace it everywhere).
+Target: Ubuntu 22.04/24.04 VPS, one domain (examples use `emlrkicukiroparish.org`; replace it everywhere).
 The site, API and media all share that one domain:
 
 | Path        | Served by                              |
@@ -46,7 +46,7 @@ rsync -av Backend/public/media/ user@SERVER:/var/www/emlr/Backend/public/media/
 cd /var/www/emlr/Backend && npm ci && npx prisma migrate deploy && npx prisma generate
 npx prisma db seed           # creates the admin + starting content (only on an empty database)
 npm run build && pm2 start ../deploy/ecosystem.config.js && pm2 save && pm2 startup
-cd .. && npm ci && SNAPSHOT_API=http://127.0.0.1:5050 SITE_URL=https://emlrkicukiro.rw npm run build
+cd .. && npm ci && SNAPSHOT_API=http://127.0.0.1:5050 SITE_URL=https://emlrkicukiroparish.org npm run build
 ```
 
 ## 5. nginx + HTTPS
@@ -56,7 +56,7 @@ sudo cp deploy/nginx.conf /etc/nginx/sites-available/emlr
 sudo ln -s /etc/nginx/sites-available/emlr /etc/nginx/sites-enabled/emlr
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t && sudo systemctl reload nginx
-sudo certbot --nginx -d emlrkicukiro.rw -d www.emlrkicukiro.rw
+sudo certbot --nginx -d emlrkicukiroparish.org -d www.emlrkicukiroparish.org
 ```
 
 ## 6. Backups
@@ -72,7 +72,7 @@ Restore: `gunzip -c db_DATE.sql.gz | psql "$DATABASE_URL"` and untar the uploads
 ## 7. Updating the site later
 
 ```bash
-cd /var/www/emlr && git pull && SITE_URL=https://emlrkicukiro.rw ./deploy/deploy.sh
+cd /var/www/emlr && git pull && SITE_URL=https://emlrkicukiroparish.org ./deploy/deploy.sh
 ```
 
 Each build saves the live content into the site itself, so pages still show text if the API ever stops.
@@ -85,5 +85,5 @@ Content edited in the dashboard appears immediately; the bundled copy refreshes 
 - [ ] **Giving accounts**: confirm the MTN / Airtel / bank details with the treasurer.
 - [ ] Google AI Studio: rotate the Gemini key (it was shared in chat) and put the new one in `Backend/.env`, then `pm2 reload emlr-api`.
 - [ ] Google Cloud: restrict the YouTube API key to the server IP.
-- [ ] Submit `https://emlrkicukiro.rw/sitemap.xml` in Google Search Console.
-- [ ] `pm2 logs emlr-api` shows no errors; `curl https://emlrkicukiro.rw/health` returns `{"ok":true}`.
+- [ ] Submit `https://emlrkicukiroparish.org/sitemap.xml` in Google Search Console.
+- [ ] `pm2 logs emlr-api` shows no errors; `curl https://emlrkicukiroparish.org/health` returns `{"ok":true}`.

@@ -21,6 +21,7 @@ import { uploadsRouter } from "./uploads";
 import { dashboardRouter } from "./dashboard";
 import { publicRouter } from "./public";
 import { swaggerRouter } from "./swagger";
+import { analyticsRouter, trackRouter } from "./analytics";
 
 export const apiRouter = Router();
 
@@ -47,4 +48,6 @@ apiRouter.use("/settings", settingsRouter);
 apiRouter.use("/submissions", submissionsRouter);
 apiRouter.use("/uploads", uploadsRouter);
 
+apiRouter.use("/public/track", trackRouter);
 apiRouter.use("/public", publicRouter);
+apiRouter.use("/analytics", analyticsRouter);

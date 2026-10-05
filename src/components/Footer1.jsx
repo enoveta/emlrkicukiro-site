@@ -27,7 +27,7 @@ const Footer = () => {
   const { t } = useLanguage();
   const settings = useSettings();
   const phone = settings.phone || '+250 788 524 792';
-  const email = settings.email || 'info@emlrkicukiro.rw';
+  const email = settings.email || 'info@emlrkicukiroparish.org';
   const address = settings.address || 'Kicukiro, Kigali, Rwanda';
   const churchName = settings.churchName || 'EMLR Kicukiro';
 
