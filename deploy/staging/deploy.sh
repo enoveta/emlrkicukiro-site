@@ -20,11 +20,11 @@ step "Build API"
 
 step "Upload release $REL"
 $SSH "mkdir -p $APP/releases/$REL"
-tar -czf - build Backend/dist Backend/src Backend/prisma Backend/prisma.config.ts Backend/package.json Backend/package-lock.json Backend/tsconfig.json \
+COPYFILE_DISABLE=1 tar --no-xattrs -czf - build Backend/dist Backend/src Backend/prisma Backend/prisma.config.ts Backend/package.json Backend/package-lock.json Backend/tsconfig.json \
   | $SSH "tar -xzf - -C $APP/releases/$REL"
 if [[ "${1:-}" == "--media" ]]; then
   step "Sync media"
-  rsync -az --exclude uploads Backend/public/media/ "$HOST:$APP/shared/media/"
+  rsync -rlz --omit-dir-times --no-perms --no-group --exclude uploads Backend/public/media/ "$HOST:$APP/shared/media/"
 fi
 
 step "Install API dependencies and link shared files"

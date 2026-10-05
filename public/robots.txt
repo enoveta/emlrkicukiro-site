@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://emlrkicukiroparish.org/sitemap.xml
+Sitemap: https://site.emlrkicukiroparish.org/sitemap.xml
