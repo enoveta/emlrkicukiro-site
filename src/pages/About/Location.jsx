@@ -44,7 +44,7 @@ function Location() {
             />
             <div className="p-5 space-y-3">
               <p className="flex items-start text-gray-700">
-                <FaMapMarkerAlt className="mt-1 mr-3 text-[#1f7fae] shrink-0" aria-hidden="true" />
+                <FaMapMarkerAlt className="mt-1 mr-3 text-[#1a6f99] shrink-0" aria-hidden="true" />
                 <span>
                   <strong className="text-[#001d3a]">EMLR Kicukiro</strong>
                   <br />
@@ -52,7 +52,7 @@ function Location() {
                 </span>
               </p>
               <p className="flex items-start text-gray-700">
-                <FaClock className="mt-1 mr-3 text-[#1f7fae] shrink-0" aria-hidden="true" />
+                <FaClock className="mt-1 mr-3 text-[#1a6f99] shrink-0" aria-hidden="true" />
                 <span>{t('home.serviceTimes', times)}</span>
               </p>
               <a
@@ -72,12 +72,12 @@ function Location() {
               {CONTACTS.map((c) => (
                 <li key={c.name} className="flex items-start">
                   <span className="bg-[#e8f5fb] p-3 rounded-full mr-4">
-                    <FaUser className="text-[#1f7fae]" aria-hidden="true" />
+                    <FaUser className="text-[#1a6f99]" aria-hidden="true" />
                   </span>
                   <div>
                     <h3 className="font-semibold text-[#001d3a]">{c.name}</h3>
                     <p className="text-gray-600">{t(`location.${c.role}`)}</p>
-                    <a href={tel(c.phone)} className="inline-flex items-center mt-1 text-[#1f7fae] hover:text-[#001d3a]">
+                    <a href={tel(c.phone)} className="inline-flex items-center mt-1 text-[#1a6f99] hover:text-[#001d3a]">
                       <FaPhone className="mr-2 text-sm" aria-hidden="true" />
                       {c.phone}
                     </a>
@@ -86,11 +86,11 @@ function Location() {
               ))}
               <li className="flex items-start pt-5 border-t border-gray-100">
                 <span className="bg-[#e8f5fb] p-3 rounded-full mr-4">
-                  <FaEnvelope className="text-[#1f7fae]" aria-hidden="true" />
+                  <FaEnvelope className="text-[#1a6f99]" aria-hidden="true" />
                 </span>
                 <div>
                   <h3 className="font-semibold text-[#001d3a]">{t('location.email')}</h3>
-                  <a href={`mailto:${email}`} className="text-[#1f7fae] hover:text-[#001d3a] break-all">
+                  <a href={`mailto:${email}`} className="text-[#1a6f99] hover:text-[#001d3a] break-all">
                     {email}
                   </a>
                 </div>

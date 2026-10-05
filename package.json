@@ -20,7 +20,8 @@
     "start": "react-scripts start",
     "snapshot": "node scripts/snapshot.js",
     "prebuild": "node scripts/snapshot.js && node scripts/seo.js",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "postbuild": "node scripts/postbuild.js"
   },
   "eslintConfig": {
     "extends": [

@@ -18,7 +18,7 @@ function News() {
         {!loading && !(newsItems || []).length ? <p className="text-center text-gray-600">{t('news.empty')}</p> : null}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {(newsItems || []).map((item) => (
-            <NewsCard key={item.id} item={item} lang={lang} t={t} />
+            <NewsCard key={item.id} item={item} lang={lang} t={t} heading="h2" />
           ))}
         </div>
       </div>

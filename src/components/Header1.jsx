@@ -157,7 +157,7 @@ const Header = ({ scrolled }) => {
         type="button"
         onClick={() => setLanguageOpen(!languageOpen)}
         className="flex items-center hover:text-[#feed17] transition-colors"
-        aria-label={t('nav.language')}
+        aria-label={`${t('nav.language')}: ${lang === 'rw' ? 'RW' : 'EN'}`}
         aria-expanded={languageOpen}
         aria-haspopup="true"
       >
@@ -234,12 +234,12 @@ const Header = ({ scrolled }) => {
       <div className="h-px bg-[#5ebadf]" />
       <div
         className={`relative transition-all duration-300 ${
-          scrolled || !isHomePage ? 'py-2 bg-[#003366] shadow-lg' : 'py-3 bg-[#003366]/60 backdrop-blur-sm'
+          scrolled || !isHomePage ? 'py-2 bg-[#003366] shadow-lg' : 'py-3 bg-[#003366]/70'
         }`}
         onMouseLeave={scheduleClose}
       >
         <div className="container mx-auto px-4 lg:px-8 flex justify-between items-center">
-          <Link to="/" className="flex items-center" aria-label="EMLR Kicukiro — home">
+          <Link to="/" className="flex items-center">
             <img src={logo} alt="" width="64" height="64" className="h-14 w-14 md:h-16 md:w-16 object-contain" />
             <div className="ml-3">
               <span className="block text-xl font-bold text-white leading-tight">EMLR</span>

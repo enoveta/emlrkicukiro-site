@@ -19,7 +19,7 @@ const CTA = () => {
   const times = useServiceTimes();
 
   return (
-    <section className="py-20 md:py-24 bg-[#003366]">
+    <section className="defer-render py-20 md:py-24 bg-[#003366]">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center space-y-6">
           <h2 className="text-3xl md:text-5xl font-bold text-white">{t('home.readyJoin')}</h2>

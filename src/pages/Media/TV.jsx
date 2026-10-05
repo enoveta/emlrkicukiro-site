@@ -53,7 +53,7 @@ function PlaylistVideos({ playlist, onBack, onPlay, t, lang, channel }) {
   return (
     <>
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <button type="button" className="inline-flex items-center text-[#003366] hover:text-[#1f7fae] font-medium" onClick={onBack}>
+        <button type="button" className="inline-flex items-center text-[#003366] hover:text-[#1a6f99] font-medium" onClick={onBack}>
           <FaArrowLeft className="mr-2" aria-hidden="true" /> {t('tv.back')}
         </button>
         <h2 className="text-2xl font-bold text-[#003366]">{t(`tv.playlists.${playlist.key}`)}</h2>
@@ -133,7 +133,7 @@ const TV = () => {
                 </div>
                 <div className="p-6">
                   <h2 className="text-xl font-bold text-[#001d3a] mb-2">{t(`tv.playlists.${p.key}`)}</h2>
-                  <span className="inline-flex items-center font-medium text-[#1f7fae]">
+                  <span className="inline-flex items-center font-medium text-[#1a6f99]">
                     {t('tv.browse')}
                     <FaArrowRight className="ml-2 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                   </span>

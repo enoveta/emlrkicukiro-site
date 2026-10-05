@@ -24,3 +24,9 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Below-the-fold sections: the browser skips their layout until they are near the screen. */
+.defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}

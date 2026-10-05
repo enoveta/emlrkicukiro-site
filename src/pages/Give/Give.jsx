@@ -31,7 +31,7 @@ function Give() {
             {account.mtnNumber || account.airtelNumber ? (
               <section className="bg-white rounded-xl shadow-md p-6 md:p-8">
                 <h2 className="flex items-center text-xl font-bold text-[#001d3a] mb-4">
-                  <FaMobileAlt className="mr-3 text-[#1f7fae]" aria-hidden="true" />
+                  <FaMobileAlt className="mr-3 text-[#1a6f99]" aria-hidden="true" />
                   {t('give.mobileMoney')}
                 </h2>
                 <dl>
@@ -44,7 +44,7 @@ function Give() {
             {account.accountNumber ? (
               <section className="bg-white rounded-xl shadow-md p-6 md:p-8">
                 <h2 className="flex items-center text-xl font-bold text-[#001d3a] mb-4">
-                  <FaUniversity className="mr-3 text-[#1f7fae]" aria-hidden="true" />
+                  <FaUniversity className="mr-3 text-[#1a6f99]" aria-hidden="true" />
                   {t('give.bankTransfer')}
                 </h2>
                 <dl>

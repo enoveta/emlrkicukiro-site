@@ -30,7 +30,8 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 const AdminApp = lazy(() => import('./admin/AdminApp'));
 const ChatBot = lazy(() => import('./components/ChatBot1'));
 
-const PageFallback = () => <div className="min-h-[60vh]" aria-busy="true" />;
+// Full-height placeholder keeps the footer below the fold while a page chunk loads (no layout jump).
+const PageFallback = () => <div className="min-h-screen" aria-busy="true" />;
 
 function ScrollToTop() {
   const { pathname } = useLocation();

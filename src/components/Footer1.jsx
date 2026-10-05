@@ -53,7 +53,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-[#001d3a] text-white">
+    <footer className="defer-render bg-[#001d3a] text-white">
       <div className="w-full h-2 bg-gradient-to-r from-[#001d3a] via-[#5fb9e2] to-[#fae924]" />
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">

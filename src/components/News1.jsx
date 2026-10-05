@@ -5,7 +5,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { formatDate, localized } from '../i18n/translations';
 import Img from './ui/Img';
 
-export const NewsCard = ({ item, lang, t }) => (
+export const NewsCard = ({ item, lang, t, heading: Heading = 'h3' }) => (
   <Link
     to={`/news/${item.id}`}
     className="flex flex-col bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl group"
@@ -24,7 +24,7 @@ export const NewsCard = ({ item, lang, t }) => (
       <time dateTime={item.date} className="self-start bg-[#fae924] text-[#001d3a] px-3 py-1 rounded-full text-xs font-semibold mb-3">
         {formatDate(item.date, lang)}
       </time>
-      <h3 className="text-xl font-bold text-[#001d3a] mb-3 leading-tight">{localized(item, 'title', lang)}</h3>
+      <Heading className="text-xl font-bold text-[#001d3a] mb-3 leading-tight">{localized(item, 'title', lang)}</Heading>
       <p className="text-gray-600 mb-5 line-clamp-3">{localized(item, 'content', lang)}</p>
       <span className="mt-auto text-[#001d3a] font-medium inline-flex items-center">
         {t('home.readMore')}
@@ -41,7 +41,7 @@ const News = () => {
   if (!display.length) return null;
 
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-br from-[#4aa9d3] to-[#2f8fbf]">
+    <section className="defer-render py-20 md:py-28 bg-gradient-to-br from-[#4aa9d3] to-[#2f8fbf]">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between md:items-end gap-6 mb-12">
           <div>

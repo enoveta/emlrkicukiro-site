@@ -27,7 +27,7 @@ function Team() {
                   <Img src={member.imageUrl} alt={member.name} thumb className="w-full h-full object-cover" />
                 </div>
                 <h2 className="text-2xl font-bold text-[#001d3a] mb-1">{member.name}</h2>
-                <p className="text-[#1f7fae] font-semibold text-lg">{localized(member, 'position', lang)}</p>
+                <p className="text-[#1a6f99] font-semibold text-lg">{localized(member, 'position', lang)}</p>
               </div>
             ))}
           </div>
@@ -41,7 +41,7 @@ function Team() {
               </div>
               <h2 className="text-lg font-bold text-[#001d3a] mb-1">{member.name}</h2>
               {localized(member, 'position', lang) ? (
-                <p className="text-[#1f7fae] font-medium">{localized(member, 'position', lang)}</p>
+                <p className="text-[#1a6f99] font-medium">{localized(member, 'position', lang)}</p>
               ) : null}
             </div>
           ))}

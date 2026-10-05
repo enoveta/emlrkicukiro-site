@@ -31,7 +31,7 @@ const Testimonials = () => {
   const current = list[currentSlide] || list[0];
 
   return (
-    <section className="py-20 bg-[#f8f9fa]">
+    <section className="defer-render py-20 bg-[#f8f9fa]">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-[#001d3a] mb-4">{t('home.testimonials')}</h2>

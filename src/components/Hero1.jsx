@@ -140,7 +140,7 @@ const Hero = () => {
       </div>
 
       {count > 1 && (
-        <div className="absolute bottom-20 md:bottom-8 left-6 lg:left-12 z-10 flex gap-2">
+        <div className="absolute bottom-20 md:bottom-8 left-4 lg:left-10 z-10 flex items-center">
           {slides.map((_, i) => (
             <button
               key={i}
@@ -151,8 +151,14 @@ const Hero = () => {
               }}
               aria-label={`Slide ${i + 1}`}
               aria-current={i === current}
-              className={`h-2 rounded-full transition-all ${i === current ? 'w-8 bg-[#feed17]' : 'w-2 bg-white/60 hover:bg-white'}`}
-            />
+              className="p-2 group"
+            >
+              <span
+                className={`block h-2 rounded-full transition-all ${
+                  i === current ? 'w-8 bg-[#feed17]' : 'w-2 bg-white/60 group-hover:bg-white'
+                }`}
+              />
+            </button>
           ))}
         </div>
       )}

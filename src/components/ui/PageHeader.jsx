@@ -3,7 +3,7 @@ export default function PageHeader({ badge, title, subtitle, children }) {
   return (
     <div className="text-center mb-12">
       {badge ? (
-        <span className="inline-block px-4 py-1 text-sm font-semibold text-[#1f7fae] bg-[#e8f5fb] rounded-full mb-4">
+        <span className="inline-block px-4 py-1 text-sm font-semibold text-[#1a6f99] bg-[#e8f5fb] rounded-full mb-4">
           {badge}
         </span>
       ) : null}

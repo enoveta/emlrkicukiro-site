@@ -24,7 +24,7 @@ export const MinistryCard = ({ ministry, lang, t }) => (
     <div className="p-6 flex flex-col flex-1">
       <h3 className="text-xl font-bold text-[#001d3a] mb-2">{localized(ministry, 'name', lang)}</h3>
       <p className="text-gray-600 mb-5 line-clamp-3">{localized(ministry, 'shortDescription', lang)}</p>
-      <span className="mt-auto inline-flex items-center font-medium text-[#1f7fae] group-hover:text-[#003366] transition-colors">
+      <span className="mt-auto inline-flex items-center font-medium text-[#1a6f99] group-hover:text-[#003366] transition-colors">
         {t('home.learnMoreMinistry')}
         <FaArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
       </span>
@@ -44,10 +44,10 @@ const Programs = () => {
   if (!featured.length) return null;
 
   return (
-    <section className="py-20 bg-white">
+    <section className="defer-render py-20 bg-white">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-14">
-          <span className="inline-block px-3 py-1 text-sm font-semibold text-[#1f7fae] bg-[#e8f5fb] rounded-full mb-4">
+          <span className="inline-block px-3 py-1 text-sm font-semibold text-[#1a6f99] bg-[#e8f5fb] rounded-full mb-4">
             {t('home.churchMinistries')}
           </span>
           <h2 className="text-3xl md:text-5xl font-bold text-[#003366] mb-6">

@@ -22,7 +22,7 @@ function NewsDetail() {
   return (
     <article className="py-12 md:py-16 px-4 bg-white">
       <div className="max-w-3xl mx-auto">
-        <Link to="/news" className="inline-flex items-center text-sm text-[#1f7fae] hover:text-[#003366] mb-6">
+        <Link to="/news" className="inline-flex items-center text-sm text-[#1a6f99] hover:text-[#003366] mb-6">
           <FaArrowLeft className="mr-2" aria-hidden="true" />
           {t('news.back')}
         </Link>

@@ -23,7 +23,7 @@ function Leadership() {
   usePageMeta(t('structure.title'));
   const s = (key) => t(`structure.${key}`);
   const navy = 'bg-gradient-to-br from-[#001d3a] to-[#0a2c52]';
-  const blue = 'bg-gradient-to-br from-[#1f7fae] to-[#3a9bc4]';
+  const blue = 'bg-gradient-to-br from-[#1a6f99] to-[#3a9bc4]';
 
   return (
     <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50">

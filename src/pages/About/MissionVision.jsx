@@ -10,7 +10,7 @@ function MissionVision() {
     <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1 text-sm font-semibold text-[#1f7fae] bg-[#e8f5fb] rounded-full mb-4">
+          <span className="inline-block px-4 py-1 text-sm font-semibold text-[#1a6f99] bg-[#e8f5fb] rounded-full mb-4">
             {t('mission.badge')}
           </span>
           <h1 className="text-3xl md:text-5xl font-bold text-[#001d3a] mb-6">{t('mission.title')}</h1>
@@ -27,7 +27,7 @@ function MissionVision() {
             <h2 className="text-2xl font-bold mb-4">{t('mission.mission')}</h2>
             <p className="text-lg">{t('mission.missionText')}</p>
           </div>
-          <div className="bg-gradient-to-br from-[#1f7fae] to-[#3a9bc4] rounded-xl p-8 text-white">
+          <div className="bg-gradient-to-br from-[#1a6f99] to-[#3a9bc4] rounded-xl p-8 text-white">
             <h2 className="text-2xl font-bold mb-4">{t('mission.vision')}</h2>
             <p className="text-lg">{t('mission.visionText')}</p>
           </div>

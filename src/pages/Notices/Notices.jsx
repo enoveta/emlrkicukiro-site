@@ -56,7 +56,7 @@ function NoticeCard({ notice, lang, t }) {
             href={mediaUrl(notice.attachmentUrl)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center font-medium text-[#1f7fae] hover:text-[#003366]"
+            className="inline-flex items-center font-medium text-[#1a6f99] hover:text-[#003366]"
           >
             <FaFileDownload className="mr-1" aria-hidden="true" />
             {t('notices.download')}
