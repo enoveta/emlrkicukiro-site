@@ -6,9 +6,9 @@ set -euo pipefail
 HOST=emlrkicukiro
 APP=/var/www/site.emlrkicukiroparish.org
 SSH="ssh -o BatchMode=yes $HOST"
-CUR=$($SSH "basename \$(readlink -f $APP/current)")
-PREV=$($SSH "ls -1t $APP/releases | grep -vx '$CUR' | head -1")
+CUR=$($SSH "readlink $APP/releases/current")
+PREV=$($SSH "cd $APP/releases && ls -1dt 2*/ | tr -d / | grep -vx '$CUR' | head -1")
 [[ -n "$PREV" ]] || { echo "No previous release to roll back to"; exit 1; }
 echo "Rolling back: $CUR -> $PREV"
-$SSH "ln -sfn $APP/releases/$PREV $APP/current.tmp && mv -Tf $APP/current.tmp $APP/current && sudo /usr/local/sbin/emlr-site-ctl restart"
+$SSH "cd $APP/releases && ln -sfn $PREV current.tmp && mv -Tf current.tmp current && sudo /usr/local/sbin/emlr-site-ctl restart"
 $SSH "curl -fsS --max-time 5 http://127.0.0.1:5050/health" && echo && echo "Rolled back to $PREV"

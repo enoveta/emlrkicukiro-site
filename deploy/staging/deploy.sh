@@ -35,13 +35,14 @@ $SSH "set -e; cd $APP/releases/$REL/Backend
   ln -sfn $APP/shared/.env .env
   chmod -R g+rwX,o+rX $APP/releases/$REL"
 
-PREV=$($SSH "readlink -f $APP/current 2>/dev/null || true")
-step "Switch current -> $REL"
-$SSH "ln -sfn $APP/releases/$REL $APP/current.tmp && mv -Tf $APP/current.tmp $APP/current"
+# $APP/current is a fixed root-owned link to releases/current; we switch only releases/current.
+PREV=$($SSH "readlink $APP/releases/current 2>/dev/null || true")
+step "Switch releases/current -> $REL"
+$SSH "cd $APP/releases && ln -sfn $REL current.tmp && mv -Tf current.tmp current"
 
 rollback() {
   echo "!! Deploy failed; switching back to ${PREV:-<none>}"
-  [[ -n "$PREV" ]] && $SSH "ln -sfn $PREV $APP/current.tmp && mv -Tf $APP/current.tmp $APP/current && sudo /usr/local/sbin/emlr-site-ctl restart" || true
+  [[ -n "$PREV" ]] && $SSH "cd $APP/releases && ln -sfn $PREV current.tmp && mv -Tf current.tmp current && sudo /usr/local/sbin/emlr-site-ctl restart" || true
   exit 1
 }
 trap rollback ERR
@@ -61,5 +62,5 @@ done
 trap - ERR
 
 step "Keep the 5 newest releases"
-$SSH "cd $APP/releases && ls -1t | tail -n +6 | xargs -r rm -rf"
+$SSH "cd $APP/releases && ls -1dt 2*/ | tail -n +6 | xargs -r rm -rf"
 echo; echo "Deployed release $REL to $SITE"
