@@ -24,8 +24,8 @@ JWT_SECRET="replace-with-a-long-random-secret"
 JWT_EXPIRES_IN="7d"
 
 # Initial admin (used by prisma seed)
-SEED_ADMIN_EMAIL="admin@gmail.com"
-SEED_ADMIN_PASSWORD="CHANGE_ME"
+SEED_ADMIN_EMAIL="admin@emlrkicukiroparish.org"
+SEED_ADMIN_PASSWORD="CHANGE_ME_TO_A_STRONG_PASSWORD"
 ```
 
 ## Install
