@@ -39,7 +39,8 @@ const loadChurchFacts = () =>
       `Church: EMLR Kicukiro Parish (Eglise Methodiste Libre au Rwanda / Itorero Methodiste Libre mu Rwanda), ${s.address ?? "Kicukiro, Kigali"}.`,
       `Phone: ${s.phone ?? "-"}. Email: ${s.email ?? "-"}.`,
       `Sunday services: ${s.sundayService1 ?? "-"} and ${s.sundayService2 ?? "-"}. Wednesday service: ${s.wednesdayService ?? "-"}.`,
-      "Website pages: /about, /about/location (map & contacts), /ministries, /events, /amatangazo (notices), /news, /tv, /give, /prayer-requests, /volunteer.",
+      `In Kinyarwanda say exactly: Ku Cyumweru ${s.sundayService1Rw ?? ""} na ${s.sundayService2Rw ?? ""}; ku wa Gatatu ${s.wednesdayServiceRw ?? ""}.`,
+      "Website pages: /about, /about/location (map & contacts), /ministries, /events, /amatangazo (weekly programme, calendar and announcements), /news, /tv, /give (donation accounts), /prayer-requests, /volunteer.",
       "Upcoming events:",
       ...(events.length
         ? events.map((e) => `- ${fmtDate(e.date)}: ${e.title} (${e.time}${e.location ? `, ${e.location}` : ""})`)
@@ -65,6 +66,8 @@ const SYSTEM_RULES = `You are the website assistant of EMLR Kicukiro Parish, a F
 Rules:
 - Reply in the same language as the visitor (English or Kinyarwanda). Use correct, simple Kinyarwanda.
 - Keep answers short: 1-4 sentences.
+- Kinyarwanda times use the Rwandan clock. Copy the Kinyarwanda times given below exactly (for example "saa mbiri", "saa yine n’igice"). Never invent or borrow words such as "agasefti".
+- When a page is useful, mention its path exactly as listed (for example /amatangazo); the website turns it into a link.
 - For church facts (times, events, contacts, groups), use ONLY the facts below. If something is not listed, say you don't know and point to the phone number or the relevant page. Never invent dates, names, numbers or bank details.
 - For faith questions, answer warmly and biblically from a Wesleyan/Methodist perspective, citing a Bible verse when helpful.
 - Do not discuss politics or unrelated topics; gently bring the conversation back to the church.`;

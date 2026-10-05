@@ -264,6 +264,10 @@ export const translations = {
       acEvangelism: 'Evangelism Team',
       confConflict: 'Conference Conflict Resolution',
       confConflictText: 'Mediation and conflict resolution at the conference level.',
+      intro: 'How EMLR is organised, from the national level to the parishes.',
+      legendLine: 'Leadership line',
+      legendSide: 'Audit and mediation',
+      parishNote: 'Including Kicukiro Parish',
     },
     team: {
       title: 'Pastoral Team',
@@ -285,6 +289,8 @@ export const translations = {
     },
     chat: {
       title: 'EMLR Assistant',
+      status: 'Online · English & Kinyarwanda',
+      newChat: 'New conversation',
       open: 'Open chat assistant',
       close: 'Close chat',
       welcome: 'Peace be with you! Ask me about our services, events or the Christian faith.',
@@ -578,6 +584,10 @@ export const translations = {
       acEvangelism: 'Itsinda ry’Ivugabutumwa',
       confConflict: 'Ubunzi bwa Konferanse',
       confConflictText: 'Bunga kandi bukemura amakimbirane ku rwego rwa Konferanse.',
+      intro: 'Uko EMLR iteguye, kuva ku rwego rw’igihugu kugeza kuri paruwasi.',
+      legendLine: 'Umurongo w’ubuyobozi',
+      legendSide: 'Ubugenzuzi n’ubunzi',
+      parishNote: 'Harimo Paruwasi ya Kicukiro',
     },
     team: {
       title: 'Abashumba',
@@ -599,6 +609,8 @@ export const translations = {
     },
     chat: {
       title: 'Umufasha wa EMLR',
+      status: 'Ari hano · Ikinyarwanda & English',
+      newChat: 'Ikiganiro gishya',
       open: 'Fungura umufasha',
       close: 'Funga',
       welcome: 'Amahoro y’Imana abane nawe! Mbaza ku materaniro, ibikorwa cyangwa ukwizera.',
