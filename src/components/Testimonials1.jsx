@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FaQuoteLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { usePublicData } from '../api/usePublicData';
-import { mediaUrl } from '../api/client';
+import Img from './ui/Img';
 import { useLanguage } from '../i18n/LanguageContext';
 import { localized } from '../i18n/translations';
 
@@ -22,10 +22,10 @@ const Testimonials = () => {
   };
 
   useEffect(() => {
-    if (!list.length) return undefined;
-    const interval = setInterval(nextSlide, 5000);
+    if (list.length < 2) return undefined;
+    const interval = setInterval(nextSlide, 7000);
     return () => clearInterval(interval);
-  }, [list.length]);
+  }, [list.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!list.length) return null;
   const current = list[currentSlide] || list[0];
@@ -45,7 +45,7 @@ const Testimonials = () => {
             aria-label="Previous"
             type="button"
           >
-            <FaChevronLeft className="text-[#001d3a]" />
+            <FaChevronLeft className="text-[#001d3a]" aria-hidden="true" />
           </button>
           <button
             onClick={nextSlide}
@@ -53,7 +53,7 @@ const Testimonials = () => {
             aria-label="Next"
             type="button"
           >
-            <FaChevronRight className="text-[#001d3a]" />
+            <FaChevronRight className="text-[#001d3a]" aria-hidden="true" />
           </button>
 
           <div className="bg-white rounded-xl shadow-lg overflow-hidden max-w-4xl mx-auto">
@@ -61,11 +61,7 @@ const Testimonials = () => {
               <div className="flex flex-col md:flex-row items-center">
                 <div className="mb-6 md:mb-0 md:mr-8">
                   <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-[#5fb9e2]">
-                    <img
-                      src={mediaUrl(current.imageUrl)}
-                      alt={current.author}
-                      className="w-full h-full object-cover"
-                    />
+                    <Img src={current.imageUrl} alt={current.author} thumb className="w-full h-full object-cover" />
                   </div>
                 </div>
                 <div className="text-center md:text-left">

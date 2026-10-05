@@ -1,130 +1,165 @@
+import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { FaChevronDown } from 'react-icons/fa';
-import { useEffect, useState, useRef } from 'react';
 import { usePublicData } from '../api/usePublicData';
 import { mediaUrl } from '../api/client';
 import { useLanguage } from '../i18n/LanguageContext';
 import { localized } from '../i18n/translations';
 
+const SmartLink = ({ to, className, children }) =>
+  /^https?:/.test(to || '') ? (
+    <a href={to} className={className} target="_blank" rel="noopener noreferrer">
+      {children}
+    </a>
+  ) : (
+    <Link to={to || '/'} className={className}>
+      {children}
+    </Link>
+  );
+
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
 const Hero = () => {
-  const videoRef = useRef(null);
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
   const { data: banners } = usePublicData('/banners', []);
   const apiSlides = banners?.[0]?.slides || [];
+  const [current, setCurrent] = useState(0);
+  // Slides beyond the first are only mounted once we reach them, so they don't compete with the first paint.
+  const [visited, setVisited] = useState(() => new Set([0]));
+  const videoRefs = useRef({});
 
   const slides = apiSlides.map((s) => ({
     type: s.mediaType === 'video' ? 'video' : 'image',
-    bg: mediaUrl(s.imageUrl),
-    hasBlur: s.hasBlur !== false,
+    src: mediaUrl(s.imageUrl),
+    poster: s.mediaType === 'video' ? mediaUrl(s.imageUrl.replace(/\.mp4$/i, '-poster.jpg')) : undefined,
     duration: s.duration || 8000,
-    content: {
-      title: localized(s, 'title', lang) || '',
-      highlight: localized(s, 'highlight', lang) || '',
-      subtitle: localized(s, 'subtitle', lang) || s.text || '',
-      cta1: localized(s, 'cta1', lang) || (lang === 'rw' ? 'Menya byinshi' : 'Learn More'),
-      cta1Link: s.cta1Link || '/about',
-      cta2: localized(s, 'cta2', lang) || (lang === 'rw' ? 'Dusure' : 'Visit Us'),
-      cta2Link: s.cta2Link || '/about/location',
-    },
+    title: localized(s, 'title', lang),
+    highlight: localized(s, 'highlight', lang),
+    subtitle: localized(s, 'subtitle', lang) || s.text || '',
+    cta1: localized(s, 'cta1', lang) || t('home.learnMore'),
+    cta1Link: s.cta1Link || '/about',
+    cta2: localized(s, 'cta2', lang) || t('home.visitUs'),
+    cta2Link: s.cta2Link || '/about/location',
   }));
-
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [fade, setFade] = useState(false);
+  const count = slides.length;
 
   useEffect(() => {
-    if (!slides.length) return undefined;
-    const interval = setInterval(() => {
-      setFade(true);
-      setTimeout(() => {
-        setCurrentSlide((prev) => (prev + 1) % slides.length);
-        setFade(false);
-      }, 1000);
-    }, slides[currentSlide]?.duration || 8000);
-    return () => clearInterval(interval);
-  }, [currentSlide, slides.length]);
+    if (count < 2 || prefersReducedMotion()) return undefined;
+    const timer = setTimeout(() => {
+      const next = (current + 1) % count;
+      setVisited((prev) => new Set(prev).add(next));
+      setCurrent(next);
+    }, slides[current]?.duration || 8000);
+    return () => clearTimeout(timer);
+  }, [current, count]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!slides.length) return;
-    if (slides[currentSlide]?.type === 'video' && videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(() => {});
-    }
-  }, [currentSlide, slides.length]);
+    Object.entries(videoRefs.current).forEach(([i, el]) => {
+      if (!el) return;
+      if (Number(i) === current) {
+        el.currentTime = 0;
+        el.play().catch(() => {});
+      } else {
+        el.pause();
+      }
+    });
+  }, [current]);
 
-  if (!slides.length) {
-    return <section className="min-h-screen bg-[#001d3a]" />;
+  if (!count) {
+    return <section className="min-h-[85vh] md:min-h-screen bg-[#001d3a]" aria-hidden="true" />;
   }
 
-  const active = slides[currentSlide];
+  const active = slides[current];
 
   return (
-    <section className="min-h-screen flex items-center relative overflow-hidden">
-      <div className="absolute inset-0 transition-opacity duration-1000 ease-in-out">
+    <section className="min-h-[85vh] md:min-h-screen flex items-center relative overflow-hidden bg-[#001d3a]">
+      <div className="absolute inset-0">
         {slides.map((slide, index) => {
-          if (slide.type === 'image') {
-            return (
-              <div
-                key={`slide-${index}`}
-                className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ease-in-out ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
-                style={{
-                  backgroundImage: `linear-gradient(rgba(0, 51, 102, 0.3), rgba(0, 51, 102, 0.6)), url(${slide.bg})`,
-                  transition: fade ? 'opacity 1s ease-in-out' : 'none',
-                }}
-              />
-            );
-          }
+          if (!visited.has(index)) return null;
+          const shown = index === current;
           return (
             <div
-              key={`slide-${index}`}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
-              style={{ transition: fade ? 'opacity 1s ease-in-out' : 'none' }}
+              key={`${slide.src}-${index}`}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${shown ? 'opacity-100' : 'opacity-0'}`}
+              aria-hidden={!shown}
             >
-              <video
-                ref={index === currentSlide ? videoRef : null}
-                className="w-full h-full object-cover"
-                muted
-                loop
-                playsInline
-              >
-                <source src={slide.bg} type="video/mp4" />
-              </video>
-              <div className="absolute inset-0 bg-[#003366]/40" />
+              {slide.type === 'image' ? (
+                <img
+                  src={slide.src}
+                  alt=""
+                  className="w-full h-full object-cover"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  fetchpriority={index === 0 ? 'high' : 'low'}
+                  decoding="async"
+                />
+              ) : (
+                <video
+                  ref={(el) => {
+                    videoRefs.current[index] = el;
+                  }}
+                  className="w-full h-full object-cover"
+                  src={slide.src}
+                  poster={slide.poster}
+                  muted
+                  loop
+                  playsInline
+                  autoPlay={shown}
+                  preload={shown ? 'auto' : 'none'}
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-b from-[#003366]/40 via-[#003366]/45 to-[#001d3a]/80" />
             </div>
           );
         })}
       </div>
 
-      <div className="container mx-auto px-6 lg:px-12 mt-36 relative z-10">
-        <div className="max-w-2xl">
+      <div className="container mx-auto px-6 lg:px-12 mt-28 md:mt-36 relative z-10">
+        <div className="max-w-2xl" aria-live="polite">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white">
-            {active.content.title}{' '}
-            <span className="text-[#5eb9df]">{active.content.highlight}</span>
+            {active.title} <span className="text-[#5eb9df]">{active.highlight}</span>
           </h1>
-          <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-lg leading-relaxed">
-            {active.content.subtitle}
-          </p>
+          {active.subtitle ? (
+            <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-lg leading-relaxed">{active.subtitle}</p>
+          ) : null}
           <div className="flex flex-col sm:flex-row gap-4">
-            <a
-              href={active.content.cta1Link}
-              className="px-8 py-4 bg-[#001d3a] border border-[#001d3a] hover:bg-[#002244] text-white rounded-lg font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-xl text-lg flex items-center justify-center"
+            <SmartLink
+              to={active.cta1Link}
+              className="px-8 py-4 bg-[#feed17] text-[#001d3a] hover:bg-white rounded-lg font-semibold transition-colors text-lg flex items-center justify-center"
             >
-              {active.content.cta1}
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </a>
-            <a
-              href={active.content.cta2Link}
-              className="px-8 py-4 border border-white text-white hover:bg-white hover:text-[#003366] rounded-lg font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-xl text-lg"
+              {active.cta1}
+            </SmartLink>
+            <SmartLink
+              to={active.cta2Link}
+              className="px-8 py-4 border border-white text-white hover:bg-white hover:text-[#003366] rounded-lg font-semibold transition-colors text-lg text-center"
             >
-              {active.content.cta2}
-            </a>
+              {active.cta2}
+            </SmartLink>
           </div>
         </div>
       </div>
 
+      {count > 1 && (
+        <div className="absolute bottom-20 md:bottom-8 left-6 lg:left-12 z-10 flex gap-2">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => {
+                setVisited((prev) => new Set(prev).add(i));
+                setCurrent(i);
+              }}
+              aria-label={`Slide ${i + 1}`}
+              aria-current={i === current}
+              className={`h-2 rounded-full transition-all ${i === current ? 'w-8 bg-[#feed17]' : 'w-2 bg-white/60 hover:bg-white'}`}
+            />
+          ))}
+        </div>
+      )}
+
       <a
-        href="/about"
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white text-2xl animate-bounce cursor-pointer"
+        href="#home-content"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white text-2xl animate-bounce motion-reduce:animate-none hidden md:block"
         aria-label="Scroll down"
       >
         <FaChevronDown />

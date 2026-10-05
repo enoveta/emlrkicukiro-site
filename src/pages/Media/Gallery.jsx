@@ -1,72 +1,65 @@
-import { useState } from 'react';
-import Lightbox from 'yet-another-react-lightbox';
-import 'yet-another-react-lightbox/styles.css';
-import Zoom from 'yet-another-react-lightbox/plugins/zoom';
-import Download from 'yet-another-react-lightbox/plugins/download';
+import { lazy, Suspense, useState } from 'react';
 import { usePublicData } from '../../api/usePublicData';
 import { mediaUrl } from '../../api/client';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { localized } from '../../i18n/translations';
+import Img from '../../components/ui/Img';
+import PageHeader from '../../components/ui/PageHeader';
+import { SkeletonCards } from '../../components/ui/Skeleton';
+import usePageMeta from '../../hooks/usePageMeta';
+
+// The lightbox is only downloaded when a photo is opened.
+const GalleryLightbox = lazy(() => import('./GalleryLightbox'));
 
 function Gallery() {
   const { data: items, loading } = usePublicData('/gallery', []);
   const { t, lang } = useLanguage();
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  usePageMeta(t('gallery.title'), t('gallery.subtitle'));
+  const [openIndex, setOpenIndex] = useState(-1);
 
-  const allImages = (items || []).map((item) => ({
+  const photos = (items || []).map((item) => ({
+    path: item.imageUrl,
     src: mediaUrl(item.imageUrl),
-    alt: localized(item, 'alt', lang),
+    alt: localized(item, 'alt', lang) || localized(item, 'caption', lang),
     caption: localized(item, 'caption', lang),
   }));
 
   return (
-    <div className="min-h-screen pt-8 pb-16 px-4 bg-gray-50">
+    <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50">
       <div className="container mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 text-[#001d3a]">{t('gallery.title')}</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{t('gallery.subtitle')}</p>
-        </div>
-
-        {loading && <p className="text-center text-gray-500">{t('gallery.loading')}</p>}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {allImages.map((photo, index) => (
-            <div
-              key={index}
-              className="group relative aspect-square bg-white rounded-xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-all duration-300"
-              onClick={() => {
-                setCurrentImageIndex(index);
-                setLightboxOpen(true);
-              }}
+        <PageHeader title={t('gallery.title')} subtitle={t('gallery.subtitle')} />
+        {loading ? <SkeletonCards count={6} className="aspect-square" /> : null}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+          {photos.map((photo, index) => (
+            <button
+              key={photo.path + index}
+              type="button"
+              className="group relative aspect-square bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow"
+              onClick={() => setOpenIndex(index)}
+              aria-label={photo.caption || photo.alt}
             >
-              <img
-                src={photo.src}
+              <Img
+                src={photo.path}
                 alt={photo.alt}
+                thumb
+                width="400"
+                height="400"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
-                <div className="p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <p className="font-medium truncate">{photo.caption}</p>
-                </div>
-              </div>
-            </div>
+              {photo.caption ? (
+                <span className="absolute inset-x-0 bottom-0 p-3 text-left text-sm font-medium text-white bg-gradient-to-t from-black/70 to-transparent">
+                  {photo.caption}
+                </span>
+              ) : null}
+            </button>
           ))}
         </div>
-
-        {!loading && allImages.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">{t('gallery.empty')}</p>
-          </div>
+        {!loading && photos.length === 0 && <p className="text-center text-gray-500 py-12">{t('gallery.empty')}</p>}
+        {openIndex >= 0 && (
+          <Suspense fallback={null}>
+            <GalleryLightbox photos={photos} index={openIndex} onClose={() => setOpenIndex(-1)} />
+          </Suspense>
         )}
-
-        <Lightbox
-          open={lightboxOpen}
-          close={() => setLightboxOpen(false)}
-          index={currentImageIndex}
-          slides={allImages.map((img) => ({ src: img.src, alt: img.alt, title: img.caption }))}
-          plugins={[Zoom, Download]}
-        />
       </div>
     </div>
   );

@@ -1,101 +1,64 @@
 import { useState } from 'react';
 import { publicApi } from '../api/client';
 import { useLanguage } from '../i18n/LanguageContext';
+import FormField, { Honeypot } from '../components/ui/FormField';
+import PageHeader from '../components/ui/PageHeader';
+import usePageMeta from '../hooks/usePageMeta';
+
+const EMPTY = { name: '', email: '', phone: '', areaOfInterest: '', message: '', website: '' };
+const AREAS = ['worship', 'children', 'youth', 'technical', 'hospitality', 'outreach', 'other'];
 
 function Volunteer() {
   const { t } = useLanguage();
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    areaOfInterest: '',
-  });
+  usePageMeta(t('volunteer.title'), t('volunteer.subtitle'));
+  const [form, setForm] = useState(EMPTY);
   const [status, setStatus] = useState({ loading: false, message: '', error: '' });
+  const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setStatus({ loading: true, message: '', error: '' });
     try {
       await publicApi.post('/volunteers', form);
-      setForm({ name: '', email: '', phone: '', areaOfInterest: '' });
+      setForm(EMPTY);
       setStatus({ loading: false, message: t('volunteer.success'), error: '' });
     } catch (err) {
-      setStatus({ loading: false, message: '', error: err.message || 'Submission failed' });
+      setStatus({ loading: false, message: '', error: err.message });
     }
   };
 
   return (
-    <div className="min-h-screen pt-8 pb-16 px-4">
-      <div className="container mx-auto max-w-4xl">
-        <div className="bg-gradient-to-r from-[#001d3a] to-[#5fb9e2] text-white p-8 rounded-lg mb-8">
-          <h1 className="text-4xl font-bold mb-4">{t('volunteer.title')}</h1>
-          <p className="text-xl">{t('volunteer.subtitle')}</p>
-        </div>
-
-        <div className="bg-white p-8 rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-4 text-[#001d3a]">{t('volunteer.formTitle')}</h2>
-          <p className="text-gray-700 mb-6">{t('volunteer.formIntro')}</p>
-
-          <form className="space-y-4" onSubmit={onSubmit}>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('volunteer.fullName')}</label>
-              <input
-                required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                type="text"
-                className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-[#5fb9e2]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('volunteer.email')}</label>
-              <input
-                required
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                type="email"
-                className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-[#5fb9e2]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('volunteer.phone')}</label>
-              <input
-                required
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                type="tel"
-                className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-[#5fb9e2]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('volunteer.interest')}</label>
-              <select
-                required
-                value={form.areaOfInterest}
-                onChange={(e) => setForm({ ...form, areaOfInterest: e.target.value })}
-                className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-[#5fb9e2]"
-              >
-                <option value="">{t('volunteer.pleaseSelect')}</option>
-                <option value="worship">{t('volunteer.worship')}</option>
-                <option value="children">{t('volunteer.children')}</option>
-                <option value="youth">{t('volunteer.youth')}</option>
-                <option value="technical">{t('volunteer.technical')}</option>
-                <option value="hospitality">{t('volunteer.hospitality')}</option>
-                <option value="outreach">{t('volunteer.outreach')}</option>
-                <option value="other">{t('volunteer.other')}</option>
-              </select>
-            </div>
-            {status.message ? <p className="text-green-700">{status.message}</p> : null}
+    <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50">
+      <div className="container mx-auto max-w-2xl">
+        <PageHeader title={t('volunteer.title')} subtitle={t('volunteer.subtitle')} />
+        <form className="relative bg-white p-6 md:p-8 rounded-xl shadow-md space-y-5" onSubmit={onSubmit}>
+          <FormField id="name" label={t('volunteer.fullName')} required maxLength={120} value={form.name} onChange={set('name')} autoComplete="name" />
+          <div className="grid sm:grid-cols-2 gap-5">
+            <FormField id="email" label={t('volunteer.email')} type="email" required maxLength={200} value={form.email} onChange={set('email')} autoComplete="email" />
+            <FormField id="phone" label={t('volunteer.phone')} type="tel" required maxLength={40} value={form.phone} onChange={set('phone')} autoComplete="tel" />
+          </div>
+          <FormField id="areaOfInterest" as="select" label={t('volunteer.interest')} required value={form.areaOfInterest} onChange={set('areaOfInterest')}>
+            <option value="">{t('volunteer.pleaseSelect')}</option>
+            {AREAS.map((a) => (
+              <option key={a} value={a}>
+                {t(`volunteer.${a}`)}
+              </option>
+            ))}
+          </FormField>
+          <FormField id="message" as="textarea" rows={3} label={t('volunteer.message')} maxLength={4000} value={form.message} onChange={set('message')} />
+          <Honeypot value={form.website} onChange={set('website')} />
+          <div aria-live="polite">
+            {status.message ? <p className="text-green-700 font-medium">{status.message}</p> : null}
             {status.error ? <p className="text-red-600">{status.error}</p> : null}
-            <button
-              type="submit"
-              disabled={status.loading}
-              className="bg-[#001d3a] text-white px-6 py-3 rounded-lg hover:bg-[#5fb9e2] transition-colors disabled:opacity-60"
-            >
-              {status.loading ? t('volunteer.submitting') : t('volunteer.submit')}
-            </button>
-          </form>
-        </div>
+          </div>
+          <button
+            type="submit"
+            disabled={status.loading}
+            className="w-full sm:w-auto bg-[#001d3a] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#003366] transition-colors disabled:opacity-60"
+          >
+            {status.loading ? t('volunteer.submitting') : t('volunteer.submit')}
+          </button>
+        </form>
       </div>
     </div>
   );

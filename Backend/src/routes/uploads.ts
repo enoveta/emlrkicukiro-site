@@ -13,7 +13,7 @@ const uploadsDir = path.join(mediaRoot, "uploads");
 fs.mkdirSync(uploadsDir, { recursive: true });
 
 // SVG is intentionally not accepted: it can carry scripts.
-const IMAGE_EXT = new Set([".jpg", ".jpeg", ".png", ".gif", ".webp", ".mp4", ".webm", ".mov"]);
+const IMAGE_EXT = new Set([".jpg", ".jpeg", ".png", ".gif", ".webp", ".mp4", ".webm", ".mov", ".pdf"]);
 const OPTIMIZABLE = new Set([".jpg", ".jpeg", ".png", ".webp"]);
 const MAX_WIDTH = 1920;
 
@@ -48,7 +48,7 @@ const describe = async (file: Express.Multer.File) => {
     url: `/media/uploads/${filename}`,
     filename,
     size,
-    type: file.mimetype.startsWith("video/") ? "video" : "image"
+    type: file.mimetype.startsWith("video/") ? "video" : file.mimetype === "application/pdf" ? "document" : "image"
   };
 };
 
@@ -81,7 +81,7 @@ const fileMeta = (absolutePath: string, urlPath: string) => {
     url: urlPath,
     size: stat.size,
     updatedAt: stat.mtime.toISOString(),
-    type: [".mp4", ".webm", ".mov"].includes(ext) ? "video" : "image"
+    type: [".mp4", ".webm", ".mov"].includes(ext) ? "video" : ext === ".pdf" ? "document" : "image"
   };
 };
 

@@ -29,7 +29,7 @@ export default function ContentList({ resourceKey }) {
 
   useEffect(() => {
     load();
-  }, [resourceKey]);
+  }, [resourceKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = useMemo(() => {
     return items.filter((item) => {

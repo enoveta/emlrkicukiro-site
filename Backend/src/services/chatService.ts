@@ -34,7 +34,7 @@ const loadChurchFacts = () =>
       `Church: EMLR Kicukiro Parish (Eglise Methodiste Libre au Rwanda / Itorero Methodiste Libre mu Rwanda), ${s.address ?? "Kicukiro, Kigali"}.`,
       `Phone: ${s.phone ?? "-"}. Email: ${s.email ?? "-"}.`,
       `Sunday services: ${s.sundayService1 ?? "-"} and ${s.sundayService2 ?? "-"}. Wednesday service: ${s.wednesdayService ?? "-"}.`,
-      "Website pages: /about, /about/location (map & contacts), /ministries, /events, /amatangazo (notices), /media/news, /media/tv, /give, /prayer-requests, /volunteer.",
+      "Website pages: /about, /about/location (map & contacts), /ministries, /events, /amatangazo (notices), /news, /tv, /give, /prayer-requests, /volunteer.",
       "Upcoming events:",
       ...(events.length
         ? events.map((e) => `- ${fmtDate(e.date)}: ${e.title} (${e.time}${e.location ? `, ${e.location}` : ""})`)

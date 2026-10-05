@@ -1,46 +1,24 @@
-// src/pages/PrivacyPolicy.jsx
-function PrivacyPolicy() {
-    return (
-      <div className="min-h-screen pt-8 pb-16 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <div className="bg-gradient-to-r from-[#290011] to-[#842a1a] text-white p-8 rounded-lg mb-8">
-            <h1 className="text-4xl font-bold mb-4">Privacy Policy</h1>
-            <p className="text-xl">
-              How we protect and use your personal information.
-            </p>
-          </div>
-  
-          <div className="bg-white p-8 rounded-lg shadow-md">
-            <h2 className="text-2xl font-semibold mb-4 text-[#290011]">Privacy Policy</h2>
-            <p className="text-gray-700 mb-6">
-              This privacy policy explains how EMLR Kicukiro collects, uses, and protects your personal information.
-            </p>
-            
-            <div className="space-y-6 text-gray-700">
-              <div>
-                <h3 className="text-xl font-semibold mb-2 text-[#d44930]">Information We Collect</h3>
-                <p>We collect information you provide when you register for events, make donations, or contact us.</p>
-              </div>
-              
-              <div>
-                <h3 className="text-xl font-semibold mb-2 text-[#d44930]">How We Use Your Information</h3>
-                <p>We use your information to communicate with you, process donations, and provide services you request.</p>
-              </div>
-              
-              <div>
-                <h3 className="text-xl font-semibold mb-2 text-[#d44930]">Information Protection</h3>
-                <p>We implement security measures to protect your personal information from unauthorized access.</p>
-              </div>
-              
-              <div>
-                <h3 className="text-xl font-semibold mb-2 text-[#d44930]">Contact Us</h3>
-                <p>If you have questions about our privacy policy, please contact us at info@emlrkicukiro.rw</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  
-  export default PrivacyPolicy;
+import LegalPage from './LegalPage';
+
+const content = {
+  en: [
+    { h: 'Who we are', p: 'This website belongs to Eglise Methodiste Libre au Rwanda (EMLR), Kicukiro Parish, Kigali, Rwanda.' },
+    { h: 'What we collect', p: 'We only collect what you send us through the prayer request and volunteer forms: your name, email address, phone number and message. We do not use advertising trackers.' },
+    { h: 'How we use it', p: 'Prayer requests are read only by the parish prayer team. Volunteer details are used to contact you about serving. We never sell or share your information with third parties.' },
+    { h: 'Chat assistant', p: 'Questions typed into the chat assistant are sent to Google Gemini to generate an answer. Please do not share private or sensitive information in the chat.' },
+    { h: 'Videos and maps', p: 'Videos are shown from YouTube and the map from Google Maps. These services may set their own cookies when you use them.' },
+    { h: 'Storage and deletion', p: 'Your submissions are kept securely and only as long as needed. To see, correct or delete your information, email us at {email}.' },
+  ],
+  rw: [
+    { h: 'Abo turi bo', p: 'Uru rubuga ni urwa Itorero Methodiste Libre mu Rwanda (EMLR), Paruwasi ya Kicukiro, i Kigali.' },
+    { h: 'Amakuru dukusanya', p: 'Dukusanya gusa amakuru utwoherereje ukoresheje ifishi yo gusabirwa n’iyo gukorera itorero: amazina, imeyili, telefone n’ubutumwa bwawe. Ntidukoresha ibikoresho by’amatangazo y’ubucuruzi.' },
+    { h: 'Uko tuyakoresha', p: 'Ubusabe bwo gusabirwa busomwa n’itsinda ry’amasengesho gusa. Amakuru y’abifuza gukorera itorero akoreshwa mu kubavugisha. Ntitugurisha kandi ntidusangiza abandi amakuru yawe.' },
+    { h: 'Umufasha wo kuganira', p: 'Ibibazo wandika mu mufasha wo kuganira byoherezwa kuri Google Gemini kugira ngo itange igisubizo. Ntukandikemo amakuru bwite cyangwa y’ibanga.' },
+    { h: 'Amashusho n’ikarita', p: 'Amashusho ava kuri YouTube, ikarita ikava kuri Google Maps. Izo serivisi zishobora gukoresha cookies zazo.' },
+    { h: 'Kubika no gusiba', p: 'Amakuru yawe abikwa neza kandi mu gihe gikenewe gusa. Niba ushaka kuyabona, kuyakosora cyangwa kuyasiba, twandikire kuri {email}.' },
+  ],
+};
+
+export default function PrivacyPolicy() {
+  return <LegalPage title="Privacy Policy" content={content} updated="Last updated: October 2026" />;
+}

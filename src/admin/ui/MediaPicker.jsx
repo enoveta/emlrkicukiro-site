@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { adminApi, mediaUrl } from '../../api/client';
+import { adminApi, mediaThumb, mediaUrl } from '../../api/client';
 
 export default function MediaPicker({ open, onClose, onSelect, accept = 'all' }) {
   const [items, setItems] = useState([]);
@@ -80,7 +80,7 @@ export default function MediaPicker({ open, onClose, onSelect, accept = 'all' })
             {uploading ? 'Uploading...' : 'Upload files'}
             <input
               type="file"
-              accept="image/*,video/*"
+              accept="image/*,video/*,application/pdf"
               multiple
               className="hidden"
               disabled={uploading}
@@ -105,9 +105,11 @@ export default function MediaPicker({ open, onClose, onSelect, accept = 'all' })
               >
                 <div className="aspect-square bg-gray-100 relative">
                   {item.type === 'video' ? (
-                    <video src={mediaUrl(item.url)} className="w-full h-full object-cover" muted />
+                    <video src={mediaUrl(item.url)} className="w-full h-full object-cover" muted preload="metadata" />
+                  ) : item.type === 'document' ? (
+                    <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-red-600">PDF</div>
                   ) : (
-                    <img src={mediaUrl(item.url)} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
+                    <img src={mediaThumb(item.url)} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
                   )}
                   <span className="absolute top-2 left-2 text-[10px] uppercase bg-black/60 text-white px-1.5 py-0.5 rounded">
                     {item.type}

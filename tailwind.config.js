@@ -1,21 +1,14 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./public/index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
-      colors: {
-        primary: '#003366',
-        secondary: '#E74C3C',
-        accent: '#F39C12',
-        light: '#F5F5F5',
-        dark: '#333333',
-      },
+      // Tailwind 3.3 lacks these steps; classes like text-white/85 are used across the site.
+      opacity: { 15: '0.15', 35: '0.35', 45: '0.45', 55: '0.55', 65: '0.65', 85: '0.85' },
       fontFamily: {
-        sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
       },
     },
   },
   plugins: [],
-}
+};

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { adminApi, mediaUrl } from '../../api/client';
+import { adminApi, mediaThumb, mediaUrl } from '../../api/client';
 import { useToast } from '../ui/Toast';
 import { Skeleton } from '../ui/StatusPill';
 
@@ -97,7 +97,7 @@ export default function MediaLibraryPage() {
           {uploading ? 'Uploading...' : 'Upload media'}
           <input
             type="file"
-            accept="image/*,video/*"
+            accept="image/*,video/*,application/pdf"
             multiple
             className="hidden"
             disabled={uploading}
@@ -160,9 +160,11 @@ export default function MediaLibraryPage() {
             <div key={item.url} className="bg-white rounded-2xl border border-slate-200 overflow-hidden group">
               <div className="aspect-square bg-slate-100 relative">
                 {item.type === 'video' ? (
-                  <video src={mediaUrl(item.url)} className="w-full h-full object-cover" muted />
+                  <video src={mediaUrl(item.url)} className="w-full h-full object-cover" muted preload="metadata" />
+                ) : item.type === 'document' ? (
+                  <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-red-600">PDF</div>
                 ) : (
-                  <img src={mediaUrl(item.url)} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
+                  <img src={mediaThumb(item.url)} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
                 )}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition flex items-end justify-center opacity-0 group-hover:opacity-100 p-2 gap-1">
                   <button type="button" onClick={() => copyUrl(item.url)} className="text-[11px] bg-white rounded-lg px-2 py-1">

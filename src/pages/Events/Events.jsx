@@ -1,60 +1,50 @@
-import { FaClock, FaMapMarkerAlt } from 'react-icons/fa';
 import { usePublicData } from '../../api/usePublicData';
-import { formatEventDay, formatEventMonth } from '../../api/client';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { localized } from '../../i18n/translations';
+import { EventCard, isUpcoming } from '../../components/Events1';
+import PageHeader from '../../components/ui/PageHeader';
+import { SkeletonCards } from '../../components/ui/Skeleton';
+import usePageMeta from '../../hooks/usePageMeta';
 
 function Events() {
   const { data: events, loading } = usePublicData('/events', []);
   const { t, lang } = useLanguage();
+  usePageMeta(t('events.title'), t('events.subtitle'));
+
+  const all = events || [];
+  const upcoming = all.filter((e) => isUpcoming(e)).sort((a, b) => new Date(a.date) - new Date(b.date));
+  const past = all.filter((e) => !isUpcoming(e)).sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return (
-    <div className="min-h-screen pt-8 pb-16 px-4 bg-gray-50">
+    <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50">
       <div className="container mx-auto max-w-6xl">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-[#001d3a] mb-4">{t('events.title')}</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{t('events.subtitle')}</p>
-        </div>
+        <PageHeader title={t('events.title')} subtitle={t('events.subtitle')} />
+        {loading ? <SkeletonCards count={3} className="h-48" /> : null}
 
-        {loading && <p className="text-center text-gray-500">{t('events.loading')}</p>}
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {(events || []).map((event) => (
-            <div
-              key={event.id}
-              className="group relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
-            >
-              <div
-                className="absolute inset-0 bg-[#5fb9e2] opacity-90"
-                style={{
-                  backgroundImage: 'url("https://www.transparenttextures.com/patterns/black-mamba.png")',
-                }}
-              />
-              <div className="relative p-6 h-full flex flex-col">
-                <div className="flex items-start mb-4">
-                  <div className="bg-[#001d3a] text-white p-3 rounded-lg mr-4 text-center min-w-[60px]">
-                    <div className="text-xl font-bold leading-tight">{formatEventDay(event.date)}</div>
-                    <div className="text-xs uppercase tracking-wider text-[#fae924]">
-                      {formatEventMonth(event.date)}
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-bold text-white mt-1">{localized(event, 'title', lang)}</h3>
-                </div>
-                <p className="text-white/90 mb-4 text-sm">{localized(event, 'description', lang)}</p>
-                <div className="space-y-3 pl-2 mt-auto">
-                  <div className="flex items-center text-white">
-                    <FaClock className="mr-3 text-[#fae924]" />
-                    <span>{localized(event, 'time', lang)}</span>
-                  </div>
-                  <div className="flex items-center text-white">
-                    <FaMapMarkerAlt className="mr-3 text-[#fae924]" />
-                    <span>{localized(event, 'location', lang) || 'EMLR Kicukiro'}</span>
-                  </div>
-                </div>
+        {!loading && (
+          <>
+            <h2 className="text-2xl font-bold text-[#003366] mb-6">{t('events.upcoming')}</h2>
+            {upcoming.length ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                {upcoming.map((event) => (
+                  <EventCard key={event.id} event={event} lang={lang} showDescription />
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
+            ) : (
+              <p className="text-gray-600 bg-white rounded-xl p-6 border border-gray-200 mb-16">{t('events.none')}</p>
+            )}
+
+            {past.length ? (
+              <>
+                <h2 className="text-2xl font-bold text-[#003366] mb-6">{t('events.past')}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {past.map((event) => (
+                    <EventCard key={event.id} event={event} lang={lang} showDescription past />
+                  ))}
+                </div>
+              </>
+            ) : null}
+          </>
+        )}
       </div>
     </div>
   );

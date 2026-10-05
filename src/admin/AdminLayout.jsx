@@ -14,8 +14,9 @@ const NAV = [
   {
     title: 'Website content',
     items: [
-      { to: '/admin/events', label: 'Events', icon: '◉' },
-      { to: '/admin/announcements', label: 'News', icon: '☰' },
+      { to: '/admin/notices', label: 'Amatangazo', icon: '✦' },
+      { to: '/admin/events', label: 'Events (Ibikorwa)', icon: '◉' },
+      { to: '/admin/announcements', label: 'News (Amakuru)', icon: '☰' },
       { to: '/admin/ministries', label: 'Ministries', icon: '◎' },
       { to: '/admin/people', label: 'Leadership', icon: '☺' },
       { to: '/admin/gallery', label: 'Gallery', icon: '▥' },
@@ -30,6 +31,7 @@ const NAV = [
     items: [
       { to: '/admin/submissions', label: 'Inbox', icon: '✉' },
       { to: '/admin/settings', label: 'Site settings', icon: '⚙' },
+      { to: '/admin/account', label: 'Account & users', icon: '☼' },
     ],
   },
 ];

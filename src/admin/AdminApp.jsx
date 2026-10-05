@@ -6,6 +6,7 @@ import ContentList from './pages/ContentList';
 import ContentForm from './pages/ContentForm';
 import SubmissionsPage from './pages/SubmissionsPage';
 import SettingsPage from './pages/SettingsPage';
+import AccountPage from './pages/AccountPage';
 import HeroSlidesPage from './pages/HeroSlidesPage';
 import MediaLibraryPage from './pages/MediaLibraryPage';
 import { RESOURCE_CONFIG } from './resourceConfig';
@@ -33,6 +34,7 @@ export default function AdminApp() {
         <Route path="banners" element={<Navigate to="/admin/hero" replace />} />
         <Route path="submissions" element={<SubmissionsPage />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="account" element={<AccountPage />} />
         {Object.keys(RESOURCE_CONFIG).map((key) => (
           <Route key={key} path={key} element={<ContentList resourceKey={key} />} />
         ))}

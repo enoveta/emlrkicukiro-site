@@ -1,151 +1,67 @@
-import { useMemo, useState } from 'react';
-import { usePublicData } from '../../api/usePublicData';
+import { FaMobileAlt, FaUniversity } from 'react-icons/fa';
+import { usePublicData, useSettings } from '../../api/usePublicData';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { localized } from '../../i18n/translations';
+import PageHeader from '../../components/ui/PageHeader';
+import usePageMeta from '../../hooks/usePageMeta';
 
+const Row = ({ label, value }) =>
+  value ? (
+    <div className="flex flex-col sm:flex-row sm:justify-between gap-1 py-3 border-b border-gray-100 last:border-0">
+      <dt className="text-gray-500">{label}</dt>
+      <dd className="font-semibold text-[#001d3a] select-all">{value}</dd>
+    </div>
+  ) : null;
+
+/** Static payment details — taken from the first published giving account in the dashboard. */
 function Give() {
   const { data: accounts } = usePublicData('/giving', []);
-  const { t, lang } = useLanguage();
-  const [activeMethod, setActiveMethod] = useState('mobile');
-  const [donationPurpose, setDonationPurpose] = useState('offerings');
-  const [donationAmount, setDonationAmount] = useState('');
-  const [customAmount, setCustomAmount] = useState('');
-
-  const purposes = useMemo(
-    () =>
-      (accounts || []).map((a) => ({
-        id: a.purposeKey,
-        name: localized(a, 'purposeName', lang),
-      })),
-    [accounts, lang]
-  );
-
-  const selected = (accounts || []).find((a) => a.purposeKey === donationPurpose) || accounts?.[0];
-  const presetAmounts = [5000, 10000, 20000, 50000];
+  const settings = useSettings();
+  const { t } = useLanguage();
+  usePageMeta(t('give.title'), t('give.subtitle'));
+  const account = (accounts || [])[0];
+  const phone = settings.phone || '+250 788 524 792';
 
   return (
-    <div className="min-h-screen pt-8 pb-16 px-4 bg-gray-50">
+    <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50">
       <div className="container mx-auto max-w-4xl">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-[#001d3a] mb-3">{t('give.title')}</h1>
-          <p className="text-gray-600">{t('give.subtitle')}</p>
-        </div>
+        <PageHeader title={t('give.title')} subtitle={t('give.subtitle')} />
 
-        <div className="bg-white rounded-xl shadow-md p-6 md:p-8 space-y-8">
-          <div>
-            <h2 className="text-lg font-semibold text-[#001d3a] mb-3">{t('give.purpose')}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {purposes.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setDonationPurpose(p.id)}
-                  className={`p-3 rounded-lg border text-left ${
-                    donationPurpose === p.id
-                      ? 'border-[#5fb9e2] bg-[#e8f5fb] text-[#001d3a]'
-                      : 'border-gray-200'
-                  }`}
-                >
-                  {p.name}
-                </button>
-              ))}
-            </div>
+        {account ? (
+          <div className="grid md:grid-cols-2 gap-6">
+            {account.mtnNumber || account.airtelNumber ? (
+              <section className="bg-white rounded-xl shadow-md p-6 md:p-8">
+                <h2 className="flex items-center text-xl font-bold text-[#001d3a] mb-4">
+                  <FaMobileAlt className="mr-3 text-[#1f7fae]" aria-hidden="true" />
+                  {t('give.mobileMoney')}
+                </h2>
+                <dl>
+                  <Row label="MTN MoMo" value={account.mtnNumber} />
+                  <Row label="Airtel Money" value={account.airtelNumber} />
+                  <Row label={t('give.name')} value={account.mobileName} />
+                </dl>
+              </section>
+            ) : null}
+            {account.accountNumber ? (
+              <section className="bg-white rounded-xl shadow-md p-6 md:p-8">
+                <h2 className="flex items-center text-xl font-bold text-[#001d3a] mb-4">
+                  <FaUniversity className="mr-3 text-[#1f7fae]" aria-hidden="true" />
+                  {t('give.bankTransfer')}
+                </h2>
+                <dl>
+                  <Row label={t('give.bank')} value={account.bankName} />
+                  <Row label={t('give.accountName')} value={account.accountName} />
+                  <Row label={t('give.accountNumber')} value={account.accountNumber} />
+                  <Row label="SWIFT" value={account.swift} />
+                </dl>
+              </section>
+            ) : null}
           </div>
+        ) : null}
 
-          <div>
-            <h2 className="text-lg font-semibold text-[#001d3a] mb-3">{t('give.method')}</h2>
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => setActiveMethod('mobile')}
-                className={`px-4 py-2 rounded-lg border ${
-                  activeMethod === 'mobile' ? 'border-[#001d3a] bg-[#001d3a] text-white' : 'border-gray-200'
-                }`}
-              >
-                {t('give.mobileMoney')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveMethod('bank')}
-                className={`px-4 py-2 rounded-lg border ${
-                  activeMethod === 'bank' ? 'border-[#001d3a] bg-[#001d3a] text-white' : 'border-gray-200'
-                }`}
-              >
-                {t('give.bankTransfer')}
-              </button>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-lg font-semibold text-[#001d3a] mb-3">{t('give.amount')}</h2>
-            <div className="flex flex-wrap gap-2 mb-3">
-              {presetAmounts.map((amount) => (
-                <button
-                  key={amount}
-                  type="button"
-                  onClick={() => {
-                    setDonationAmount(String(amount));
-                    setCustomAmount('');
-                  }}
-                  className={`px-4 py-2 rounded-lg border ${
-                    donationAmount === String(amount) ? 'bg-[#fae924] border-[#fae924]' : 'border-gray-200'
-                  }`}
-                >
-                  {amount.toLocaleString()}
-                </button>
-              ))}
-            </div>
-            <input
-              type="number"
-              placeholder={t('give.customAmount')}
-              value={customAmount}
-              onChange={(e) => {
-                setCustomAmount(e.target.value);
-                setDonationAmount(e.target.value);
-              }}
-              className="w-full p-3 border border-gray-300 rounded-lg"
-            />
-          </div>
-
-          {selected && (
-            <div className="bg-[#f8f9fa] rounded-lg p-5 border border-gray-200">
-              <h3 className="font-semibold text-[#001d3a] mb-3">{t('give.accountDetails')}</h3>
-              {activeMethod === 'mobile' ? (
-                <div className="space-y-2 text-gray-700">
-                  <p>
-                    <strong>{t('give.name')}:</strong> {selected.mobileName}
-                  </p>
-                  <p>
-                    <strong>MTN:</strong> {selected.mtnNumber}
-                  </p>
-                  <p>
-                    <strong>Airtel:</strong> {selected.airtelNumber}
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-2 text-gray-700">
-                  <p>
-                    <strong>{t('give.bank')}:</strong> {selected.bankName}
-                  </p>
-                  <p>
-                    <strong>{t('give.accountName')}:</strong> {selected.accountName}
-                  </p>
-                  <p>
-                    <strong>{t('give.accountNumber')}:</strong> {selected.accountNumber}
-                  </p>
-                  <p>
-                    <strong>SWIFT:</strong> {selected.swift}
-                  </p>
-                </div>
-              )}
-              {donationAmount ? (
-                <p className="mt-4 text-sm text-[#5fb9e2]">
-                  {t('give.suggested', { amount: Number(donationAmount).toLocaleString() })}
-                </p>
-              ) : null}
-            </div>
-          )}
-        </div>
+        <blockquote className="mt-10 text-center text-lg italic text-gray-700 max-w-2xl mx-auto">{t('give.verse')}</blockquote>
+        <p className="mt-6 text-center text-gray-600">
+          {t('give.questions', { phone })}{' '}
+        </p>
       </div>
     </div>
   );

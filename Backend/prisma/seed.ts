@@ -28,7 +28,7 @@ const settings: Record<string, string> = {
   sundayService1: "8:00 AM",
   sundayService1Rw: "saa mbiri",
   sundayService2: "10:30 AM",
-  sundayService2Rw: "saa yine n’igice",
+  sundayService2Rw: "saa yine n’igice za mu gitondo",
   wednesdayService: "6:00 PM",
   wednesdayServiceRw: "saa kumi n’ebyiri z’umugoroba",
   facebook: "https://www.facebook.com/p/EMLR-Kicukiro-100083143130293/",
@@ -70,7 +70,7 @@ const slides = [
     cta1Link: "/about/location",
     cta2: "Watch Online",
     cta2Rw: "EMLR TV",
-    cta2Link: "/media/tv"
+    cta2Link: "/tv"
   },
   {
     imageUrl: `${MEDIA}/community.mp4`,

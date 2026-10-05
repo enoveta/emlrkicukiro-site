@@ -8,11 +8,16 @@ const emptySlide = (order = 0) => ({
   imageUrl: '',
   mediaType: 'image',
   title: 'Welcome to',
-  highlight: 'EMRL Kicukiro',
+  titleRw: 'Murakaza neza muri',
+  highlight: 'EMLR Kicukiro',
+  highlightRw: 'EMLR Kicukiro',
   subtitle: '',
-  cta1: 'Learn About Us',
+  subtitleRw: '',
+  cta1: 'About Us',
+  cta1Rw: 'Abo turi bo',
   cta1Link: '/about',
   cta2: 'Visit Us',
+  cta2Rw: 'Tugane',
   cta2Link: '/about/location',
   duration: 8000,
   hasBlur: true,
@@ -41,11 +46,16 @@ export default function HeroSlidesPage() {
             imageUrl: s.imageUrl || '',
             mediaType: s.mediaType || 'image',
             title: s.title || '',
+            titleRw: s.titleRw || '',
             highlight: s.highlight || '',
+            highlightRw: s.highlightRw || '',
             subtitle: s.subtitle || '',
+            subtitleRw: s.subtitleRw || '',
             cta1: s.cta1 || '',
+            cta1Rw: s.cta1Rw || '',
             cta1Link: s.cta1Link || '',
             cta2: s.cta2 || '',
+            cta2Rw: s.cta2Rw || '',
             cta2Link: s.cta2Link || '',
             duration: s.duration || 8000,
             hasBlur: s.hasBlur !== false,
@@ -89,6 +99,9 @@ export default function HeroSlidesPage() {
       const body = {
         slides: slides.map((s, i) => ({
           ...s,
+          ...Object.fromEntries(
+            ['titleRw', 'highlightRw', 'subtitleRw', 'cta1Rw', 'cta2Rw'].map((k) => [k, s[k] || null])
+          ),
           order: i,
           duration: Number(s.duration || 8000),
         })),
@@ -259,16 +272,21 @@ export default function HeroSlidesPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {[
-                    ['title', 'Title'],
-                    ['highlight', 'Highlight'],
-                    ['subtitle', 'Subtitle'],
-                    ['cta1', 'Primary button'],
+                    ['title', 'Title (EN)'],
+                    ['titleRw', 'Title (RW)'],
+                    ['highlight', 'Highlight (EN)'],
+                    ['highlightRw', 'Highlight (RW)'],
+                    ['subtitle', 'Subtitle (EN)'],
+                    ['subtitleRw', 'Subtitle (RW)'],
+                    ['cta1', 'Primary button (EN)'],
+                    ['cta1Rw', 'Primary button (RW)'],
+                    ['cta2', 'Secondary button (EN)'],
+                    ['cta2Rw', 'Secondary button (RW)'],
                     ['cta1Link', 'Primary link'],
-                    ['cta2', 'Secondary button'],
                     ['cta2Link', 'Secondary link'],
                     ['duration', 'Duration (ms)'],
                   ].map(([key, label]) => (
-                    <div key={key} className={key === 'subtitle' ? 'md:col-span-2' : ''}>
+                    <div key={key}>
                       <label className="block text-xs font-medium text-slate-600 mb-1">{label}</label>
                       <input
                         className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm"

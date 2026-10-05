@@ -30,6 +30,10 @@ export function LanguageProvider({ children }) {
 
   const value = useMemo(() => {
     const dict = translations[lang] || translations.en;
+    const lookup = (root, path) =>
+      path.split('.').reduce((cur, part) => (cur && typeof cur === 'object' ? cur[part] : undefined), root);
+    /** Raw value (arrays/objects), falling back to English. */
+    const get = (path) => lookup(dict, path) ?? lookup(translations.en, path);
     const t = (path, vars) => {
       const parts = path.split('.');
       let cur = dict;
@@ -47,7 +51,7 @@ export function LanguageProvider({ children }) {
       }
       return typeof cur === 'string' ? interpolate(cur, vars) : path;
     };
-    return { lang, setLang, t, isRw: lang === 'rw' };
+    return { lang, setLang, t, get, isRw: lang === 'rw' };
   }, [lang]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
@@ -60,6 +64,7 @@ export function useLanguage() {
       lang: 'en',
       setLang: () => {},
       t: (path) => path,
+      get: () => undefined,
       isRw: false,
     };
   }

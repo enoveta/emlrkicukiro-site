@@ -28,6 +28,7 @@ export default function ContentForm({ resourceKey }) {
         else if (f.type === 'datetime') initial[f.key] = new Date().toISOString().slice(0, 16);
         else if (f.type === 'select') initial[f.key] = f.options?.[0] || '';
         else initial[f.key] = '';
+        if (f.rw) initial[`${f.key}Rw`] = '';
       });
       setForm(initial);
       setLoading(false);
@@ -42,12 +43,13 @@ export default function ContentForm({ resourceKey }) {
         const next = {};
         cfg.fields.forEach((f) => {
           next[f.key] = toInputValue(f, data[f.key]);
+          if (f.rw) next[`${f.key}Rw`] = data[`${f.key}Rw`] ?? '';
         });
         setForm(next);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [id, resourceKey]);
+  }, [id, resourceKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onSave = async (e, publishAfter = false) => {
     e.preventDefault();
@@ -57,6 +59,7 @@ export default function ContentForm({ resourceKey }) {
       const body = {};
       cfg.fields.forEach((f) => {
         body[f.key] = fromInputValue(f, form[f.key]);
+        if (f.rw) body[`${f.key}Rw`] = (form[`${f.key}Rw`] || '').trim() || null;
       });
 
       let saved;
@@ -95,16 +98,28 @@ export default function ContentForm({ resourceKey }) {
       </div>
 
       <form onSubmit={(e) => onSave(e, false)} className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
+        <p className="text-xs text-slate-500 bg-slate-50 rounded-lg p-3">
+          Fields marked <span className="font-semibold">EN / RW</span> have an English and a Kinyarwanda box. If the
+          Kinyarwanda box is empty, the English text is shown to Kinyarwanda readers.
+        </p>
         {cfg.fields.map((field) => (
           <div key={field.key}>
-            <label className="block text-sm font-medium text-slate-700 mb-1">{field.label}</label>
-            {field.type === 'textarea' ? (
-              <textarea
-                className="w-full border border-slate-200 rounded-xl p-3 min-h-[120px] text-sm"
-                value={form[field.key] || ''}
-                required={field.required}
-                onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
-              />
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              {field.label}
+              {field.required ? <span className="text-red-500"> *</span> : null}
+              {field.rw ? <span className="ml-2 text-xs font-semibold text-[#5fb9e2]">EN / RW</span> : null}
+            </label>
+            {field.rw ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <FieldInput field={field} value={form[field.key]} onChange={(v) => setForm((f) => ({ ...f, [field.key]: v }))} placeholder="English" />
+                <FieldInput
+                  field={{ ...field, required: false }}
+                  value={form[`${field.key}Rw`]}
+                  onChange={(v) => setForm((f) => ({ ...f, [`${field.key}Rw`]: v }))}
+                  placeholder="Ikinyarwanda"
+                  lang="rw"
+                />
+              </div>
             ) : field.type === 'boolean' ? (
               <label className="inline-flex items-center gap-2 text-sm">
                 <input
@@ -122,7 +137,7 @@ export default function ContentForm({ resourceKey }) {
               >
                 {(field.options || []).map((opt) => (
                   <option key={opt} value={opt}>
-                    {opt}
+                    {field.optionLabels?.[opt] || opt}
                   </option>
                 ))}
               </select>
@@ -142,19 +157,22 @@ export default function ContentForm({ resourceKey }) {
                     onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
                     placeholder="Or paste media URL"
                   />
+                  {form[field.key] ? (
+                    <button
+                      type="button"
+                      onClick={() => setForm({ ...form, [field.key]: '' })}
+                      className="px-3 py-2 rounded-xl border border-slate-200 text-sm text-red-600"
+                    >
+                      Remove
+                    </button>
+                  ) : null}
                 </div>
-                {form[field.key] ? (
+                {form[field.key] && !/\.pdf$/i.test(form[field.key]) ? (
                   <img src={mediaUrl(form[field.key])} alt="" className="h-28 rounded-xl object-cover border" />
                 ) : null}
               </div>
             ) : (
-              <input
-                className="w-full border border-slate-200 rounded-xl p-3 text-sm"
-                type={field.type === 'datetime' ? 'datetime-local' : field.type === 'number' ? 'number' : 'text'}
-                value={form[field.key] ?? ''}
-                required={field.required}
-                onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
-              />
+              <FieldInput field={field} value={form[field.key]} onChange={(v) => setForm((f) => ({ ...f, [field.key]: v }))} />
             )}
           </div>
         ))}
@@ -189,5 +207,31 @@ export default function ContentForm({ resourceKey }) {
         }}
       />
     </div>
+  );
+}
+
+function FieldInput({ field, value, onChange, placeholder, lang }) {
+  if (field.type === 'textarea') {
+    return (
+      <textarea
+        className="w-full border border-slate-200 rounded-xl p-3 min-h-[120px] text-sm"
+        value={value || ''}
+        required={field.required}
+        placeholder={placeholder}
+        lang={lang}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    );
+  }
+  return (
+    <input
+      className="w-full border border-slate-200 rounded-xl p-3 text-sm"
+      type={field.type === 'datetime' ? 'datetime-local' : field.type === 'number' ? 'number' : 'text'}
+      value={value ?? ''}
+      required={field.required}
+      placeholder={placeholder}
+      lang={lang}
+      onChange={(e) => onChange(e.target.value)}
+    />
   );
 }
