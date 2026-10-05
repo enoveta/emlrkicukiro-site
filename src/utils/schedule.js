@@ -49,11 +49,13 @@ export function formatTime(value, lang = 'en') {
 }
 
 export const formatRange = (item, lang) =>
-  item.endTime ? `${formatTime(item.startTime, lang)} – ${formatTime(item.endTime, lang)}` : formatTime(item.startTime, lang);
+  item.endTime ? `${formatTime(item.startTime, lang)} - ${formatTime(item.endTime, lang)}` : formatTime(item.startTime, lang);
 
 /** Does a recurring item happen on this date? Handles "first/second/.../last weekday of the month". */
+export const daysOf = (item) => item.days || (item.dayOfWeek !== undefined ? [item.dayOfWeek] : []);
+
 export function occursOn(item, date) {
-  if (date.getDay() !== item.dayOfWeek) return false;
+  if (!daysOf(item).includes(date.getDay())) return false;
   const rule = item.recurrence || 'every';
   if (rule === 'every') return true;
   const nth = Math.ceil(date.getDate() / 7);

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 const SITE = 'EMLR Kicukiro';
 const DEFAULT_DESCRIPTION =
-  'Eglise Methodiste Libre au Rwanda, Kicukiro Parish — Sunday services, ministries, events and announcements.';
+  'Eglise Methodiste Libre au Rwanda, Kicukiro Parish: Sunday services, ministries, events and announcements.';
 
 const setMeta = (attr, key, value) => {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`);
@@ -17,7 +17,7 @@ const setMeta = (attr, key, value) => {
 /** Sets the browser title, description and share-preview tags for the current page. */
 export default function usePageMeta(title, description, image) {
   useEffect(() => {
-    const fullTitle = title ? `${title} | ${SITE}` : `${SITE} — Eglise Methodiste Libre au Rwanda`;
+    const fullTitle = title ? `${title} | ${SITE}` : `${SITE} | Eglise Methodiste Libre au Rwanda`;
     const desc = (description || DEFAULT_DESCRIPTION).slice(0, 180);
     document.title = fullTitle;
     setMeta('name', 'description', desc);

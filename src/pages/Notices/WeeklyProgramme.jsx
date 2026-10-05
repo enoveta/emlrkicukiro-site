@@ -1,123 +1,117 @@
-import { useState } from 'react';
-import { FaClock, FaMapMarkerAlt, FaUser, FaRedo } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaUser, FaRedo } from 'react-icons/fa';
 import { localized } from '../../i18n/translations';
-import { DAY_NAMES, DAY_SHORT, WEEK_ORDER, formatRange, sortByTime, styleFor } from '../../utils/schedule';
+import { DAY_NAMES, WEEK_ORDER, daysOf, formatRange, sortByTime, styleFor } from '../../utils/schedule';
 
-const numericRange = (item) => (item.endTime ? `${item.startTime} – ${item.endTime}` : item.startTime);
+const MONTHS = {
+  en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  rw: ['Mutarama', 'Gashyantare', 'Werurwe', 'Mata', 'Gicurasi', 'Kamena', 'Nyakanga', 'Kanama', 'Nzeri', 'Ukwakira', 'Ugushyingo', 'Ukuboza'],
+};
 
-export function ActivityCard({ item, lang, t, compact = false }) {
+/** Date of the given weekday in the current Monday-to-Sunday week. */
+const dateThisWeek = (day, today = new Date()) => {
+  const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - ((today.getDay() + 6) % 7));
+  return new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + ((day + 6) % 7));
+};
+
+/** One activity: time on the left, details on the right. Used by the calendar side panel too. */
+export function ActivityCard({ item, lang, t }) {
   const style = styleFor(item.category);
   const location = localized(item, 'location', lang);
   const notes = localized(item, 'notes', lang);
   return (
-    <article className={`bg-white rounded-lg border border-gray-200 border-l-4 ${style.bar} p-3 shadow-sm break-inside-avoid`}>
-      <p className="flex items-center text-sm font-semibold text-[#001d3a] tabular-nums">
-        <FaClock className="mr-1.5 text-gray-400 shrink-0" aria-hidden="true" />
-        {numericRange(item)}
-      </p>
-      {lang === 'rw' && !compact ? <p className="text-xs text-gray-500 mt-0.5">{formatRange(item, lang)}</p> : null}
-      <h3 className={`font-bold text-[#001d3a] leading-snug mt-1 ${compact ? 'text-sm' : 'text-base'}`}>
-        {localized(item, 'title', lang)}
-      </h3>
-      <div className="mt-1.5 space-y-0.5 text-xs text-gray-600">
+    <article className="grid grid-cols-[4.5rem_1fr] sm:grid-cols-[5.5rem_1fr] gap-4 py-4">
+      <div className="text-right">
+        <p className="text-xl font-bold text-[#001d3a] tabular-nums leading-none">{item.startTime}</p>
+        {item.endTime ? (
+          <p className="text-sm text-gray-500 tabular-nums mt-1">
+            {t('schedule.until')} {item.endTime}
+          </p>
+        ) : null}
+      </div>
+      <div className="min-w-0 border-l-2 border-gray-100 pl-4">
+        <h4 className="text-base sm:text-lg font-semibold text-[#001d3a] leading-snug">{localized(item, 'title', lang)}</h4>
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-600">
+          <span className="inline-flex items-center gap-1.5">
+            <span className={`w-2.5 h-2.5 rounded-full ${style.dot}`} aria-hidden="true" />
+            {t(`schedule.categories.${item.category}`)}
+          </span>
+          {location ? (
+            <span className="inline-flex items-center gap-1.5">
+              <FaMapMarkerAlt className="text-gray-400" aria-hidden="true" />
+              {location}
+            </span>
+          ) : null}
+          {item.leader ? (
+            <span className="inline-flex items-center gap-1.5">
+              <FaUser className="text-gray-400" aria-hidden="true" />
+              {item.leader}
+            </span>
+          ) : null}
+        </p>
+        {lang === 'rw' ? <p className="text-sm text-gray-500 mt-1">{formatRange(item, lang)}</p> : null}
         {item.recurrence && item.recurrence !== 'every' ? (
-          <p className="flex items-center">
-            <FaRedo className="mr-1.5 text-gray-400" aria-hidden="true" />
+          <p className="inline-flex items-center gap-1.5 text-sm text-[#1a6f99] mt-1">
+            <FaRedo className="text-xs" aria-hidden="true" />
             {t(`schedule.${item.recurrence}`)}
           </p>
         ) : null}
-        {location ? (
-          <p className="flex items-center">
-            <FaMapMarkerAlt className="mr-1.5 text-gray-400" aria-hidden="true" />
-            {location}
-          </p>
-        ) : null}
-        {item.leader ? (
-          <p className="flex items-center">
-            <FaUser className="mr-1.5 text-gray-400" aria-hidden="true" />
-            {t('schedule.leader')}: {item.leader}
-          </p>
-        ) : null}
-        {notes && !compact ? <p className="text-gray-500 pt-0.5">{notes}</p> : null}
+        {notes ? <p className="text-sm text-gray-600 mt-1">{notes}</p> : null}
       </div>
     </article>
   );
 }
 
-/** Monday→Sunday table on desktop; day tabs on phones (opens on today). */
+/** The week as a list of day cards (Monday to Sunday). Days without activities are left out. */
 export default function WeeklyProgramme({ items, lang, t }) {
-  const todayDay = new Date().getDay();
-  const [mobileDay, setMobileDay] = useState(todayDay);
-  const byDay = (day) => sortByTime(items.filter((i) => i.dayOfWeek === day));
+  const today = new Date();
+  const todayDay = today.getDay();
 
   if (!items.length) {
     return <p className="text-center text-gray-600 bg-white rounded-xl p-8 border border-gray-200">{t('schedule.emptyWeek')}</p>;
   }
 
+  const days = WEEK_ORDER.map((d) => ({ day: d, list: sortByTime(items.filter((i) => daysOf(i).includes(d))) })).filter(
+    ({ day, list }) => list.length || day === todayDay
+  );
+
   return (
-    <>
-      {/* Phones: one day at a time */}
-      <div className="md:hidden print:hidden">
-        <div className="grid grid-cols-7 gap-1 pb-2" role="tablist">
-          {WEEK_ORDER.map((d) => (
-            <button
-              key={d}
-              type="button"
-              role="tab"
-              aria-selected={mobileDay === d}
-              onClick={() => setMobileDay(d)}
-              className={`px-0.5 py-2 rounded-lg text-xs font-semibold border ${
-                mobileDay === d
-                  ? 'bg-[#003366] border-[#003366] text-white'
-                  : d === todayDay
-                    ? 'bg-[#fff8c2] border-[#feed17] text-[#001d3a]'
-                    : 'bg-white border-gray-200 text-[#001d3a]'
+    <div className="grid lg:grid-cols-2 gap-5 print:grid-cols-2 print:gap-3">
+      {days.map(({ day, list }) => {
+        const isToday = day === todayDay;
+        const date = dateThisWeek(day, today);
+        return (
+          <section
+            key={day}
+            aria-label={DAY_NAMES[lang][day]}
+            className={`bg-white rounded-2xl border overflow-hidden break-inside-avoid ${
+              isToday ? 'border-[#feed17] ring-2 ring-[#feed17] shadow-md' : 'border-gray-200 shadow-sm'
+            }`}
+          >
+            <header
+              className={`flex items-center justify-between gap-3 px-5 py-3 ${
+                isToday ? 'bg-[#003366] text-white' : 'bg-gray-50 text-[#003366]'
               }`}
             >
-              {DAY_SHORT[lang][d]}
-              {byDay(d).length ? <span className="block text-[10px] font-normal opacity-75">{byDay(d).length}</span> : null}
-            </button>
-          ))}
-        </div>
-        <h3 className="text-lg font-bold text-[#003366] mt-3 mb-3">
-          {DAY_NAMES[lang][mobileDay]}
-          {mobileDay === todayDay ? <span className="ml-2 text-xs font-semibold text-[#6b5d00] bg-[#fff8c2] px-2 py-0.5 rounded-full">{t('schedule.today')}</span> : null}
-        </h3>
-        <div className="space-y-3">
-          {byDay(mobileDay).length ? (
-            byDay(mobileDay).map((item) => <ActivityCard key={item.id} item={item} lang={lang} t={t} />)
-          ) : (
-            <p className="text-gray-500 bg-white rounded-lg border border-gray-200 p-4">{t('schedule.empty')}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Tablets / desktop / print: the whole week */}
-      <div className="hidden md:grid print:grid grid-cols-7 gap-2 lg:gap-3">
-        {WEEK_ORDER.map((d) => {
-          const list = byDay(d);
-          const isToday = d === todayDay;
-          return (
-            <section
-              key={d}
-              aria-label={DAY_NAMES[lang][d]}
-              className={`rounded-xl p-2 lg:p-3 min-h-[180px] ${isToday ? 'bg-[#fff8c2] ring-2 ring-[#feed17]' : 'bg-gray-100'}`}
-            >
-              <h3 className="text-center text-sm font-bold text-[#003366] mb-2">
-                {DAY_NAMES[lang][d]}
-                {isToday ? <span className="block text-[11px] font-semibold text-[#6b5d00]">{t('schedule.today')}</span> : null}
-              </h3>
-              <div className="space-y-2">
-                {list.length ? (
-                  list.map((item) => <ActivityCard key={item.id} item={item} lang={lang} t={t} compact />)
-                ) : (
-                  <p className="text-center text-xs text-gray-400 pt-4">—</p>
-                )}
-              </div>
-            </section>
-          );
-        })}
-      </div>
-    </>
+              <h3 className="text-lg font-bold">{DAY_NAMES[lang][day]}</h3>
+              <span className="flex items-center gap-2 text-sm">
+                {isToday ? (
+                  <span className="px-2 py-0.5 rounded-full bg-[#feed17] text-[#001d3a] text-xs font-bold">{t('schedule.today')}</span>
+                ) : null}
+                <span className={isToday ? 'text-white/80' : 'text-gray-500'}>
+                  {date.getDate()} {MONTHS[lang][date.getMonth()]}
+                </span>
+              </span>
+            </header>
+            <div className="px-5 divide-y divide-gray-100">
+              {list.length ? (
+                list.map((item) => <ActivityCard key={item.id} item={item} lang={lang} t={t} />)
+              ) : (
+                <p className="py-5 text-gray-500">{t('schedule.empty')}</p>
+              )}
+            </div>
+          </section>
+        );
+      })}
+    </div>
   );
 }

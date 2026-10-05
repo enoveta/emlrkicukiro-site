@@ -8,6 +8,7 @@
 import { env } from "../src/config/env";
 import { hashPassword } from "../src/services/authService";
 import { prisma } from "../src/prisma/client";
+import { MINISTRY_CONTENT } from "./ministry-content";
 
 const MEDIA = "/media";
 
@@ -26,9 +27,10 @@ const settings: Record<string, string> = {
   email: "info@emlrkicukiro.rw",
   address: "Kicukiro, Kigali, Rwanda",
   sundayService1: "8:00 AM",
-  sundayService1Rw: "saa mbiri",
-  sundayService2: "10:30 AM",
-  sundayService2Rw: "saa yine n’igice za mu gitondo",
+  sundayService1Rw: "saa mbiri za mu gitondo",
+  sundayService2: "11:30 AM",
+  sundayService2Rw: "saa tanu n’igice",
+  // Midweek general service (Thursday). Key name kept for compatibility.
   wednesdayService: "6:00 PM",
   wednesdayServiceRw: "saa kumi n’ebyiri z’umugoroba",
   facebook: "https://www.facebook.com/p/EMLR-Kicukiro-100083143130293/",
@@ -63,8 +65,8 @@ const slides = [
     titleRw: "Tugane",
     highlight: "Sunday Services",
     highlightRw: "ku Cyumweru",
-    subtitle: "Sundays at 8:00 AM and 10:30 AM.",
-    subtitleRw: "Amateraniro ni saa mbiri na saa yine n’igice za mu gitondo.",
+    subtitle: "Sundays at 8:00 AM and 11:30 AM.",
+    subtitleRw: "Ku Cyumweru saa mbiri za mu gitondo na saa tanu n’igice.",
     cta1: "Find Us",
     cta1Rw: "Aho duherereye",
     cta1Link: "/about/location",
@@ -176,7 +178,7 @@ const news = [
 const stats = [
   { number: "1500+", label: "Church Members", labelRw: "Abakristo", sortOrder: 0 },
   { number: "15", label: "Ministries", labelRw: "Ibyiciro", sortOrder: 1 },
-  { number: "5+", label: "Weekly Services", labelRw: "Amateraniro buri cyumweru", sortOrder: 2 },
+  { number: "11", label: "Gatherings every week", labelRw: "Amateraniro n’amasengesho buri cyumweru", sortOrder: 2 },
   { number: "25+", label: "Cell Groups", labelRw: "Amatsinda", sortOrder: 3 }
 ];
 
@@ -219,7 +221,8 @@ const giving = [
     purposeKey: "offerings",
     purposeName: "Offerings & Tithes",
     purposeNameRw: "Amaturo n’Icyacumi",
-    mtnNumber: "0788 524 792",
+    mtnNumber: null,
+    momoCode: "006361",
     airtelNumber: "0734 567 890",
     mobileName: "EMLR Kicukiro - Offerings",
     bankName: "Bank of Kigali",
@@ -271,7 +274,8 @@ const giving = [
     purposeKey: "other",
     purposeName: "Other Purposes",
     purposeNameRw: "Izindi Mpamvu",
-    mtnNumber: "0788 524 792",
+    mtnNumber: null,
+    momoCode: "006361",
     airtelNumber: "0734 567 890",
     mobileName: "EMLR Kicukiro - General",
     bankName: "Bank of Kigali",
@@ -282,35 +286,15 @@ const giving = [
   }
 ];
 
-/** Weekly programme. Only confirmed times are seeded; the church adds the rest in the dashboard. */
+/** Weekly programme (from the parish "AMATANGAZO" slides). Managed in Dashboard → Weekly programme. */
+const PLACE = { location: "EMLR Kicukiro", locationRw: "EMLR Kicukiro" };
 const schedule = [
-  {
-    title: "First Sunday Service",
-    titleRw: "Amateraniro ya mbere yo ku Cyumweru",
-    category: "service",
-    dayOfWeek: 0,
-    startTime: "08:00",
-    location: "EMLR Kicukiro",
-    sortOrder: 0
-  },
-  {
-    title: "Second Sunday Service",
-    titleRw: "Amateraniro ya kabiri yo ku Cyumweru",
-    category: "service",
-    dayOfWeek: 0,
-    startTime: "10:30",
-    location: "EMLR Kicukiro",
-    sortOrder: 1
-  },
-  {
-    title: "Wednesday Service",
-    titleRw: "Amateraniro yo ku wa Gatatu",
-    category: "service",
-    dayOfWeek: 3,
-    startTime: "18:00",
-    location: "EMLR Kicukiro",
-    sortOrder: 0
-  }
+  { title: "First Sunday Service", titleRw: "Iteraniro rya mbere", category: "service", days: [0], startTime: "08:00", endTime: "11:00", ...PLACE, sortOrder: 0 },
+  { title: "Second Sunday Service", titleRw: "Iteraniro rya kabiri", category: "service", days: [0], startTime: "11:30", endTime: "13:15", ...PLACE, sortOrder: 1 },
+  { title: "Morning Prayer (Nibature)", titleRw: "Amasengesho ya mu gitondo (Nibature)", category: "prayer", days: [1, 2, 3, 4, 5, 6], startTime: "05:00", endTime: "06:00", ministrySlug: "prayer-ministry", ...PLACE, sortOrder: 0 },
+  { title: "General Prayer: Fasting", titleRw: "Amasengesho rusange: Kwiyiriza ubusa", category: "prayer", days: [2], startTime: "09:00", endTime: "15:00", ministrySlug: "prayer-ministry", ...PLACE, sortOrder: 1 },
+  { title: "Women's Prayer", titleRw: "Amasengesho y’Abari n’Abategarugori", category: "prayer", days: [4], startTime: "09:00", endTime: "15:00", ministrySlug: "women-fellowship", ...PLACE, sortOrder: 1 },
+  { title: "General Service", titleRw: "Amateraniro rusange", category: "service", days: [4], startTime: "18:00", endTime: "20:00", ...PLACE, sortOrder: 2 }
 ];
 
 /**
@@ -539,7 +523,7 @@ const main = async () => {
 
   const hasContent = (await prisma.ministry.count()) > 0 || (await prisma.siteSetting.count()) > 0;
   if (hasContent && process.env.SEED_FORCE !== "true") {
-    console.log("Content already exists — skipped. Use SEED_FORCE=true to replace it.");
+    console.log("Content already exists; skipped. Use SEED_FORCE=true to replace it.");
     return;
   }
 
@@ -583,31 +567,25 @@ const main = async () => {
   await prisma.scheduleItem.createMany({ data: schedule.map((i) => ({ ...i, ...owned })) });
 
   await prisma.ministry.createMany({
-    data: ministries.map(({ image, ...m }, sortOrder) => ({
+    data: ministries.map(({ image, ...m }, sortOrder) => {
+      const rich = MINISTRY_CONTENT[m.slug];
+      const curly = (text: string) => text.replace(/'/g, "\u2019");
+      return {
       ...m,
-      heroImageUrl: `${MEDIA}/${image}`,
-      aboutImageUrl: `${MEDIA}/${image}`,
+      ...(rich ? { body: curly(rich.body), bodyRw: curly(rich.bodyRw) } : {}),
+      heroImageUrl: `${MEDIA}/${rich?.image ?? image}`,
+      // Designed backgrounds are only used as the hero; the page shows the "What we do" list instead of a photo.
+      aboutImageUrl: rich?.image ? null : `${MEDIA}/${image}`,
       youtubeUrl: m.youtubeUrl ?? null,
       featuredOnHome: Boolean(m.featuredOnHome),
       homeOrder: m.homeOrder ?? 0,
       sortOrder,
       ...owned
-    }))
+      };
+    })
   });
 
-  const now = new Date();
-  await prisma.notice.create({
-    data: {
-      title: "Welcome to our new website",
-      titleRw: "Murakaza neza ku rubuga rwacu rushya",
-      body: "Church notices will be published here every week. Check this page for the latest communication from the parish.",
-      bodyRw: "Amatangazo y’itorero azajya atangazwa hano buri cyumweru. Jya usura uru rupapuro umenye amakuru mashya ya Paruwasi.",
-      category: "weekly",
-      publishDate: now,
-      pinned: true,
-      ...owned
-    }
-  });
+
 
   console.log("Seed completed with website content.");
 };

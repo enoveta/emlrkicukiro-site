@@ -140,7 +140,7 @@ export default function HeroSlidesPage() {
         <div>
           <h1 className="text-3xl font-bold text-[#001d3a]">Home slides</h1>
           <p className="text-slate-500 mt-1">
-            Manage the homepage hero carousel — media, titles, and buttons.
+            Manage the homepage hero carousel: media, titles, and buttons.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

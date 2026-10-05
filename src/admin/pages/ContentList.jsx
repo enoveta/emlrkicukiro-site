@@ -126,7 +126,7 @@ export default function ContentList({ resourceKey }) {
                   </div>
                   {cfg.subtitle ? <p className="text-sm text-slate-600 mt-1">{cfg.subtitle(item)}</p> : null}
                   <p className="text-xs text-slate-500 mt-1">
-                    Updated {item.updatedAt ? new Date(item.updatedAt).toLocaleString() : '—'}
+                    Updated {item.updatedAt ? new Date(item.updatedAt).toLocaleString() : '-'}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">

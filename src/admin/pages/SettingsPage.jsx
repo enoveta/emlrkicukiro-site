@@ -15,11 +15,11 @@ const SECTIONS = [
   },
   {
     title: 'Service times',
-    hint: 'Kinyarwanda uses its own clock: 8:00 AM = “saa mbiri”, 10:30 AM = “saa yine n’igice”, 6:00 PM = “saa kumi n’ebyiri z’umugoroba”.',
+    hint: 'Shown on the home page. Kinyarwanda uses its own clock: 8:00 AM = “saa mbiri za mu gitondo”, 11:30 AM = “saa tanu n’igice”, 6:00 PM = “saa kumi n’ebyiri z’umugoroba”. The full programme is managed in Weekly programme.',
     pairs: [
-      { key: 'sundayService1', label: 'Sunday service 1', en: '8:00 AM', rw: 'saa mbiri' },
-      { key: 'sundayService2', label: 'Sunday service 2', en: '10:30 AM', rw: 'saa yine n’igice za mu gitondo' },
-      { key: 'wednesdayService', label: 'Wednesday service', en: '6:00 PM', rw: 'saa kumi n’ebyiri z’umugoroba' },
+      { key: 'sundayService1', label: 'Sunday service 1', en: '8:00 AM', rw: 'saa mbiri za mu gitondo' },
+      { key: 'sundayService2', label: 'Sunday service 2', en: '11:30 AM', rw: 'saa tanu n’igice' },
+      { key: 'wednesdayService', label: 'Thursday general service', en: '6:00 PM', rw: 'saa kumi n’ebyiri z’umugoroba' },
     ],
   },
   {

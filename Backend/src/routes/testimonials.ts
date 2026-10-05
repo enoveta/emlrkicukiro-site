@@ -6,7 +6,7 @@ import { prisma } from "../prisma/client";
 const upsertSchema = z.object({
   text: z.string().min(1),
   author: z.string().min(1),
-  role: z.string().optional(),
+  role: z.string().optional().nullable(),
   imageUrl: optionalUrl,
   sortOrder: z.number().int().optional()
 });

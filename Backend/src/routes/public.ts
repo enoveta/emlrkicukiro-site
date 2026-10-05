@@ -55,7 +55,7 @@ publicRouter.get("/notices", async (_req, res) => {
 publicRouter.get("/schedule", async (_req, res) => {
   const data = await prisma.scheduleItem.findMany({
     where: { status: "PUBLISHED" },
-    orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }, { sortOrder: "asc" }]
+    orderBy: [{ startTime: "asc" }, { sortOrder: "asc" }]
   });
   return res.json(data);
 });

@@ -11,7 +11,8 @@ const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use 24-hour time, e.
 const upsertSchema = z.object({
   title: z.string().min(1),
   category: z.enum(SCHEDULE_CATEGORIES).optional(),
-  dayOfWeek: z.number().int().min(0).max(6),
+  days: z.array(z.number().int().min(0).max(6)).min(1, "Choose at least one day"),
+  ministrySlug: z.string().optional().nullable(),
   recurrence: z.enum(SCHEDULE_RECURRENCE).optional(),
   startTime: time,
   endTime: z.union([time, z.literal(""), z.null()]).optional(),
@@ -24,7 +25,8 @@ const upsertSchema = z.object({
 const mapItem = (body: Record<string, unknown>) => ({
   title: body.title,
   category: body.category ?? "service",
-  dayOfWeek: Number(body.dayOfWeek),
+  days: [...new Set((body.days as number[]).map(Number))].sort((a, b) => a - b),
+  ministrySlug: body.ministrySlug || null,
   recurrence: body.recurrence ?? "every",
   startTime: body.startTime,
   endTime: body.endTime || null,
@@ -39,7 +41,7 @@ export const scheduleRouter = createContentRouter({
   delegate: prisma.scheduleItem as never,
   upsertSchema,
   rwFields: ["titleRw", "locationRw", "notesRw"],
-  listArgs: { orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] },
+  listArgs: { orderBy: [{ startTime: "asc" }, { sortOrder: "asc" }] },
   mapCreate: (body, userId) => ({ ...mapItem(body), createdById: userId }),
   mapUpdate: (body) => mapItem(body)
 });

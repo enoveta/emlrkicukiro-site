@@ -5,7 +5,7 @@ import { prisma } from "../prisma/client";
 
 const upsertSchema = z.object({
   name: z.string().min(1),
-  position: z.string().optional(),
+  position: z.string().optional().nullable(),
   imageUrl: optionalUrl,
   team: z.enum(["NATIONAL", "PARISH", "OTHER"]).optional(),
   bio: z.string().optional().nullable(),

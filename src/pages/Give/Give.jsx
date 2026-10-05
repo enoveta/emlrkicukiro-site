@@ -1,38 +1,37 @@
 import { useState } from 'react';
-import { FaMobileAlt, FaUniversity, FaCopy, FaCheck } from 'react-icons/fa';
+import { FaMobileAlt, FaUniversity } from 'react-icons/fa';
 import { usePublicData, useSettings } from '../../api/usePublicData';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { localized } from '../../i18n/translations';
 import PageHeader from '../../components/ui/PageHeader';
 import usePageMeta from '../../hooks/usePageMeta';
 
-function CopyRow({ label, value, t }) {
-  const [copied, setCopied] = useState(false);
+function Row({ label, value }) {
   if (!value) return null;
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(value.replace(/\s/g, ''));
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      /* clipboard unavailable: the value is still selectable */
-    }
-  };
   return (
-    <div className="flex items-center justify-between gap-3 py-3 border-b border-gray-100 last:border-0">
-      <div>
-        <dt className="text-sm text-gray-500">{label}</dt>
-        <dd className="font-semibold text-[#001d3a] select-all">{value}</dd>
-      </div>
-      <button
-        type="button"
-        onClick={copy}
-        className="shrink-0 inline-flex items-center gap-1 text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-[#1a6f99] hover:bg-[#e8f5fb]"
-        aria-label={`${t('give.copy')} ${label}`}
-      >
-        {copied ? <FaCheck aria-hidden="true" /> : <FaCopy aria-hidden="true" />}
-        {copied ? t('give.copied') : t('give.copy')}
-      </button>
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 py-3 border-b border-gray-100 last:border-0">
+      <dt className="text-sm text-gray-500">{label}</dt>
+      <dd className="font-semibold text-[#001d3a] text-lg select-all">{value}</dd>
+    </div>
+  );
+}
+
+/** MTN MoMo Pay: the code plus a tap-to-dial shortcut on phones. */
+function MomoPay({ code, t }) {
+  if (!code) return null;
+  const ussd = `*182*8*1*${code}#`;
+  return (
+    <div className="py-3 border-b border-gray-100 last:border-0">
+      <dt className="text-sm text-gray-500">{t('give.momoCode')}</dt>
+      <dd className="flex flex-wrap items-center justify-between gap-3 mt-1">
+        <span className="text-2xl font-bold tracking-wider text-[#001d3a] select-all">{code}</span>
+        <a
+          href={`tel:${ussd.replace('#', '%23')}`}
+          className="inline-flex items-center px-4 py-2 rounded-lg bg-[#feed17] text-[#001d3a] font-semibold hover:bg-[#ffe600]"
+        >
+          {t('give.dial', { ussd })}
+        </a>
+      </dd>
     </div>
   );
 }
@@ -48,7 +47,7 @@ function Give() {
   const [method, setMethod] = useState('mobile');
   const selected = list.find((a) => a.purposeKey === purpose) || list[0];
   const phone = settings.phone || '+250 788 524 792';
-  const hasMobile = Boolean(selected?.mtnNumber || selected?.airtelNumber);
+  const hasMobile = Boolean(selected?.momoCode || selected?.mtnNumber || selected?.airtelNumber);
   const hasBank = Boolean(selected?.accountNumber);
   const activeMethod = method === 'mobile' && !hasMobile ? 'bank' : method === 'bank' && !hasBank ? 'mobile' : method;
 
@@ -122,16 +121,17 @@ function Give() {
               <dl>
                 {activeMethod === 'mobile' ? (
                   <>
-                    <CopyRow label="MTN MoMo" value={selected.mtnNumber} t={t} />
-                    <CopyRow label="Airtel Money" value={selected.airtelNumber} t={t} />
-                    <CopyRow label={t('give.name')} value={selected.mobileName} t={t} />
+                    <MomoPay code={selected.momoCode} t={t} />
+                    <Row label="MTN MoMo" value={selected.mtnNumber} />
+                    <Row label="Airtel Money" value={selected.airtelNumber} />
+                    <Row label={t('give.name')} value={selected.mobileName} />
                   </>
                 ) : (
                   <>
-                    <CopyRow label={t('give.bank')} value={selected.bankName} t={t} />
-                    <CopyRow label={t('give.accountName')} value={selected.accountName} t={t} />
-                    <CopyRow label={t('give.accountNumber')} value={selected.accountNumber} t={t} />
-                    <CopyRow label="SWIFT" value={selected.swift} t={t} />
+                    <Row label={t('give.bank')} value={selected.bankName} />
+                    <Row label={t('give.accountName')} value={selected.accountName} />
+                    <Row label={t('give.accountNumber')} value={selected.accountNumber} />
+                    <Row label="SWIFT" value={selected.swift} />
                   </>
                 )}
               </dl>

@@ -17,10 +17,17 @@ export const RESOURCE_CONFIG = {
     titleField: 'title',
     description:
       'Recurring activities shown on the Amatangazo page: services, prayer, choir practice, meetings… (use Events for one-off dates)',
-    subtitle: (item) =>
-      `${DAY_LABELS[item.dayOfWeek]?.split(' / ')[0] || ''} ${item.startTime}${item.endTime ? `–${item.endTime}` : ''}${
-        item.recurrence && item.recurrence !== 'every' ? ` · ${item.recurrence} of month` : ''
-      } · ${item.category}`,
+    subtitle: (item) => {
+      const days = item.days || [];
+      const dayText =
+        days.length === 7
+          ? 'Every day'
+          : days.join(',') === '1,2,3,4,5,6'
+            ? 'Monday to Saturday'
+            : days.map((d) => DAY_LABELS[d]?.split(' / ')[0]).join(', ');
+      const often = item.recurrence && item.recurrence !== 'every' ? ` · ${item.recurrence} week of month` : '';
+      return `${dayText} · ${item.startTime}${item.endTime ? ` to ${item.endTime}` : ''}${often} · ${item.category}`;
+    },
     fields: [
       { key: 'title', rw: true, label: 'Activity name', type: 'text', required: true },
       {
@@ -39,7 +46,7 @@ export const RESOURCE_CONFIG = {
           other: 'Other / Ibindi',
         },
       },
-      { key: 'dayOfWeek', label: 'Day', type: 'select', numeric: true, options: DAY_OPTIONS, optionLabels: DAY_LABELS },
+      { key: 'days', label: 'Days', type: 'days', required: true },
       {
         key: 'recurrence',
         label: 'How often',
@@ -58,6 +65,12 @@ export const RESOURCE_CONFIG = {
       { key: 'endTime', label: 'Ends (optional)', type: 'time' },
       { key: 'location', rw: true, label: 'Place', type: 'text' },
       { key: 'leader', label: 'Led by (optional)', type: 'text' },
+      {
+        key: 'ministrySlug',
+        label: 'Also show on ministry page (optional)',
+        type: 'select',
+        optionsFrom: '/ministries',
+      },
       { key: 'notes', rw: true, label: 'Notes (optional)', type: 'textarea' },
       { key: 'sortOrder', label: 'Order (same day & time)', type: 'number' },
     ],
@@ -67,7 +80,7 @@ export const RESOURCE_CONFIG = {
     path: '/notices',
     noMedia: true,
     titleField: 'title',
-    description: 'Church announcements (daily, weekly, monthly, urgent) — separate from news and events',
+    description: 'Church announcements (daily, weekly, monthly, urgent), separate from news and events',
     fields: [
       { key: 'title', rw: true, label: 'Title', type: 'text', required: true },
       { key: 'body', rw: true, label: 'Announcement text', type: 'textarea', required: true },
@@ -102,7 +115,7 @@ export const RESOURCE_CONFIG = {
     label: 'News',
     path: '/announcements',
     titleField: 'title',
-    description: 'News stories (Amakuru) — for weekly church communication use Amatangazo',
+    description: 'News stories (Amakuru). For weekly church communication use Amatangazo',
     fields: [
       { key: 'title', rw: true, label: 'Title', type: 'text', required: true },
       { key: 'content', rw: true, label: 'Content', type: 'textarea', required: true },
@@ -201,7 +214,8 @@ export const RESOURCE_CONFIG = {
     fields: [
       { key: 'purposeKey', label: 'Purpose key', type: 'text', required: true },
       { key: 'purposeName', rw: true, label: 'Purpose name', type: 'text', required: true },
-      { key: 'mtnNumber', label: 'MTN number', type: 'text' },
+      { key: 'momoCode', label: 'MTN MoMo Pay code (e.g. 006361)', type: 'text' },
+      { key: 'mtnNumber', label: 'MTN number (optional)', type: 'text' },
       { key: 'airtelNumber', label: 'Airtel number', type: 'text' },
       { key: 'mobileName', label: 'Mobile account name', type: 'text' },
       { key: 'bankName', label: 'Bank name', type: 'text' },
@@ -228,6 +242,7 @@ export const RESOURCE_CONFIG = {
 };
 
 export function toInputValue(field, value) {
+  if (field.type === 'days') return Array.isArray(value) ? value : [];
   if (field.numeric) return value === null || value === undefined ? field.options?.[0] ?? '' : String(value);
   if (field.type === 'datetime' && value) {
     const d = new Date(value);
@@ -240,6 +255,8 @@ export function toInputValue(field, value) {
 }
 
 export function fromInputValue(field, value) {
+  if (field.type === 'days') return (value || []).map(Number);
+  if (field.optionsFrom) return value || null;
   if (field.type === 'datetime') {
     if (!value && !field.required) return null;
     const d = new Date(value);

@@ -18,6 +18,24 @@ export default function ContentForm({ resourceKey }) {
   const [loading, setLoading] = useState(!isNew);
   const [existingStatus, setExistingStatus] = useState('DRAFT');
   const [pickerField, setPickerField] = useState(null);
+  const [remoteOptions, setRemoteOptions] = useState({});
+
+  // Selects whose options come from another resource (e.g. ministries).
+  useEffect(() => {
+    cfg.fields
+      .filter((f) => f.optionsFrom)
+      .forEach((f) => {
+        adminApi
+          .get(f.optionsFrom)
+          .then((rows) =>
+            setRemoteOptions((prev) => ({
+              ...prev,
+              [f.key]: (rows || []).map((r) => ({ value: r.slug || r.id, label: r.nameRw ? `${r.name} / ${r.nameRw}` : r.name || r.title })),
+            }))
+          )
+          .catch(() => {});
+      });
+  }, [resourceKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (isNew) {
@@ -26,7 +44,8 @@ export default function ContentForm({ resourceKey }) {
         if (f.type === 'boolean') initial[f.key] = false;
         else if (f.type === 'number') initial[f.key] = 0;
         else if (f.type === 'datetime') initial[f.key] = new Date().toISOString().slice(0, 16);
-        else if (f.type === 'select') initial[f.key] = f.options?.[0] || '';
+        else if (f.type === 'days') initial[f.key] = [];
+        else if (f.type === 'select') initial[f.key] = f.optionsFrom ? '' : f.options?.[0] || '';
         else initial[f.key] = '';
         if (f.rw) initial[`${f.key}Rw`] = '';
       });
@@ -129,17 +148,30 @@ export default function ContentForm({ resourceKey }) {
                 />
                 Enabled
               </label>
+            ) : field.type === 'days' ? (
+              <DaysPicker value={form[field.key] || []} onChange={(v) => setForm((f) => ({ ...f, [field.key]: v }))} />
             ) : field.type === 'select' ? (
               <select
                 className="w-full border border-slate-200 rounded-xl p-3 text-sm"
-                value={form[field.key] || ''}
+                value={form[field.key] ?? ''}
                 onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
               >
-                {(field.options || []).map((opt) => (
-                  <option key={opt} value={opt}>
-                    {field.optionLabels?.[opt] || opt}
-                  </option>
-                ))}
+                {field.optionsFrom ? (
+                  <>
+                    <option value="">None</option>
+                    {(remoteOptions[field.key] || []).map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </>
+                ) : (
+                  (field.options || []).map((opt) => (
+                    <option key={opt} value={opt}>
+                      {field.optionLabels?.[opt] || opt}
+                    </option>
+                  ))
+                )}
               </select>
             ) : field.type === 'image' ? (
               <div className="space-y-2">
@@ -235,5 +267,60 @@ function FieldInput({ field, value, onChange, placeholder, lang }) {
       lang={lang}
       onChange={(e) => onChange(e.target.value)}
     />
+  );
+}
+
+const WEEK = [
+  [1, 'Mon', 'Mbe'],
+  [2, 'Tue', 'Kab'],
+  [3, 'Wed', 'Gat'],
+  [4, 'Thu', 'Kan'],
+  [5, 'Fri', 'Gtn'],
+  [6, 'Sat', 'Gtd'],
+  [0, 'Sun', 'Cyu'],
+];
+
+function DaysPicker({ value, onChange }) {
+  const set = new Set(value.map(Number));
+  const toggle = (d) => {
+    const next = new Set(set);
+    if (next.has(d)) next.delete(d);
+    else next.add(d);
+    onChange([...next].sort((a, b) => a - b));
+  };
+  const quick = (label, days) => (
+    <button
+      type="button"
+      onClick={() => onChange(days)}
+      className="text-xs px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"
+    >
+      {label}
+    </button>
+  );
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap gap-2">
+        {WEEK.map(([d, en, rw]) => (
+          <button
+            key={d}
+            type="button"
+            aria-pressed={set.has(d)}
+            onClick={() => toggle(d)}
+            className={`w-16 py-2 rounded-xl border text-sm font-semibold ${
+              set.has(d) ? 'bg-[#001d3a] border-[#001d3a] text-white' : 'bg-white border-slate-200 text-slate-700 hover:border-[#5fb9e2]'
+            }`}
+          >
+            {en}
+            <span className="block text-[10px] font-normal opacity-75">{rw}</span>
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {quick('Mon to Sat', [1, 2, 3, 4, 5, 6])}
+        {quick('Every day', [0, 1, 2, 3, 4, 5, 6])}
+        {quick('Clear', [])}
+      </div>
+      {!set.size ? <p className="text-xs text-red-600">Choose at least one day.</p> : null}
+    </div>
   );
 }

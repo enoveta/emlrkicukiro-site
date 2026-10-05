@@ -132,7 +132,7 @@ function Notices() {
           </div>
         ) : null}
 
-        <h2 className="hidden print:block text-xl font-bold mb-4">{t('schedule.tabWeek')} — EMLR Kicukiro</h2>
+        <h2 className="hidden print:block text-xl font-bold mb-4">{t('schedule.tabWeek')}, EMLR Kicukiro</h2>
 
         {view === 'week' ? (
           loadingSchedule ? (

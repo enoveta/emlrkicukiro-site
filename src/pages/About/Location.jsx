@@ -1,7 +1,6 @@
-import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
+import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 import { useSettings } from '../../api/usePublicData';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { useServiceTimes } from '../../components/CTA1';
 import PageHeader from '../../components/ui/PageHeader';
 import usePageMeta from '../../hooks/usePageMeta';
 
@@ -13,8 +12,6 @@ const DIRECTIONS =
 const CONTACTS = [
   { name: 'Rev NDAGIJIMANA Jean Baptiste', role: 'seniorPastor', phone: '+250 788 524 792' },
   { name: 'Rev Dr RUTIMIRWA Benjamin', role: 'associatePastor', phone: '+250 788 300 839' },
-  { name: 'Mr. Manasse NSHIMYUMUKIZA', role: 'teacher', phone: '+250 785 714 185' },
-  { name: 'Mr. HAKIZIMANA Bernard', role: 'sysAdmin', phone: '+250 788 917 742' },
 ];
 
 const tel = (phone) => `tel:${phone.replace(/\s/g, '')}`;
@@ -22,7 +19,6 @@ const tel = (phone) => `tel:${phone.replace(/\s/g, '')}`;
 function Location() {
   const { t } = useLanguage();
   const settings = useSettings();
-  const times = useServiceTimes();
   usePageMeta(t('location.title'), t('location.subtitle'));
   const email = settings.email || 'info@emlrkicukiro.rw';
   const address = settings.address || 'Kicukiro, Kigali, Rwanda';
@@ -50,10 +46,6 @@ function Location() {
                   <br />
                   {address}
                 </span>
-              </p>
-              <p className="flex items-start text-gray-700">
-                <FaClock className="mt-1 mr-3 text-[#1a6f99] shrink-0" aria-hidden="true" />
-                <span>{t('home.serviceTimes', times)}</span>
               </p>
               <a
                 href={DIRECTIONS}

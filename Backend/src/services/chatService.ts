@@ -30,7 +30,7 @@ const loadChurchFacts = () =>
       prisma.ministry.findMany({ where: { status: "PUBLISHED" }, orderBy: { sortOrder: "asc" } }),
       prisma.scheduleItem.findMany({
         where: { status: "PUBLISHED" },
-        orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }]
+        orderBy: [{ startTime: "asc" }]
       })
     ]);
     const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -46,14 +46,14 @@ const loadChurchFacts = () =>
         ? events.map((e) => `- ${fmtDate(e.date)}: ${e.title} (${e.time}${e.location ? `, ${e.location}` : ""})`)
         : ["- none published"]),
       "Current notices:",
-      ...(notices.length ? notices.map((n) => `- ${fmtDate(n.publishDate)}: ${n.title} — ${n.body}`) : ["- none published"]),
+      ...(notices.length ? notices.map((n) => `- ${fmtDate(n.publishDate)}: ${n.title}: ${n.body}`) : ["- none published"]),
       "Weekly programme (24-hour times):",
       ...(schedule.length
         ? schedule.map(
             (i) =>
-              `- ${i.recurrence === "every" ? "Every" : `The ${i.recurrence}`} ${DAYS[i.dayOfWeek]} ${i.startTime}${
+              `- ${i.recurrence === "every" ? "Every" : `The ${i.recurrence}`} ${i.days.map((d) => DAYS[d]).join(", ")} ${i.startTime}${
                 i.endTime ? `-${i.endTime}` : ""
-              }: ${i.title}${i.location ? ` (${i.location})` : ""}${i.leader ? `, led by ${i.leader}` : ""}`
+              }: ${i.title}${i.titleRw ? ` / ${i.titleRw}` : ""}${i.location ? ` (${i.location})` : ""}${i.leader ? `, led by ${i.leader}` : ""}`
           )
         : ["- none published"]),
       "Ministries and groups:",

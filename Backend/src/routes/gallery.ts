@@ -5,8 +5,8 @@ import { prisma } from "../prisma/client";
 
 const upsertSchema = z.object({
   imageUrl: z.string().min(1),
-  alt: z.string().optional(),
-  caption: z.string().optional(),
+  alt: z.string().optional().nullable(),
+  caption: z.string().optional().nullable(),
   sortOrder: z.number().int().optional()
 });
 
