@@ -3,8 +3,21 @@ import { z } from "zod";
 
 import { prisma } from "../prisma/client";
 import { validateBody } from "../middleware/validate";
+import { askAssistant } from "../services/chatService";
+import { getPlaylistVideos } from "../services/youtubeService";
+import { HttpError } from "../utils/httpError";
+import { chatLimiter, formLimiter } from "../middleware/rateLimit";
 
 export const publicRouter = Router();
+
+// Let browsers/CDN reuse public content briefly and serve it stale while refreshing.
+publicRouter.use((req, res, next) => {
+  if (req.method === "GET") res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=86400");
+  next();
+});
+
+const getSetting = async (key: string) =>
+  (await prisma.siteSetting.findUnique({ where: { key } }))?.value ?? null;
 
 publicRouter.get("/events", async (_req, res) => {
   const data = await prisma.event.findMany({
@@ -18,6 +31,23 @@ publicRouter.get("/announcements", async (_req, res) => {
   const data = await prisma.announcement.findMany({
     where: { status: "PUBLISHED" },
     orderBy: { date: "desc" }
+  });
+  return res.json(data);
+});
+
+publicRouter.get("/announcements/:id", async (req, res) => {
+  const item = await prisma.announcement.findFirst({
+    where: { id: req.params.id, status: "PUBLISHED" }
+  });
+  if (!item) return res.status(404).json({ message: "News item not found" });
+  return res.json(item);
+});
+
+publicRouter.get("/notices", async (_req, res) => {
+  const data = await prisma.notice.findMany({
+    where: { status: "PUBLISHED", publishDate: { lte: new Date() } },
+    orderBy: [{ pinned: "desc" }, { publishDate: "desc" }],
+    take: 300
   });
   return res.json(data);
 });
@@ -80,6 +110,8 @@ publicRouter.get("/gallery", async (_req, res) => {
 });
 
 publicRouter.get("/testimonials", async (_req, res) => {
+  // Hidden site-wide unless an admin turns the section on in Site settings.
+  if ((await getSetting("showTestimonials")) !== "true") return res.json([]);
   const data = await prisma.testimonial.findMany({
     where: { status: "PUBLISHED" },
     orderBy: { sortOrder: "asc" }
@@ -110,28 +142,56 @@ publicRouter.get("/settings", async (_req, res) => {
   return res.json(map);
 });
 
-const prayerSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  request: z.string().min(1)
+const playlistIdSchema = z.string().regex(/^[A-Za-z0-9_-]{10,64}$/);
+
+publicRouter.get("/youtube/playlists/:id", async (req, res) => {
+  const parsed = playlistIdSchema.safeParse(req.params.id);
+  if (!parsed.success) throw new HttpError(400, "Invalid playlist id");
+  res.set("Cache-Control", "public, max-age=600, stale-while-revalidate=86400");
+  return res.json(await getPlaylistVideos(parsed.data));
 });
 
-publicRouter.post("/prayer-requests", validateBody(prayerSchema), async (req, res) => {
-  const body = req.body as z.infer<typeof prayerSchema>;
+const chatSchema = z.object({
+  messages: z
+    .array(z.object({ role: z.enum(["user", "assistant"]), text: z.string().min(1).max(1000) }))
+    .min(1)
+    .max(12)
+});
+
+publicRouter.post("/chat", chatLimiter, validateBody(chatSchema), async (req, res) => {
+  const body = req.body as z.infer<typeof chatSchema>;
+  res.set("Cache-Control", "no-store");
+  return res.json({ reply: await askAssistant(body.messages) });
+});
+
+const prayerSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  email: z.string().trim().email().max(200),
+  request: z.string().trim().min(1).max(4000),
+  website: z.string().optional() // honeypot: real visitors never fill this
+});
+
+const isBot = (body: { website?: string }) => Boolean(body.website && body.website.trim());
+
+publicRouter.post("/prayer-requests", formLimiter, validateBody(prayerSchema), async (req, res) => {
+  const { website, ...body } = req.body as z.infer<typeof prayerSchema>;
+  if (isBot({ website })) return res.status(201).json({ message: "Prayer request received" });
   const created = await prisma.prayerRequest.create({ data: body });
   return res.status(201).json({ id: created.id, message: "Prayer request received" });
 });
 
 const volunteerSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().min(1),
-  areaOfInterest: z.string().min(1),
-  message: z.string().optional().nullable()
+  name: z.string().trim().min(1).max(120),
+  email: z.string().trim().email().max(200),
+  phone: z.string().trim().min(1).max(40),
+  areaOfInterest: z.string().trim().min(1).max(120),
+  message: z.string().max(4000).optional().nullable(),
+  website: z.string().optional()
 });
 
-publicRouter.post("/volunteers", validateBody(volunteerSchema), async (req, res) => {
+publicRouter.post("/volunteers", formLimiter, validateBody(volunteerSchema), async (req, res) => {
   const body = req.body as z.infer<typeof volunteerSchema>;
+  if (isBot(body)) return res.status(201).json({ message: "Volunteer application received" });
   const created = await prisma.volunteerApplication.create({
     data: {
       name: body.name,

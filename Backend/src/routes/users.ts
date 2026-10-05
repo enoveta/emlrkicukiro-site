@@ -5,11 +5,28 @@ import { prisma } from "../prisma/client";
 import { authenticate, requireRole, type AuthenticatedRequest } from "../middleware/auth";
 import { validateBody } from "../middleware/validate";
 import { HttpError } from "../utils/httpError";
+import { hashPassword } from "../services/authService";
 
 export const usersRouter = Router();
 
 usersRouter.use(authenticate);
 usersRouter.use(requireRole(["ADMIN"]));
+
+const createUserSchema = z.object({
+  email: z.string().trim().toLowerCase().email(),
+  password: z.string().min(10),
+  role: z.enum(["ADMIN", "CONTENT_MANAGER"]).default("CONTENT_MANAGER")
+});
+
+usersRouter.post("/", validateBody(createUserSchema), async (req, res) => {
+  const { email, password, role } = req.body as z.infer<typeof createUserSchema>;
+  if (await prisma.user.findUnique({ where: { email } })) throw new HttpError(409, "Email already exists");
+  const user = await prisma.user.create({
+    data: { email, role, passwordHash: await hashPassword(password) },
+    select: { id: true, email: true, role: true, createdAt: true }
+  });
+  return res.status(201).json(user);
+});
 
 usersRouter.get("/", async (_req, res) => {
   const users = await prisma.user.findMany({

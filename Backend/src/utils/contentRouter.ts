@@ -33,11 +33,33 @@ type Options = {
   getArgs?: (id: string) => unknown;
   createArgs?: (data: Record<string, unknown>) => unknown;
   updateInclude?: unknown;
+  /** Optional Kinyarwanda text columns accepted alongside the English fields */
+  rwFields?: string[];
+};
+
+const pickRw = (body: Record<string, unknown>, fields: string[], forCreate: boolean) => {
+  const out: Record<string, unknown> = {};
+  for (const field of fields) {
+    const value = body[field];
+    if (value === undefined) {
+      if (forCreate) out[field] = null;
+      continue;
+    }
+    out[field] = typeof value === "string" && value.trim() ? value.trim() : null;
+  }
+  return out;
 };
 
 export const createContentRouter = (options: Options) => {
   const router = Router();
   router.use(authenticate);
+
+  const rwFields = options.rwFields ?? [];
+  const upsertSchema = rwFields.length
+    ? (options.upsertSchema as z.AnyZodObject).extend(
+        Object.fromEntries(rwFields.map((field) => [field, z.string().optional().nullable()]))
+      )
+    : options.upsertSchema;
 
   router.get("/", async (_req, res) => {
     const items = await options.delegate.findMany(options.listArgs ?? { orderBy: { updatedAt: "desc" } });
@@ -52,16 +74,17 @@ export const createContentRouter = (options: Options) => {
     return res.json(item);
   });
 
-  router.post("/", validateBody(options.upsertSchema), async (req: AuthenticatedRequest, res) => {
+  router.post("/", validateBody(upsertSchema), async (req: AuthenticatedRequest, res) => {
     if (!req.user) throw new HttpError(401, "Unauthorized");
-    const data = options.mapCreate(req.body as Record<string, unknown>, req.user.id);
+    const body = req.body as Record<string, unknown>;
+    const data = { ...options.mapCreate(body, req.user.id), ...pickRw(body, rwFields, true) };
     const created = await options.delegate.create(
       options.createArgs?.(data) ?? { data }
     );
     return res.status(201).json(created);
   });
 
-  router.put("/:id", validateBody(options.upsertSchema), async (req: AuthenticatedRequest, res) => {
+  router.put("/:id", validateBody(upsertSchema), async (req: AuthenticatedRequest, res) => {
     const id = req.params.id;
     if (!req.user) throw new HttpError(401, "Unauthorized");
 
@@ -73,7 +96,8 @@ export const createContentRouter = (options: Options) => {
     assertOwnerOrAdmin(req.user, existing.createdById);
     assertNotPublished(existing.status as "DRAFT" | "IN_REVIEW" | "PUBLISHED", req.user);
 
-    const data = options.mapUpdate(req.body as Record<string, unknown>, req.user.id);
+    const body = req.body as Record<string, unknown>;
+    const data = { ...options.mapUpdate(body, req.user.id), ...pickRw(body, rwFields, false) };
     const updated = await options.delegate.update({
       where: { id },
       data,

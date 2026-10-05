@@ -277,33 +277,7 @@ export const openApiSpec = {
       }
     },
 
-    "/auth/signup": {
-      post: {
-        summary: "Signup (default CONTENT_MANAGER)",
-        tags: ["Auth"],
-        security: [],
-        requestBody: {
-          required: true,
-          content: {
-            "application/json": {
-              schema: { $ref: "#/components/schemas/SignupRequest" }
-            }
-          }
-        },
-        responses: {
-          "201": {
-            description: "Created",
-            content: {
-              "application/json": {
-                schema: { $ref: "#/components/schemas/SignupResponse" }
-              }
-            }
-          },
-          "400": { description: "Bad Request" },
-          "409": { description: "Conflict" }
-        }
-      }
-    },
+    
 
     "/users": {
       get: {

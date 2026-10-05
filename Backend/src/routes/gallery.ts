@@ -14,6 +14,7 @@ export const galleryRouter = createContentRouter({
   name: "Gallery item",
   delegate: prisma.galleryItem as never,
   upsertSchema,
+  rwFields: ["altRw", "captionRw"],
   listArgs: { orderBy: { sortOrder: "asc" } },
   mapCreate: (body, userId) => ({
     imageUrl: body.imageUrl,

@@ -19,6 +19,7 @@ dashboardRouter.get("/summary", async (_req, res) => {
     services,
     giving,
     stats,
+    notices,
     prayerNew,
     volunteerNew,
     prayerTotal,
@@ -34,6 +35,7 @@ dashboardRouter.get("/summary", async (_req, res) => {
     prisma.service.groupBy({ by: ["status"], _count: true }),
     prisma.givingAccount.groupBy({ by: ["status"], _count: true }),
     prisma.stat.groupBy({ by: ["status"], _count: true }),
+    prisma.notice.groupBy({ by: ["status"], _count: true }),
     prisma.prayerRequest.count({ where: { status: "NEW" } }),
     prisma.volunteerApplication.count({ where: { status: "NEW" } }),
     prisma.prayerRequest.count(),
@@ -69,7 +71,8 @@ dashboardRouter.get("/summary", async (_req, res) => {
       banners: summarize(banners),
       services: summarize(services),
       giving: summarize(giving),
-      stats: summarize(stats)
+      stats: summarize(stats),
+      notices: summarize(notices)
     },
     inbox: {
       prayerNew,

@@ -17,6 +17,7 @@ export const eventsRouter = createContentRouter({
   name: "Event",
   delegate: prisma.event as never,
   upsertSchema,
+  rwFields: ["titleRw", "descriptionRw", "timeRw", "locationRw"],
   listArgs: { orderBy: { date: "desc" } },
   mapCreate: (body, userId) => ({
     title: body.title,

@@ -50,6 +50,7 @@ model User {
   testimonialsCreated  Testimonial[]  @relation("TestimonialCreatedBy")
   statsCreated         Stat[]         @relation("StatCreatedBy")
   givingCreated        GivingAccount[] @relation("GivingCreatedBy")
+  noticesCreated       Notice[]       @relation("NoticeCreatedBy")
 }
 
 model Event {
@@ -94,6 +95,33 @@ model Announcement {
   updatedAt DateTime @updatedAt
 
   createdBy User @relation("AnnouncementCreatedBy", fields: [createdById], references: [id])
+}
+
+/// Church communications (amatangazo) — separate from news and events
+model Notice {
+  id            String    @id @default(uuid())
+  title         String
+  titleRw       String?
+  body          String
+  bodyRw        String?
+  /// daily | weekly | monthly | urgent
+  category      String    @default("weekly")
+  publishDate   DateTime
+  expiresAt     DateTime?
+  pinned        Boolean   @default(false)
+  attachmentUrl String?
+
+  status        ContentStatus @default(DRAFT)
+  createdById   String
+  publishedAt   DateTime?
+  publishedById String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdBy User @relation("NoticeCreatedBy", fields: [createdById], references: [id])
+
+  @@index([status, publishDate])
 }
 
 model Service {

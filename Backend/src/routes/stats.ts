@@ -13,6 +13,7 @@ export const statsRouter = createContentRouter({
   name: "Stat",
   delegate: prisma.stat as never,
   upsertSchema,
+  rwFields: ["labelRw"],
   listArgs: { orderBy: { sortOrder: "asc" } },
   mapCreate: (body, userId) => ({
     number: body.number,

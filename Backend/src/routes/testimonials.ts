@@ -15,6 +15,7 @@ export const testimonialsRouter = createContentRouter({
   name: "Testimonial",
   delegate: prisma.testimonial as never,
   upsertSchema,
+  rwFields: ["textRw", "roleRw"],
   listArgs: { orderBy: { sortOrder: "asc" } },
   mapCreate: (body, userId) => ({
     text: body.text,

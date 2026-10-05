@@ -22,6 +22,7 @@ export const ministriesRouter = createContentRouter({
   name: "Ministry",
   delegate: prisma.ministry as never,
   upsertSchema,
+  rwFields: ["nameRw", "shortDescriptionRw", "bodyRw", "scheduleLabelRw"],
   listArgs: { orderBy: [{ sortOrder: "asc" }, { name: "asc" }] },
   mapCreate: (body, userId) => ({
     slug: body.slug,

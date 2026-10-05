@@ -1,1 +1,40 @@
--- Applied via SQL
+-- AlterTable
+ALTER TABLE "Announcement" ADD COLUMN IF NOT EXISTS "contentRw" TEXT,
+ADD COLUMN IF NOT EXISTS "titleRw" TEXT;
+
+-- AlterTable
+ALTER TABLE "BannerSlide" ADD COLUMN IF NOT EXISTS "cta1Rw" TEXT,
+ADD COLUMN IF NOT EXISTS "cta2Rw" TEXT,
+ADD COLUMN IF NOT EXISTS "highlightRw" TEXT,
+ADD COLUMN IF NOT EXISTS "subtitleRw" TEXT,
+ADD COLUMN IF NOT EXISTS "titleRw" TEXT;
+
+-- AlterTable
+ALTER TABLE "Event" ADD COLUMN IF NOT EXISTS "descriptionRw" TEXT,
+ADD COLUMN IF NOT EXISTS "locationRw" TEXT,
+ADD COLUMN IF NOT EXISTS "timeRw" TEXT,
+ADD COLUMN IF NOT EXISTS "titleRw" TEXT;
+
+-- AlterTable
+ALTER TABLE "GalleryItem" ADD COLUMN IF NOT EXISTS "altRw" TEXT,
+ADD COLUMN IF NOT EXISTS "captionRw" TEXT;
+
+-- AlterTable
+ALTER TABLE "GivingAccount" ADD COLUMN IF NOT EXISTS "purposeNameRw" TEXT;
+
+-- AlterTable
+ALTER TABLE "Ministry" ADD COLUMN IF NOT EXISTS "bodyRw" TEXT,
+ADD COLUMN IF NOT EXISTS "nameRw" TEXT,
+ADD COLUMN IF NOT EXISTS "scheduleLabelRw" TEXT,
+ADD COLUMN IF NOT EXISTS "shortDescriptionRw" TEXT;
+
+-- AlterTable
+ALTER TABLE "Person" ADD COLUMN IF NOT EXISTS "positionRw" TEXT;
+
+-- AlterTable
+ALTER TABLE "Stat" ADD COLUMN IF NOT EXISTS "labelRw" TEXT;
+
+-- AlterTable
+ALTER TABLE "Testimonial" ADD COLUMN IF NOT EXISTS "roleRw" TEXT,
+ADD COLUMN IF NOT EXISTS "textRw" TEXT;
+

@@ -4,6 +4,7 @@ import { authRouter } from "./auth";
 import { usersRouter } from "./users";
 import { eventsRouter } from "./events";
 import { announcementsRouter } from "./announcements";
+import { noticesRouter } from "./notices";
 import { servicesRouter } from "./services";
 import { projectsRouter } from "./projects";
 import { bannersRouter } from "./banners";
@@ -30,6 +31,7 @@ apiRouter.use("/dashboard", dashboardRouter);
 
 apiRouter.use("/events", eventsRouter);
 apiRouter.use("/announcements", announcementsRouter);
+apiRouter.use("/notices", noticesRouter);
 apiRouter.use("/services", servicesRouter);
 apiRouter.use("/projects", projectsRouter);
 apiRouter.use("/banners", bannersRouter);

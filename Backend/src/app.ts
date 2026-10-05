@@ -1,27 +1,46 @@
 import "express-async-errors";
 import path from "path";
 
+import compression from "compression";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 
+import { env } from "./config/env";
 import { apiRouter } from "./routes";
 import { errorHandler } from "./middleware/errorHandler";
 
 export const createApp = () => {
   const app = express();
 
+  // Behind nginx on the VPS: trust the first proxy so rate limits see real client IPs.
+  app.set("trust proxy", 1);
+  app.disable("x-powered-by");
+
   app.use(
     helmet({
       crossOriginResourcePolicy: { policy: "cross-origin" }
     })
   );
-  app.use(cors());
-  app.use(express.json({ limit: "10mb" }));
-  app.use(morgan("dev"));
+  app.use(
+    cors({
+      origin: env.corsOrigins.length ? env.corsOrigins : env.isProduction ? false : true
+    })
+  );
+  app.use(compression());
+  app.use(express.json({ limit: "1mb" }));
+  app.use(morgan(env.isProduction ? "combined" : "dev"));
 
-  app.use("/media", express.static(path.join(process.cwd(), "public", "media")));
+  // In production nginx serves /media directly; this is the fallback (and the dev server).
+  app.use(
+    "/media",
+    express.static(path.join(process.cwd(), "public", "media"), {
+      maxAge: "30d",
+      immutable: false,
+      fallthrough: false
+    })
+  );
 
   app.get("/health", (_req, res) => res.json({ ok: true }));
   app.use("/api", apiRouter);

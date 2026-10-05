@@ -14,6 +14,7 @@ export const announcementsRouter = createContentRouter({
   name: "Announcement",
   delegate: prisma.announcement as never,
   upsertSchema,
+  rwFields: ["titleRw", "contentRw"],
   listArgs: { orderBy: { date: "desc" } },
   mapCreate: (body, userId) => ({
     title: body.title,

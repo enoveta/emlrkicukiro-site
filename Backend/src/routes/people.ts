@@ -18,6 +18,7 @@ export const peopleRouter = createContentRouter({
   name: "Person",
   delegate: prisma.person as never,
   upsertSchema,
+  rwFields: ["positionRw"],
   listArgs: { orderBy: [{ team: "asc" }, { sortOrder: "asc" }] },
   mapCreate: (body, userId) => ({
     name: body.name,

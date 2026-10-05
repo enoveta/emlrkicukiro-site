@@ -20,6 +20,7 @@ export const givingRouter = createContentRouter({
   name: "Giving account",
   delegate: prisma.givingAccount as never,
   upsertSchema,
+  rwFields: ["purposeNameRw"],
   listArgs: { orderBy: { sortOrder: "asc" } },
   mapCreate: (body, userId) => ({
     purposeKey: body.purposeKey,
