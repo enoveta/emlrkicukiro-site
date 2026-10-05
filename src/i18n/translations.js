@@ -50,7 +50,7 @@ export const translations = {
       visitUs: 'Visit Us',
       contactUs: 'Contact Us',
       serviceTimes: 'Sunday services: {s1} and {s2} • Thursday: {wed}',
-      noticesTitle: 'This Week at Church',
+      noticesTitle: 'Weekly Programme',
       allNotices: 'Full programme & announcements',
     },
     events: {
@@ -223,6 +223,7 @@ export const translations = {
       privacy: 'Privacy Policy',
       terms: 'Terms of Service',
       rights: 'All rights reserved.',
+      developedBy: 'Developed by',
     },
     about: {
       badge: 'Our History',
@@ -377,7 +378,7 @@ export const translations = {
       visitUs: 'Tugane',
       contactUs: 'Twandikire',
       serviceTimes: 'Amateraniro yo ku Cyumweru: {s1} na {s2} • Ku wa Kane: {wed}',
-      noticesTitle: 'Iki cyumweru mu itorero',
+      noticesTitle: 'Gahunda y’icyumweru',
       allNotices: 'Gahunda yose n’amatangazo',
     },
     events: {
@@ -551,6 +552,7 @@ export const translations = {
       privacy: 'Privacy Policy',
       terms: 'Terms of Service',
       rights: 'Uburenganzira bwose burasigasiwe.',
+      developedBy: 'Developed by',
     },
     about: {
       badge: 'Amateka yacu',

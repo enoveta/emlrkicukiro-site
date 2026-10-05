@@ -29,10 +29,12 @@ export const EventCard = ({ event, lang, showDescription = false, past = false }
             <span>{localized(event, 'time', lang)}</span>
           </div>
         ) : null}
-        <div className="flex items-center">
-          <FaMapMarkerAlt className={`mr-3 ${past ? 'text-[#3a9bc4]' : 'text-[#fae924]'}`} aria-hidden="true" />
-          <span>{localized(event, 'location', lang) || 'EMLR Kicukiro'}</span>
-        </div>
+        {localized(event, 'location', lang) ? (
+          <div className="flex items-center">
+            <FaMapMarkerAlt className={`mr-3 ${past ? 'text-[#3a9bc4]' : 'text-[#fae924]'}`} aria-hidden="true" />
+            <span>{localized(event, 'location', lang)}</span>
+          </div>
+        ) : null}
       </div>
     </div>
   </article>

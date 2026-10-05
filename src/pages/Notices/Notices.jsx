@@ -7,8 +7,8 @@ import { localized } from '../../i18n/translations';
 import PageHeader from '../../components/ui/PageHeader';
 import { SkeletonCards } from '../../components/ui/Skeleton';
 import usePageMeta from '../../hooks/usePageMeta';
-import { DAY_NAMES, formatRange, nowAndNext, sameDay, styleFor } from '../../utils/schedule';
-import WeeklyProgramme from './WeeklyProgramme';
+import { DAY_NAMES, nowAndNext, sameDay, styleFor, timeRange } from '../../utils/schedule';
+import ProgrammeSummary from '../../components/ProgrammeSummary';
 import ChurchCalendar from './ChurchCalendar';
 import NoticeList from './NoticeList';
 
@@ -32,7 +32,7 @@ function NowNext({ items, lang, t }) {
           <div>
             <p className="text-xs uppercase tracking-wide text-[#feed17] font-semibold">{t('schedule.now')}</p>
             <p className="font-bold">{localized(current, 'title', lang)}</p>
-            <p className="text-sm text-white/80">{formatRange(current, lang)}</p>
+            <p className="text-sm text-white/80 tabular-nums">{timeRange(current)}</p>
           </div>
         </div>
       ) : null}
@@ -43,7 +43,7 @@ function NowNext({ items, lang, t }) {
             <p className="text-xs uppercase tracking-wide text-[#1a6f99] font-semibold">{t('schedule.next')}</p>
             <p className="font-bold text-[#001d3a]">{localized(next, 'title', lang)}</p>
             <p className="text-sm text-gray-600">
-              {when(nextDate)} · {formatRange(next, lang)}
+              {when(nextDate)} · {timeRange(next)}
             </p>
           </div>
         </div>
@@ -138,7 +138,11 @@ function Notices() {
           loadingSchedule ? (
             <SkeletonCards count={3} className="h-40" />
           ) : (
-            <WeeklyProgramme items={visible} lang={lang} t={t} />
+            visible.length ? (
+              <ProgrammeSummary items={visible} lang={lang} t={t} showPlace />
+            ) : (
+              <p className="text-center text-gray-600 bg-white rounded-xl p-8 border border-gray-200">{t('schedule.emptyWeek')}</p>
+            )
           )
         ) : null}
         {view === 'calendar' ? (

@@ -8,25 +8,30 @@ import Img from './ui/Img';
 export const NewsCard = ({ item, lang, t, heading: Heading = 'h3' }) => (
   <Link
     to={`/news/${item.id}`}
-    className="flex flex-col bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl group"
+    className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
   >
-    <div className="h-52 overflow-hidden">
+    <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
       <Img
         src={item.imageUrl}
         alt={localized(item, 'title', lang)}
         thumb
         width="800"
-        height="420"
-        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        height="500"
+        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
       />
-    </div>
-    <div className="p-6 flex flex-col flex-1">
-      <time dateTime={item.date} className="self-start bg-[#fae924] text-[#001d3a] px-3 py-1 rounded-full text-xs font-semibold mb-3">
+      <time
+        dateTime={item.date}
+        className="absolute top-4 left-4 bg-white/95 text-[#001d3a] rounded-lg px-3 py-1.5 text-xs font-bold shadow"
+      >
         {formatDate(item.date, lang)}
       </time>
-      <Heading className="text-xl font-bold text-[#001d3a] mb-3 leading-tight">{localized(item, 'title', lang)}</Heading>
-      <p className="text-gray-600 mb-5 line-clamp-3">{localized(item, 'content', lang)}</p>
-      <span className="mt-auto text-[#001d3a] font-medium inline-flex items-center">
+    </div>
+    <div className="p-6 flex flex-col flex-1">
+      <Heading className="text-lg md:text-xl font-bold text-[#001d3a] leading-snug mb-2 group-hover:text-[#1a6f99] transition-colors">
+        {localized(item, 'title', lang)}
+      </Heading>
+      <p className="text-gray-600 leading-relaxed line-clamp-2 mb-5">{localized(item, 'content', lang)}</p>
+      <span className="mt-auto inline-flex items-center text-sm font-semibold text-[#003366]">
         {t('home.readMore')}
         <FaArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
       </span>

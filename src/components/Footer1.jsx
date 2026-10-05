@@ -112,12 +112,10 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-white/10 text-center text-gray-400 text-sm space-y-2 md:space-y-0">
-          <span>
+        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-sm text-gray-400">
+          <p>
             &copy; {new Date().getFullYear()} EMLR Kicukiro. {t('footer.rights')}
-          </span>
-          <span className="hidden md:inline mx-2">|</span>
-          <span className="block md:inline">
+            <span className="mx-2">|</span>
             <Link to="/privacy-policy" className="hover:text-[#fae924]">
               {t('footer.privacy')}
             </Link>
@@ -125,7 +123,18 @@ const Footer = () => {
             <Link to="/terms-of-service" className="hover:text-[#fae924]">
               {t('footer.terms')}
             </Link>
-          </span>
+          </p>
+          <p>
+            {t('footer.developedBy')}{' '}
+            <a
+              href="https://enoveta.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-gray-300 hover:text-[#fae924] hover:underline underline-offset-2"
+            >
+              Enoveta
+            </a>
+          </p>
         </div>
       </div>
     </footer>

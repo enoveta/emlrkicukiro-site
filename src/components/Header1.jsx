@@ -1,6 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaBars, FaTimes, FaPhone, FaGlobe, FaBullhorn } from 'react-icons/fa';
+import {
+  FaBars,
+  FaTimes,
+  FaPhone,
+  FaGlobe,
+  FaBullhorn,
+  FaChurch,
+  FaUserTie,
+  FaMapMarkerAlt,
+  FaBible,
+  FaHandsHelping,
+  FaChartLine,
+  FaGraduationCap,
+  FaChevronRight,
+  FaArrowRight,
+} from 'react-icons/fa';
 import { IoIosArrowDown } from 'react-icons/io';
 import logo from '../assets/emlr/logo1.png';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -14,10 +29,10 @@ const SOCIAL_DEFAULTS = {
   youtube: 'https://www.youtube.com/@emlrparoissekicukiro',
 };
 const DEPARTMENTS = [
-  { key: 'evangelism', label: 'nav.evangelismDept' },
-  { key: 'social', label: 'nav.socialDept' },
-  { key: 'development', label: 'nav.planningDept' },
-  { key: 'education', label: 'nav.educationDept' },
+  { key: 'evangelism', label: 'nav.evangelismDept', icon: FaBible },
+  { key: 'social', label: 'nav.socialDept', icon: FaHandsHelping },
+  { key: 'development', label: 'nav.planningDept', icon: FaChartLine },
+  { key: 'education', label: 'nav.educationDept', icon: FaGraduationCap },
 ];
 
 const SocialIcon = ({ href, label, path }) => (
@@ -93,6 +108,7 @@ const Header = ({ scrolled }) => {
 
   const departmentColumns = DEPARTMENTS.map((dept) => ({
     title: t(dept.label),
+    icon: dept.icon,
     items: (ministries || [])
       .filter((m) => m.category === dept.key)
       .map((m) => ({ name: localized(m, 'name', lang), href: `/ministries/${m.slug}` })),
@@ -103,9 +119,11 @@ const Header = ({ scrolled }) => {
     {
       key: 'about',
       name: t('nav.aboutUs'),
+      feature: { title: t('home.noticesTitle'), text: t('schedule.pageSubtitle'), cta: t('home.allNotices'), href: '/amatangazo' },
       columns: [
         {
           title: t('nav.ourChurch'),
+          icon: FaChurch,
           items: [
             { name: t('nav.ourHistory'), href: '/about' },
             { name: t('nav.missionVision'), href: '/about/mission-vision' },
@@ -113,6 +131,7 @@ const Header = ({ scrolled }) => {
         },
         {
           title: t('nav.churchLeadership'),
+          icon: FaUserTie,
           items: [
             { name: t('nav.orgStructure'), href: '/about/leadership' },
             { name: t('nav.pastoralTeam'), href: '/about/team' },
@@ -120,11 +139,20 @@ const Header = ({ scrolled }) => {
         },
         {
           title: t('nav.ourParish'),
-          items: [{ name: t('nav.locationDirections'), href: '/about/location' }],
+          icon: FaMapMarkerAlt,
+          items: [
+            { name: t('nav.locationDirections'), href: '/about/location' },
+            { name: t('nav.notices'), href: '/amatangazo' },
+          ],
         },
       ],
     },
-    { key: 'departments', name: t('nav.departments'), columns: departmentColumns },
+    {
+      key: 'departments',
+      name: t('nav.departments'),
+      columns: departmentColumns,
+      feature: { title: t('ministries.title'), text: t('home.ministriesSubtitle'), cta: t('home.discoverAll'), href: '/ministries' },
+    },
     { key: 'tv', name: t('nav.tv'), href: '/tv' },
     {
       key: 'media',
@@ -234,7 +262,7 @@ const Header = ({ scrolled }) => {
       <div className="h-px bg-[#5ebadf]" />
       <div
         className={`relative transition-all duration-300 ${
-          scrolled || !isHomePage ? 'py-2 bg-[#003366] shadow-lg' : 'py-3 bg-[#003366]/70'
+          scrolled || !isHomePage ? 'py-2 bg-[#003366] shadow-lg' : 'py-3 bg-[#003366] lg:bg-[#003366]/70'
         }`}
         onMouseLeave={scheduleClose}
       >
@@ -312,6 +340,14 @@ const Header = ({ scrolled }) => {
           </nav>
 
           <div className="flex items-center space-x-4 lg:hidden">
+            <Link
+              to="/amatangazo"
+              className="flex items-center gap-1.5 text-white text-sm font-medium px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20"
+            >
+              <FaBullhorn className="text-[#feed17]" aria-hidden="true" />
+              <span className="hidden sm:inline">{t('nav.notices')}</span>
+              <span className="sr-only sm:hidden">{t('nav.notices')}</span>
+            </Link>
             <LanguageMenu className="md:hidden text-white" />
             <button
               className="text-white text-2xl p-1"
@@ -331,29 +367,54 @@ const Header = ({ scrolled }) => {
             onMouseEnter={() => openMenu(megaLink.key)}
             onMouseLeave={scheduleClose}
           >
-            <div className="bg-white shadow-xl border-t border-gray-100 py-6 px-8">
-              <div
-                className={`container mx-auto grid gap-8 ${
-                  megaLink.columns.length >= 4 ? 'grid-cols-4' : 'grid-cols-3'
-                }`}
-              >
-                {megaLink.columns.map((column) => (
-                  <div key={column.title}>
-                    <h3 className="text-lg font-bold text-[#003366] mb-3 pb-2 border-b border-gray-200">{column.title}</h3>
-                    <ul className="space-y-1">
-                      {column.items.map((item) => (
-                        <li key={item.href}>
-                          <Link
-                            to={item.href}
-                            className="block text-gray-700 hover:text-[#003366] hover:bg-gray-50 focus:bg-gray-50 p-2 rounded"
-                          >
-                            {item.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+            <div className="bg-white shadow-2xl border-t-4 border-[#feed17]">
+              <div className="container mx-auto px-8 py-8 flex gap-10">
+                <div className={`flex-1 grid gap-8 ${megaLink.columns.length >= 4 ? 'grid-cols-4' : 'grid-cols-3'}`}>
+                  {megaLink.columns.map((column) => {
+                    const Icon = column.icon;
+                    return (
+                      <div key={column.title}>
+                        <h3 className="flex items-center gap-2.5 mb-3 text-xs font-bold uppercase tracking-wider text-[#1a6f99]">
+                          {Icon ? (
+                            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#e8f5fb] text-[#003366] text-sm">
+                              <Icon aria-hidden="true" />
+                            </span>
+                          ) : null}
+                          {column.title}
+                        </h3>
+                        <ul className="space-y-0.5">
+                          {column.items.map((item) => (
+                            <li key={item.href}>
+                              <Link
+                                to={item.href}
+                                className="group/item flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-[15px] text-gray-700 hover:text-[#003366] hover:bg-[#f2f7fb] focus:bg-[#f2f7fb] transition-colors"
+                              >
+                                <span>{item.name}</span>
+                                <FaChevronRight
+                                  className="text-[10px] text-[#1a6f99] opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all"
+                                  aria-hidden="true"
+                                />
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })}
+                </div>
+                {megaLink.feature ? (
+                  <Link
+                    to={megaLink.feature.href}
+                    className="group/feature w-72 shrink-0 rounded-2xl bg-gradient-to-br from-[#003366] to-[#001d3a] text-white p-6 flex flex-col"
+                  >
+                    <span className="text-lg font-bold mb-2">{megaLink.feature.title}</span>
+                    <span className="text-sm text-white/75 leading-relaxed mb-5">{megaLink.feature.text}</span>
+                    <span className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-[#feed17]">
+                      {megaLink.feature.cta}
+                      <FaArrowRight className="transition-transform group-hover/feature:translate-x-1" aria-hidden="true" />
+                    </span>
+                  </Link>
+                ) : null}
               </div>
             </div>
           </div>
@@ -366,6 +427,10 @@ const Header = ({ scrolled }) => {
           aria-label="Mobile"
         >
           <div className="px-4 py-3 space-y-1">
+            <Link to="/amatangazo" className="flex items-center gap-2 py-3 font-semibold text-[#feed17] border-b border-white/10">
+              <FaBullhorn aria-hidden="true" />
+              {t('nav.notices')}
+            </Link>
             {mainNavLinks.map((link) => (
               <div key={link.key}>
                 {link.columns || link.items ? (

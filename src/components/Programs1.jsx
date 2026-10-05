@@ -8,28 +8,29 @@ import Img from './ui/Img';
 export const MinistryCard = ({ ministry, lang, t }) => (
   <Link
     to={`/ministries/${ministry.slug}`}
-    className="group relative flex flex-col bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100"
+    className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
   >
-    <div className="relative h-56 overflow-hidden">
+    <div className="relative aspect-[4/3] overflow-hidden bg-[#001d3a]">
       <Img
         src={ministry.aboutImageUrl || ministry.heroImageUrl}
         alt={localized(ministry, 'name', lang)}
         thumb
         width="800"
-        height="450"
-        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        height="600"
+        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#003366]/50 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#001d3a]/45 via-transparent to-transparent" />
     </div>
     <div className="p-6 flex flex-col flex-1">
-      <h3 className="text-xl font-bold text-[#001d3a] mb-2">{localized(ministry, 'name', lang)}</h3>
-      <p className="text-gray-600 mb-5 line-clamp-3">{localized(ministry, 'shortDescription', lang)}</p>
-      <span className="mt-auto inline-flex items-center font-medium text-[#1a6f99] group-hover:text-[#003366] transition-colors">
+      <h3 className="text-xl font-bold text-[#001d3a] leading-snug mb-2 group-hover:text-[#1a6f99] transition-colors">
+        {localized(ministry, 'name', lang)}
+      </h3>
+      <p className="text-gray-600 leading-relaxed line-clamp-3 mb-5">{localized(ministry, 'shortDescription', lang)}</p>
+      <span className="mt-auto inline-flex items-center text-sm font-semibold text-[#003366]">
         {t('home.learnMoreMinistry')}
         <FaArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
       </span>
     </div>
-    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#fae924] to-[#5fb9e2]" />
   </Link>
 );
 

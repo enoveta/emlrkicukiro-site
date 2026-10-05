@@ -108,41 +108,17 @@ const slides = [
   }
 ];
 
-const events = [
-  {
-    title: "Kigali Conference Meeting",
-    titleRw: "Inama ya Konferanse ya Kigali",
-    description: "Three days of teaching and fellowship for church leaders and members.",
-    descriptionRw: "Iminsi itatu y’inyigisho no gusabana ku bayobozi n’abakristo.",
-    date: new Date("2025-09-25T00:00:00.000Z"),
-    time: "Three days",
-    timeRw: "Iminsi itatu",
-    location: "Kigali Conference",
-    locationRw: "Konferanse ya Kigali"
-  },
-  {
-    title: "Family Week",
-    titleRw: "Icyumweru cy’Umuryango",
-    description: "A week dedicated to strengthening families in faith and love.",
-    descriptionRw: "Icyumweru cyahariwe gukomeza ingo mu kwizera no mu rukundo.",
-    date: new Date("2025-10-15T00:00:00.000Z"),
-    time: "All week",
-    timeRw: "Icyumweru cyose",
-    location: "EMLR Kicukiro",
-    locationRw: "EMLR Kicukiro"
-  },
-  {
-    title: "Praise and Worship Concert",
-    titleRw: "Igiterane cyo Kuramya no Guhimbaza",
-    description: "A day of praise and worship with our choirs.",
-    descriptionRw: "Umunsi wo kuramya no guhimbaza Imana hamwe na korali zacu.",
-    date: new Date("2025-11-18T00:00:00.000Z"),
-    time: "All day",
-    timeRw: "Umunsi wose",
-    location: "EMLR Kicukiro",
-    locationRw: "EMLR Kicukiro"
-  }
-];
+const events = [1, 2, 3].map((day) => ({
+  title: "Conference General Assembly",
+  titleRw: "Inama Nkuru ya Konferanse",
+  description: "Three-day General Assembly of the Conference.",
+  descriptionRw: "Inama Nkuru ya Konferanse y’iminsi itatu.",
+  date: new Date(`2026-10-${24 + day}T00:00:00.000Z`),
+  time: `Day ${day} of 3`,
+  timeRw: `Umunsi wa ${day} muri 3`,
+  location: null,
+  locationRw: null
+}));
 
 const news = [
   {
@@ -176,9 +152,9 @@ const news = [
 ];
 
 const stats = [
-  { number: "1500+", label: "Church Members", labelRw: "Abakristo", sortOrder: 0 },
+  { number: "1345+", label: "Church Members", labelRw: "Abakristo", sortOrder: 0 },
   { number: "15", label: "Ministries", labelRw: "Ibyiciro", sortOrder: 1 },
-  { number: "11", label: "Gatherings every week", labelRw: "Amateraniro n’amasengesho buri cyumweru", sortOrder: 2 },
+  { number: "11", label: "Weekly Gatherings", labelRw: "Amateraniro", sortOrder: 2 },
   { number: "25+", label: "Cell Groups", labelRw: "Amatsinda", sortOrder: 3 }
 ];
 

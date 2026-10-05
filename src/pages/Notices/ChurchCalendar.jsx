@@ -4,7 +4,7 @@ import { FaChevronLeft, FaChevronRight, FaMapMarkerAlt, FaClock } from 'react-ic
 import { localized } from '../../i18n/translations';
 import { DAY_NAMES, DAY_SHORT, WEEK_ORDER, occursOn, sameDay, sortByTime, styleFor, utcDay } from '../../utils/schedule';
 import { isExpired } from '../../utils/notices';
-import { ActivityCard } from './WeeklyProgramme';
+import { ActivityCard } from './ActivityCard';
 
 const MONTHS = {
   en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],

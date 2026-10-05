@@ -101,3 +101,35 @@ export const utcDay = (value) => {
   const d = new Date(value);
   return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
 };
+
+/**
+ * Short label for the days of an activity, like the parish slides:
+ * [1..6] → "Ku wa Mbere - Ku wa Gatandatu", all 7 → "Buri munsi", [4] → "Ku wa Kane".
+ */
+export function daysLabel(days, lang = 'en') {
+  const order = [...new Set(days)].sort((a, b) => WEEK_ORDER.indexOf(a) - WEEK_ORDER.indexOf(b));
+  if (!order.length) return '';
+  if (order.length === 7) return lang === 'rw' ? 'Buri munsi' : 'Every day';
+  const idx = order.map((d) => WEEK_ORDER.indexOf(d));
+  const contiguous = idx.every((v, i) => i === 0 || v === idx[i - 1] + 1);
+  if (contiguous && order.length >= 3) {
+    return `${DAY_NAMES[lang][order[0]]} - ${DAY_NAMES[lang][order[order.length - 1]].replace(/^Ku /, 'ku ')}`;
+  }
+  return order.map((d) => DAY_NAMES[lang][d]).join(', ');
+}
+
+/** Programme order: Sunday services first, then by first weekday (Monday first), then by time. */
+export function sortProgramme(items) {
+  const key = (i) => {
+    const days = daysOf(i);
+    const first = Math.min(...days.map((d) => WEEK_ORDER.indexOf(d)));
+    return [days.includes(0) && days.length === 1 ? 0 : 1, first, minutesOf(i.startTime)];
+  };
+  return [...items].sort((a, b) => {
+    const ka = key(a);
+    const kb = key(b);
+    return ka[0] - kb[0] || ka[1] - kb[1] || ka[2] - kb[2];
+  });
+}
+
+export const timeRange = (item) => (item.endTime ? `${item.startTime} - ${item.endTime}` : item.startTime);
