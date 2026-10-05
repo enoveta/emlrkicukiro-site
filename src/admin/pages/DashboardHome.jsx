@@ -22,7 +22,7 @@ const PAGE_NAMES = {
   '/about/leadership': 'Church structure',
   '/about/mission-vision': 'Mission & vision',
   '/prayer-requests': 'Prayer requests',
-  '/volunteer': 'Serve with us',
+  '/volunteer': 'Join us (volunteer)',
 };
 const pageName = (path) =>
   PAGE_NAMES[path] ||

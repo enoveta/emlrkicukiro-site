@@ -41,6 +41,7 @@ const settings: Record<string, string> = {
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3987.5168!2d30.1!3d-1.97!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMcKwNTgnMTIuMCJTIDMwwrAwNicwMC4wIkU!5e0!3m2!1sen!2srw!4v1"
 };
 
+// Home slides: each text matches its picture or video.
 const slides = [
   {
     imageUrl: `${MEDIA}/2.webp`,
@@ -49,62 +50,46 @@ const slides = [
     titleRw: "Murakaza neza muri",
     highlight: "EMLR Kicukiro",
     highlightRw: "EMLR Kicukiro",
-    subtitle: "A family of believers serving God in Kicukiro.",
-    subtitleRw: "Dukorera Imana i Kicukiro.",
-    cta1: "About Us",
-    cta1Rw: "Abo turi bo",
-    cta1Link: "/about",
-    cta2: "Visit Us",
-    cta2Rw: "Tugane",
-    cta2Link: "/about/location"
-  },
-  {
-    imageUrl: `${MEDIA}/bg5.webp`,
-    mediaType: "image",
-    title: "Join Our",
-    titleRw: "Tugane",
-    highlight: "Sunday Services",
-    highlightRw: "ku Cyumweru",
-    subtitle: "Sundays at 8:00 AM and 11:30 AM.",
-    subtitleRw: "Ku Cyumweru saa mbiri za mu gitondo na saa tanu n’igice.",
-    cta1: "Find Us",
-    cta1Rw: "Aho duherereye",
-    cta1Link: "/about/location",
-    cta2: "Watch Online",
-    cta2Rw: "EMLR TV",
-    cta2Link: "/tv"
-  },
-  {
-    imageUrl: `${MEDIA}/community.mp4`,
-    mediaType: "video",
-    title: "Find Your",
-    titleRw: "Ibyiciro",
-    highlight: "Place to Serve",
-    highlightRw: "by’Itorero",
-    subtitle: "Choirs, youth, families and cell groups.",
-    subtitleRw: "Korali, urubyiruko, imiryango n’amatsinda.",
-    cta1: "Our Ministries",
-    cta1Rw: "Reba ibyiciro",
-    cta1Link: "/ministries",
-    cta2: "Visit Us",
-    cta2Rw: "Tugane",
+    subtitle: "Sunday services at 8:00 AM and 11:30 AM.",
+    subtitleRw: "Amateraniro yo ku Cyumweru: saa mbiri za mu gitondo na saa tanu n’igice.",
+    cta1: "Weekly programme",
+    cta1Rw: "Gahunda y’icyumweru",
+    cta1Link: "/amatangazo",
+    cta2: "Find us",
+    cta2Rw: "Aho duherereye",
     cta2Link: "/about/location"
   },
   {
     imageUrl: `${MEDIA}/church-life.mp4`,
     mediaType: "video",
-    title: "Experience",
-    titleRw: "Ibikorwa",
-    highlight: "Church Life",
-    highlightRw: "by’Itorero",
-    subtitle: "See what God is doing among us.",
-    subtitleRw: "Reba ibyo Imana ikora muri twe.",
-    cta1: "Events",
-    cta1Rw: "Ibikorwa",
-    cta1Link: "/events",
-    cta2: "Notices",
+    title: "Hear the",
+    titleRw: "Twumve hamwe",
+    highlight: "Word of God",
+    highlightRw: "Ijambo ry’Imana",
+    subtitle: "Watch sermons and services on EMLR TV.",
+    subtitleRw: "Reba inyigisho n’amateraniro kuri EMLR TV.",
+    cta1: "EMLR TV",
+    cta1Rw: "EMLR TV",
+    cta1Link: "/tv",
+    cta2: "Announcements",
     cta2Rw: "Amatangazo",
     cta2Link: "/amatangazo"
+  },
+  {
+    imageUrl: `${MEDIA}/community.mp4`,
+    mediaType: "video",
+    title: "Let us build",
+    titleRw: "Dufatanye kubaka",
+    highlight: "God’s house",
+    highlightRw: "inzu y’Imana",
+    subtitle: "Support the Kicukiro Parish church building project.",
+    subtitleRw: "Shyigikira umushinga wo kubaka itorero rya Paruwasi ya Kicukiro.",
+    cta1: "Donate",
+    cta1Rw: "Donate",
+    cta1Link: "/give?purpose=fundraising",
+    cta2: "Join us",
+    cta2Rw: "Fatanya natwe",
+    cta2Link: "/volunteer"
   }
 ];
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { FaMobileAlt, FaUniversity } from 'react-icons/fa';
 import { usePublicData } from '../../api/usePublicData';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -42,7 +43,8 @@ function Give() {
   const { t, lang } = useLanguage();
   usePageMeta(t('give.title'), t('give.subtitle'));
   const list = accounts || [];
-  const [purpose, setPurpose] = useState(null);
+  const [params] = useSearchParams();
+  const [purpose, setPurpose] = useState(params.get('purpose'));
   const [method, setMethod] = useState('mobile');
   const selected = list.find((a) => a.purposeKey === purpose) || list[0];
   const hasMobile = Boolean(selected?.momoCode || selected?.mtnNumber || selected?.airtelNumber);
