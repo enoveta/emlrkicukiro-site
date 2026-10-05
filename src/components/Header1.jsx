@@ -98,7 +98,7 @@ const Header = ({ scrolled }) => {
       .map((m) => ({ name: localized(m, 'name', lang), href: `/ministries/${m.slug}` })),
   })).filter((col) => col.items.length);
 
-  // Order requested: About · Departments · News · Events · Donate
+  // Order requested: About · Departments · TV · News · Events · Donate
   const mainNavLinks = [
     {
       key: 'about',
@@ -125,6 +125,7 @@ const Header = ({ scrolled }) => {
       ],
     },
     { key: 'departments', name: t('nav.departments'), columns: departmentColumns },
+    { key: 'tv', name: t('nav.tv'), href: '/tv' },
     {
       key: 'media',
       name: t('nav.media'),
@@ -132,7 +133,6 @@ const Header = ({ scrolled }) => {
         { name: t('nav.churchNews'), href: '/news' },
         { name: t('nav.notices'), href: '/amatangazo' },
         { name: t('nav.photoGallery'), href: '/gallery' },
-        { name: t('nav.tv'), href: '/tv' },
       ],
     },
     { key: 'events', name: t('nav.events'), href: '/events' },

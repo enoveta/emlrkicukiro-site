@@ -220,12 +220,95 @@ const giving = [
     purposeName: "Offerings & Tithes",
     purposeNameRw: "Amaturo n’Icyacumi",
     mtnNumber: "0788 524 792",
-    airtelNumber: "",
-    mobileName: "EMLR Kicukiro",
+    airtelNumber: "0734 567 890",
+    mobileName: "EMLR Kicukiro - Offerings",
     bankName: "Bank of Kigali",
-    accountName: "EMLR Kicukiro",
+    accountName: "EMLR Kicukiro - Offerings",
     accountNumber: "00040-06945775-07",
     swift: "BKIGRWRW",
+    sortOrder: 0
+  },
+  {
+    purposeKey: "fundraising",
+    purposeName: "Church Building Fund",
+    purposeNameRw: "Ikigega cyo Kubaka Itorero",
+    mtnNumber: "0783 215 463",
+    airtelNumber: "0732 154 789",
+    mobileName: "EMLR Kicukiro - Building Fund",
+    bankName: "Bank of Kigali",
+    accountName: "EMLR Kicukiro - Building Fund",
+    accountNumber: "00040-06945778-09",
+    swift: "BKIGRWRW",
+    sortOrder: 1
+  },
+  {
+    purposeKey: "development",
+    purposeName: "Development Fund",
+    purposeNameRw: "Ikigega cy’Iterambere",
+    mtnNumber: "0785 478 965",
+    airtelNumber: "0735 478 123",
+    mobileName: "EMLR Kicukiro - Development",
+    bankName: "Equity Bank",
+    accountName: "EMLR Kicukiro - Development",
+    accountNumber: "10354006945775",
+    swift: "EQBLRWRW",
+    sortOrder: 2
+  },
+  {
+    purposeKey: "social",
+    purposeName: "Social Ministry",
+    purposeNameRw: "Imibereho Myiza",
+    mtnNumber: "0789 632 541",
+    airtelNumber: "0739 632 874",
+    mobileName: "EMLR Kicukiro - Social Ministry",
+    bankName: "Bank of Kigali",
+    accountName: "EMLR Kicukiro - Social Ministry",
+    accountNumber: "00040-06945779-10",
+    swift: "BKIGRWRW",
+    sortOrder: 3
+  },
+  {
+    purposeKey: "other",
+    purposeName: "Other Purposes",
+    purposeNameRw: "Izindi Mpamvu",
+    mtnNumber: "0788 524 792",
+    airtelNumber: "0734 567 890",
+    mobileName: "EMLR Kicukiro - General",
+    bankName: "Bank of Kigali",
+    accountName: "EMLR Kicukiro - General",
+    accountNumber: "00040-06945775-07",
+    swift: "BKIGRWRW",
+    sortOrder: 4
+  }
+];
+
+/** Weekly programme. Only confirmed times are seeded; the church adds the rest in the dashboard. */
+const schedule = [
+  {
+    title: "First Sunday Service",
+    titleRw: "Amateraniro ya mbere yo ku Cyumweru",
+    category: "service",
+    dayOfWeek: 0,
+    startTime: "08:00",
+    location: "EMLR Kicukiro",
+    sortOrder: 0
+  },
+  {
+    title: "Second Sunday Service",
+    titleRw: "Amateraniro ya kabiri yo ku Cyumweru",
+    category: "service",
+    dayOfWeek: 0,
+    startTime: "10:30",
+    location: "EMLR Kicukiro",
+    sortOrder: 1
+  },
+  {
+    title: "Wednesday Service",
+    titleRw: "Amateraniro yo ku wa Gatatu",
+    category: "service",
+    dayOfWeek: 3,
+    startTime: "18:00",
+    location: "EMLR Kicukiro",
     sortOrder: 0
   }
 ];
@@ -466,6 +549,7 @@ const main = async () => {
     prisma.event.deleteMany(),
     prisma.announcement.deleteMany(),
     prisma.notice.deleteMany(),
+    prisma.scheduleItem.deleteMany(),
     prisma.service.deleteMany(),
     prisma.project.deleteMany(),
     prisma.ministry.deleteMany(),
@@ -496,6 +580,7 @@ const main = async () => {
   await prisma.person.createMany({ data: people.map((p) => ({ ...p, ...owned })) });
   await prisma.galleryItem.createMany({ data: gallery.map((g) => ({ ...g, ...owned })) });
   await prisma.givingAccount.createMany({ data: giving.map((g) => ({ ...g, ...owned })) });
+  await prisma.scheduleItem.createMany({ data: schedule.map((i) => ({ ...i, ...owned })) });
 
   await prisma.ministry.createMany({
     data: ministries.map(({ image, ...m }, sortOrder) => ({

@@ -51,6 +51,7 @@ model User {
   statsCreated         Stat[]         @relation("StatCreatedBy")
   givingCreated        GivingAccount[] @relation("GivingCreatedBy")
   noticesCreated       Notice[]       @relation("NoticeCreatedBy")
+  scheduleCreated      ScheduleItem[] @relation("ScheduleCreatedBy")
 }
 
 model Event {
@@ -122,6 +123,40 @@ model Notice {
   createdBy User @relation("NoticeCreatedBy", fields: [createdById], references: [id])
 
   @@index([status, publishDate])
+}
+
+/// Recurring church activities shown on the weekly programme and calendar
+/// (services, prayer meetings, choir rehearsals, fellowship meetings...).
+model ScheduleItem {
+  id            String  @id @default(uuid())
+  title         String
+  titleRw       String?
+  /// service | prayer | choir | fellowship | youth | children | meeting | other
+  category      String  @default("service")
+  /// 0 = Sunday ... 6 = Saturday
+  dayOfWeek     Int
+  /// every | first | second | third | fourth | last  (week of the month)
+  recurrence    String  @default("every")
+  startTime     String
+  endTime       String?
+  location      String?
+  locationRw    String?
+  leader        String?
+  notes         String?
+  notesRw       String?
+  sortOrder     Int     @default(0)
+
+  status        ContentStatus @default(DRAFT)
+  createdById   String
+  publishedAt   DateTime?
+  publishedById String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdBy User @relation("ScheduleCreatedBy", fields: [createdById], references: [id])
+
+  @@index([status, dayOfWeek])
 }
 
 model Service {

@@ -1,7 +1,71 @@
+export const DAY_OPTIONS = ['1', '2', '3', '4', '5', '6', '0'];
+export const DAY_LABELS = {
+  0: 'Sunday / Ku Cyumweru',
+  1: 'Monday / Ku wa Mbere',
+  2: 'Tuesday / Ku wa Kabiri',
+  3: 'Wednesday / Ku wa Gatatu',
+  4: 'Thursday / Ku wa Kane',
+  5: 'Friday / Ku wa Gatanu',
+  6: 'Saturday / Ku wa Gatandatu',
+};
+
 export const RESOURCE_CONFIG = {
+  schedule: {
+    label: 'Weekly programme',
+    path: '/schedule',
+    noMedia: true,
+    titleField: 'title',
+    description:
+      'Recurring activities shown on the Amatangazo page: services, prayer, choir practice, meetings… (use Events for one-off dates)',
+    subtitle: (item) =>
+      `${DAY_LABELS[item.dayOfWeek]?.split(' / ')[0] || ''} ${item.startTime}${item.endTime ? `–${item.endTime}` : ''}${
+        item.recurrence && item.recurrence !== 'every' ? ` · ${item.recurrence} of month` : ''
+      } · ${item.category}`,
+    fields: [
+      { key: 'title', rw: true, label: 'Activity name', type: 'text', required: true },
+      {
+        key: 'category',
+        label: 'Type',
+        type: 'select',
+        options: ['service', 'prayer', 'choir', 'fellowship', 'youth', 'children', 'meeting', 'other'],
+        optionLabels: {
+          service: 'Service / Amateraniro',
+          prayer: 'Prayer / Amasengesho',
+          choir: 'Choir practice / Imyitozo ya korali',
+          fellowship: 'Fellowship / Gusabana',
+          youth: 'Youth / Urubyiruko',
+          children: 'Children / Abana',
+          meeting: 'Meeting / Inama',
+          other: 'Other / Ibindi',
+        },
+      },
+      { key: 'dayOfWeek', label: 'Day', type: 'select', numeric: true, options: DAY_OPTIONS, optionLabels: DAY_LABELS },
+      {
+        key: 'recurrence',
+        label: 'How often',
+        type: 'select',
+        options: ['every', 'first', 'second', 'third', 'fourth', 'last'],
+        optionLabels: {
+          every: 'Every week',
+          first: '1st week of the month',
+          second: '2nd week of the month',
+          third: '3rd week of the month',
+          fourth: '4th week of the month',
+          last: 'Last week of the month',
+        },
+      },
+      { key: 'startTime', label: 'Starts', type: 'time', required: true },
+      { key: 'endTime', label: 'Ends (optional)', type: 'time' },
+      { key: 'location', rw: true, label: 'Place', type: 'text' },
+      { key: 'leader', label: 'Led by (optional)', type: 'text' },
+      { key: 'notes', rw: true, label: 'Notes (optional)', type: 'textarea' },
+      { key: 'sortOrder', label: 'Order (same day & time)', type: 'number' },
+    ],
+  },
   notices: {
     label: 'Amatangazo',
     path: '/notices',
+    noMedia: true,
     titleField: 'title',
     description: 'Church announcements (daily, weekly, monthly, urgent) — separate from news and events',
     fields: [
@@ -133,7 +197,7 @@ export const RESOURCE_CONFIG = {
     label: 'Giving accounts',
     path: '/giving',
     titleField: 'purposeName',
-    description: 'The Donate page shows the FIRST published account (lowest sort order)',
+    description: 'Donation purposes and their Mobile Money / bank accounts shown on the Donate page',
     fields: [
       { key: 'purposeKey', label: 'Purpose key', type: 'text', required: true },
       { key: 'purposeName', rw: true, label: 'Purpose name', type: 'text', required: true },
@@ -164,6 +228,7 @@ export const RESOURCE_CONFIG = {
 };
 
 export function toInputValue(field, value) {
+  if (field.numeric) return value === null || value === undefined ? field.options?.[0] ?? '' : String(value);
   if (field.type === 'datetime' && value) {
     const d = new Date(value);
     const pad = (n) => String(n).padStart(2, '0');
@@ -181,7 +246,7 @@ export function fromInputValue(field, value) {
     return Number.isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
   }
   if (field.type === 'boolean') return Boolean(value);
-  if (field.type === 'number') return Number(value || 0);
+  if (field.type === 'number' || field.numeric) return Number(value || 0);
   if (value === '' || value === undefined) return null;
   return value;
 }

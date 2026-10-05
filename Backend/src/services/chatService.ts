@@ -11,7 +11,7 @@ const fmtDate = (d: Date) => d.toISOString().slice(0, 10);
 const loadChurchFacts = () =>
   memo("chat:facts", 5 * 60 * 1000, async () => {
     const now = new Date();
-    const [settings, events, notices, ministries] = await Promise.all([
+    const [settings, events, notices, ministries, schedule] = await Promise.all([
       prisma.siteSetting.findMany(),
       prisma.event.findMany({
         where: { status: "PUBLISHED", date: { gte: new Date(now.getTime() - 86400000) } },
@@ -27,8 +27,13 @@ const loadChurchFacts = () =>
         orderBy: [{ pinned: "desc" }, { publishDate: "desc" }],
         take: 10
       }),
-      prisma.ministry.findMany({ where: { status: "PUBLISHED" }, orderBy: { sortOrder: "asc" } })
+      prisma.ministry.findMany({ where: { status: "PUBLISHED" }, orderBy: { sortOrder: "asc" } }),
+      prisma.scheduleItem.findMany({
+        where: { status: "PUBLISHED" },
+        orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }]
+      })
     ]);
+    const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const s = Object.fromEntries(settings.map((x) => [x.key, x.value]));
     const lines = [
       `Church: EMLR Kicukiro Parish (Eglise Methodiste Libre au Rwanda / Itorero Methodiste Libre mu Rwanda), ${s.address ?? "Kicukiro, Kigali"}.`,
@@ -41,6 +46,15 @@ const loadChurchFacts = () =>
         : ["- none published"]),
       "Current notices:",
       ...(notices.length ? notices.map((n) => `- ${fmtDate(n.publishDate)}: ${n.title} — ${n.body}`) : ["- none published"]),
+      "Weekly programme (24-hour times):",
+      ...(schedule.length
+        ? schedule.map(
+            (i) =>
+              `- ${i.recurrence === "every" ? "Every" : `The ${i.recurrence}`} ${DAYS[i.dayOfWeek]} ${i.startTime}${
+                i.endTime ? `-${i.endTime}` : ""
+              }: ${i.title}${i.location ? ` (${i.location})` : ""}${i.leader ? `, led by ${i.leader}` : ""}`
+          )
+        : ["- none published"]),
       "Ministries and groups:",
       ...ministries.map((m) => `- ${m.name}: ${m.shortDescription}`)
     ];

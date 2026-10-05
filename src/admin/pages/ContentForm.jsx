@@ -226,7 +226,9 @@ function FieldInput({ field, value, onChange, placeholder, lang }) {
   return (
     <input
       className="w-full border border-slate-200 rounded-xl p-3 text-sm"
-      type={field.type === 'datetime' ? 'datetime-local' : field.type === 'number' ? 'number' : 'text'}
+      type={
+        field.type === 'datetime' ? 'datetime-local' : field.type === 'number' ? 'number' : field.type === 'time' ? 'time' : 'text'
+      }
       value={value ?? ''}
       required={field.required}
       placeholder={placeholder}

@@ -19,6 +19,7 @@ const PATHS = [
   '/announcements',
   '/events',
   '/notices',
+  '/schedule',
   '/people',
   '/gallery',
   '/testimonials',

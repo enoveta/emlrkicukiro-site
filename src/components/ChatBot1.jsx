@@ -51,7 +51,7 @@ const ChatBot = () => {
   const suggestions = get('chat.suggestions') || [];
 
   return (
-    <>
+    <div className="print-hidden">
       <button
         type="button"
         onClick={() => setIsOpen((v) => !v)}
@@ -149,7 +149,7 @@ const ChatBot = () => {
           </form>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

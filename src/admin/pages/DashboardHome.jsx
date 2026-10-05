@@ -6,6 +6,7 @@ import { Skeleton, StatusPill } from '../ui/StatusPill';
 const QUICK = [
   { to: '/admin/hero', title: 'Home slides', desc: 'Edit hero carousel media & CTAs', tone: 'from-[#001d3a] to-[#0a4a7a]' },
   { to: '/admin/media', title: 'Media library', desc: 'Upload images & videos once, reuse everywhere', tone: 'from-[#0d7377] to-[#14919b]' },
+  { to: '/admin/schedule', title: 'Weekly programme', desc: 'Services, prayer, choir practice — days & hours', tone: 'from-[#0f766e] to-[#115e59]' },
   { to: '/admin/notices', title: 'Amatangazo', desc: 'Weekly / daily church announcements', tone: 'from-[#b45309] to-[#92400e]' },
   { to: '/admin/events', title: 'Events (Ibikorwa)', desc: 'Upcoming church events', tone: 'from-[#5fb9e2] to-[#3a9bc4]' },
   { to: '/admin/announcements', title: 'News (Amakuru)', desc: 'News stories with photos', tone: 'from-[#c9a227] to-[#a8871c]' },

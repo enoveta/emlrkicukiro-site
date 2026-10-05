@@ -15,6 +15,7 @@ const NAV = [
     title: 'Website content',
     items: [
       { to: '/admin/notices', label: 'Amatangazo', icon: '✦' },
+      { to: '/admin/schedule', label: 'Weekly programme', icon: '◷' },
       { to: '/admin/events', label: 'Events (Ibikorwa)', icon: '◉' },
       { to: '/admin/announcements', label: 'News (Amakuru)', icon: '☰' },
       { to: '/admin/ministries', label: 'Ministries', icon: '◎' },

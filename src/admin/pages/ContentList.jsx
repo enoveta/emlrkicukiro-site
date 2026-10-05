@@ -112,7 +112,7 @@ export default function ContentList({ resourceKey }) {
                 key={item.id}
                 className="bg-white rounded-2xl border border-slate-200 p-4 flex flex-col md:flex-row md:items-center gap-4 hover:shadow-sm transition"
               >
-                {image ? (
+                {cfg.noMedia ? null : image ? (
                   <img src={mediaUrl(image)} alt="" className="w-full md:w-24 h-24 rounded-xl object-cover bg-slate-100" />
                 ) : (
                   <div className="w-full md:w-24 h-24 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 text-xs">
@@ -124,6 +124,7 @@ export default function ContentList({ resourceKey }) {
                     <h3 className="font-semibold text-[#001d3a] truncate">{title}</h3>
                     <StatusPill status={item.status} />
                   </div>
+                  {cfg.subtitle ? <p className="text-sm text-slate-600 mt-1">{cfg.subtitle(item)}</p> : null}
                   <p className="text-xs text-slate-500 mt-1">
                     Updated {item.updatedAt ? new Date(item.updatedAt).toLocaleString() : '—'}
                   </p>
