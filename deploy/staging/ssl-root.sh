@@ -17,8 +17,11 @@ else
   echo "   certificate already exists"
 fi
 
-echo "==> 2/3 HTTPS vhost (backup of the HTTP version kept)"
+echo "==> 2/3 HTTPS vhost + shared snippet (backups kept until nginx -t passes)"
 cp -a "$VHOST" "$VHOST.http.bak"
+SNIP=/etc/nginx/snippets/emlr-site-common.conf
+cp -a "$SNIP" "$SNIP.bak"
+install -o root -g root -m 644 "$SRC/nginx-common.inc" "$SNIP"
 install -o root -g root -m 644 "$SRC/nginx-https.conf" "$VHOST"
 [ -e /etc/letsencrypt/ssl-dhparams.pem ] || sed -i '/ssl_dhparam/d' "$VHOST"
 [ -e /etc/letsencrypt/options-ssl-nginx.conf ] || sed -i '/options-ssl-nginx.conf/d' "$VHOST"
@@ -26,11 +29,11 @@ install -o root -g root -m 644 "$SRC/nginx-https.conf" "$VHOST"
 echo "==> 3/3 nginx -t, then reload"
 if nginx -t; then
   systemctl reload nginx
-  rm -f "$VHOST.http.bak"
+  rm -f "$VHOST.http.bak" "$SNIP.bak"
   echo "==> HTTPS enabled for https://$DOMAIN"
 else
   echo "nginx -t FAILED: restoring the HTTP vhost, nothing reloaded"
-  mv -f "$VHOST.http.bak" "$VHOST"
+  mv -f "$VHOST.http.bak" "$VHOST"; mv -f "$SNIP.bak" "$SNIP"
   nginx -t
   exit 1
 fi

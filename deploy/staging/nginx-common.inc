@@ -16,17 +16,16 @@
     gzip_comp_level 6;
     gzip_types text/plain text/css application/javascript application/json image/svg+xml application/xml;
 
+    # Note: no add_header inside locations below, so the server-level security and
+    # noindex headers apply everywhere (nginx drops inherited headers otherwise).
     location = /robots.txt {
         default_type text/plain;
-        add_header X-Robots-Tag "noindex, nofollow" always;
         return 200 "User-agent: *\nDisallow: /\n";
     }
 
     location /media/ {
         alias /var/www/site.emlrkicukiroparish.org/shared/media/;
         expires 30d;
-        add_header Cache-Control "public";
-        add_header X-Robots-Tag "noindex, nofollow" always;
         try_files $uri @api;
     }
 
@@ -42,13 +41,9 @@
     location @api { proxy_pass http://127.0.0.1:5050; proxy_set_header Host $host; proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; }
     location = /health { proxy_pass http://127.0.0.1:5050; }
 
-    location /static/ {
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-        add_header X-Robots-Tag "noindex, nofollow" always;
-    }
-    location = /service-worker.js { add_header Cache-Control "no-cache"; add_header X-Robots-Tag "noindex, nofollow" always; }
-    location = /index.html        { add_header Cache-Control "no-cache"; add_header X-Robots-Tag "noindex, nofollow" always; }
+    location /static/ { expires 1y; }
+    location = /service-worker.js { expires -1; }
+    location = /index.html        { expires -1; }
 
     # Single-page app (includes /admin, the dashboard)
     location / {
