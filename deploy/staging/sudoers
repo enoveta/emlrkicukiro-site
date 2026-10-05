@@ -1,0 +1,2 @@
+# /etc/sudoers.d/emlr-site — the deploy user may run only the site's control script.
+emlrkicukiro ALL=(root) NOPASSWD: /usr/local/sbin/emlr-site-ctl

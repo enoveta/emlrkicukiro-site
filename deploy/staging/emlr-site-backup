@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Daily backup of the emlr_site database ONLY (and uploaded media). Keeps 14 days.
+set -euo pipefail
+APP=/var/www/site.emlrkicukiroparish.org
+DEST=$APP/backups
+set -a; . "$APP/shared/.env"; set +a
+mkdir -p "$DEST"
+STAMP=$(date +%F_%H%M)
+pg_dump --no-owner "${DATABASE_URL%%\?*}" | gzip > "$DEST/emlr_site_$STAMP.sql.gz"
+tar -czf "$DEST/media_$STAMP.tar.gz" -C "$APP/shared" media
+find "$DEST" -type f -mtime +14 -delete
+echo "$(date -Is) backup ok"

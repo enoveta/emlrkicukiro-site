@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# /usr/local/sbin/emlr-site-ctl  (root-owned; the deploy user may run ONLY this via sudo)
+# Narrow operations for site.emlrkicukiroparish.org. Touches nothing else on the server.
+set -euo pipefail
+APP=/var/www/site.emlrkicukiroparish.org
+ENV_FILE=$APP/shared/.env
+SERVICE=emlr-site-api
+
+as_app() { # run a command as the app user inside the current release, with the app's env
+  cd "$APP/current/Backend"
+  set -a; . "$ENV_FILE"; set +a
+  HOME="$APP" runuser -u emlrsite -m -- "$@"
+}
+
+case "${1:-}" in
+  migrate-status) as_app npx --no-install prisma migrate status ;;
+  migrate)        as_app npx --no-install prisma migrate deploy ;;
+  seed)           as_app npx --no-install prisma db seed ;;
+  restart)        systemctl restart "$SERVICE"; sleep 2; systemctl --no-pager --lines=0 status "$SERVICE" | head -3 ;;
+  status)         systemctl --no-pager --lines=20 status "$SERVICE" ;;
+  logs)           tail -n "${2:-100}" /var/log/emlr-site/api.log ;;
+  nginx-reload)   nginx -t && systemctl reload nginx ;;
+  backup)         runuser -u emlrsite -- /usr/local/sbin/emlr-site-backup ;;
+  *) echo "usage: emlr-site-ctl {migrate-status|migrate|seed|restart|status|logs [n]|nginx-reload|backup}"; exit 1 ;;
+esac
