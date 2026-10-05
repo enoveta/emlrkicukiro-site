@@ -67,13 +67,13 @@ const Hero = () => {
   }, [current]);
 
   if (!count) {
-    return <section className="min-h-[85vh] md:min-h-screen bg-[#001d3a]" aria-hidden="true" />;
+    return <section className="min-h-[72vh] md:min-h-screen bg-[#001d3a]" aria-hidden="true" />;
   }
 
   const active = slides[current];
 
   return (
-    <section className="min-h-[85vh] md:min-h-screen flex items-center relative overflow-hidden bg-[#001d3a]">
+    <section className="min-h-[72vh] md:min-h-screen flex items-end md:items-center relative overflow-hidden bg-[#001d3a]">
       <div className="absolute inset-0">
         {slides.map((slide, index) => {
           if (!visited.has(index)) return null;
@@ -108,30 +108,30 @@ const Hero = () => {
                   preload={shown ? 'auto' : 'none'}
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-b from-[#003366]/40 via-[#003366]/45 to-[#001d3a]/80" />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#003366]/30 via-[#001d3a]/55 to-[#001d3a]/90 md:from-[#003366]/40 md:via-[#003366]/45 md:to-[#001d3a]/80" />
             </div>
           );
         })}
       </div>
 
-      <div className="container mx-auto px-6 lg:px-12 mt-28 md:mt-36 relative z-10">
+      <div className="container mx-auto px-5 lg:px-12 pt-28 pb-20 md:pb-0 md:mt-36 relative z-10">
         <div className="max-w-2xl" aria-live="polite">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white">
+          <h1 className="text-[1.9rem] leading-[1.15] md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 md:leading-tight text-white">
             {active.title} <span className="text-[#5eb9df]">{active.highlight}</span>
           </h1>
           {active.subtitle ? (
-            <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-lg leading-relaxed">{active.subtitle}</p>
+            <p className="text-base md:text-2xl text-white/90 mb-7 md:mb-10 max-w-lg leading-relaxed">{active.subtitle}</p>
           ) : null}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-wrap gap-3 md:gap-4">
             <SmartLink
               to={active.cta1Link}
-              className="px-8 py-4 bg-[#feed17] text-[#001d3a] hover:bg-white rounded-lg font-semibold transition-colors text-lg flex items-center justify-center"
+              className="px-5 py-3 md:px-8 md:py-4 bg-[#feed17] text-[#001d3a] hover:bg-white rounded-lg font-semibold transition-colors text-sm md:text-lg inline-flex items-center justify-center"
             >
               {active.cta1}
             </SmartLink>
             <SmartLink
               to={active.cta2Link}
-              className="px-8 py-4 border border-white text-white hover:bg-white hover:text-[#003366] rounded-lg font-semibold transition-colors text-lg text-center"
+              className="px-5 py-3 md:px-8 md:py-4 border border-white/80 text-white hover:bg-white hover:text-[#003366] rounded-lg font-semibold transition-colors text-sm md:text-lg inline-flex items-center justify-center backdrop-blur-[1px]"
             >
               {active.cta2}
             </SmartLink>
@@ -140,7 +140,7 @@ const Hero = () => {
       </div>
 
       {count > 1 && (
-        <div className="absolute bottom-20 md:bottom-8 left-4 lg:left-10 z-10 flex items-center">
+        <div className="absolute bottom-6 md:bottom-8 left-3 lg:left-10 z-10 flex items-center">
           {slides.map((_, i) => (
             <button
               key={i}

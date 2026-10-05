@@ -87,13 +87,13 @@ function Leadership() {
       <div className="container mx-auto max-w-6xl">
         <PageHeader badge={s('badge')} title={s('title')} subtitle={s('intro')} />
 
-        <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 mb-8" aria-hidden="true">
-          <span className="inline-flex items-center gap-2">
-            <span className="w-8 border-t-2 border-[#9fb7cc]" />
+        <div className="flex flex-wrap justify-center gap-2 mb-6 md:mb-8 text-xs md:text-sm text-gray-600" aria-hidden="true">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white border border-gray-200 px-3 py-1.5">
+            <span className="w-5 border-t-2 border-[#9fb7cc]" />
             {s('legendLine')}
           </span>
-          <span className="inline-flex items-center gap-2">
-            <span className="w-8 border-t-2 border-dashed border-[#9fb7cc]" />
+          <span className="inline-flex items-center gap-2 rounded-full bg-white border border-gray-200 px-3 py-1.5">
+            <span className="w-5 border-t-2 border-dashed border-[#9fb7cc]" />
             {s('legendSide')}
           </span>
         </div>

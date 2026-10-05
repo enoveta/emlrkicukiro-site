@@ -43,6 +43,20 @@ const SocialIcon = ({ href, label, path }) => (
   </a>
 );
 
+const MobileLink = ({ href, active, sub = false, icon, children }) => (
+  <Link
+    to={href}
+    aria-current={active ? 'page' : undefined}
+    className={`flex items-center gap-2.5 rounded-xl transition-colors ${sub ? 'px-3 py-2 text-[15px]' : 'px-3 py-3 font-semibold'} ${
+      active ? 'bg-[#e8f5fb] text-[#003366] font-semibold' : `${sub ? 'text-gray-700' : 'text-[#0b2540]'} hover:bg-gray-50`
+    }`}
+  >
+    {icon ? <span className="text-[#1a6f99]">{icon}</span> : null}
+    <span className="flex-1">{children}</span>
+    {active ? <span className="w-1.5 h-1.5 rounded-full bg-[#1a6f99]" aria-hidden="true" /> : null}
+  </Link>
+);
+
 const Header = ({ scrolled }) => {
   const { lang, setLang, t } = useLanguage();
   const settings = useSettings();
@@ -82,6 +96,7 @@ const Header = ({ scrolled }) => {
     setActiveMenu(null);
     setMobileMenuOpen(false);
     setLanguageOpen(false);
+    setMobileSubmenu(null);
   }, [location.pathname]);
 
   // Escape closes any open menu; clicking outside closes too.
@@ -217,6 +232,9 @@ const Header = ({ scrolled }) => {
   );
 
   const megaLink = mainNavLinks.find((l) => l.key === activeMenu && l.columns);
+  const isCurrent = (href) => location.pathname === href;
+  const currentSection = mainNavLinks.find((l) => (l.columns || l.items) && isActive(l))?.key || '';
+  const openSection = mobileSubmenu === null ? currentSection : mobileSubmenu;
 
   return (
     <header ref={headerRef} className="fixed w-full z-50 top-0">
@@ -423,62 +441,86 @@ const Header = ({ scrolled }) => {
 
       {mobileMenuOpen && (
         <nav
-          className="lg:hidden bg-[#003366] text-white border-t border-white/10 max-h-[calc(100vh-5rem)] overflow-y-auto"
+          className="lg:hidden bg-white text-[#0b2540] shadow-2xl rounded-b-2xl max-h-[calc(100vh-4.5rem)] overflow-y-auto"
           aria-label="Mobile"
         >
-          <div className="px-4 py-3 space-y-1">
-            <Link to="/amatangazo" className="flex items-center gap-2 py-3 font-semibold text-[#feed17] border-b border-white/10">
-              <FaBullhorn aria-hidden="true" />
+          <div className="p-3 space-y-1">
+            <MobileLink href="/amatangazo" active={isCurrent('/amatangazo')} icon={<FaBullhorn aria-hidden="true" />}>
               {t('nav.notices')}
-            </Link>
-            {mainNavLinks.map((link) => (
-              <div key={link.key}>
-                {link.columns || link.items ? (
-                  <>
+            </MobileLink>
+            {mainNavLinks
+              .filter((link) => !link.cta)
+              .map((link) =>
+                link.columns || link.items ? (
+                  <div key={link.key} className="rounded-xl">
                     <button
                       type="button"
-                      className="w-full flex justify-between items-center py-3 text-left font-medium"
-                      aria-expanded={mobileSubmenu === link.key}
-                      onClick={() => setMobileSubmenu(mobileSubmenu === link.key ? null : link.key)}
+                      className={`w-full flex justify-between items-center px-3 py-3 rounded-xl text-left font-semibold ${
+                        isActive(link) ? 'text-[#003366]' : 'text-[#0b2540]'
+                      }`}
+                      aria-expanded={openSection === link.key}
+                      onClick={() => setMobileSubmenu(openSection === link.key ? '' : link.key)}
                     >
                       <span>{link.name}</span>
-                      <IoIosArrowDown className={`transition ${mobileSubmenu === link.key ? 'rotate-180' : ''}`} aria-hidden="true" />
+                      <IoIosArrowDown
+                        className={`text-gray-400 transition-transform ${openSection === link.key ? 'rotate-180' : ''}`}
+                        aria-hidden="true"
+                      />
                     </button>
-                    {mobileSubmenu === link.key && (
-                      <div className="pl-3 pb-2">
-                        {link.columns
-                          ? link.columns.map((column) => (
-                              <div key={column.title} className="mb-2">
-                                <p className="text-xs uppercase tracking-wide text-[#5fb8e1] mt-2 mb-1">{column.title}</p>
-                                {column.items.map((item) => (
-                                  <Link key={item.href} to={item.href} className="block py-2 text-white/90">
-                                    {item.name}
-                                  </Link>
-                                ))}
-                              </div>
-                            ))
-                          : link.items.map((item) => (
-                              <Link key={item.href} to={item.href} className="block py-2 text-white/90">
+                    {openSection === link.key && (
+                      <div className="pb-2 pl-2">
+                        {(link.columns || [{ title: '', items: link.items }]).map((column) => (
+                          <div key={column.title || 'items'} className="mb-1">
+                            {column.title ? (
+                              <p className="px-3 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                {column.title}
+                              </p>
+                            ) : null}
+                            {column.items.map((item) => (
+                              <MobileLink key={item.href} href={item.href} active={isCurrent(item.href)} sub>
                                 {item.name}
-                              </Link>
+                              </MobileLink>
                             ))}
+                          </div>
+                        ))}
                       </div>
                     )}
-                  </>
+                  </div>
                 ) : (
-                  <Link
-                    to={link.href}
-                    className={`block py-3 font-medium ${link.cta ? 'mt-2 text-center rounded-lg bg-[#feed17] text-[#003366]' : ''}`}
-                  >
+                  <MobileLink key={link.key} href={link.href} active={isCurrent(link.href)}>
                     {link.name}
-                  </Link>
-                )}
+                  </MobileLink>
+                )
+              )}
+          </div>
+          <div className="border-t border-gray-100 p-4 space-y-3">
+            <Link
+              to="/give"
+              className="block text-center rounded-xl bg-[#feed17] text-[#001d3a] font-semibold py-3 hover:bg-[#ffe600]"
+            >
+              {t('nav.give')}
+            </Link>
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <a href={`tel:${phone.replace(/\s/g, '')}`} className="inline-flex items-center gap-2 text-gray-600">
+                <FaPhone className="text-[#1a6f99]" aria-hidden="true" />
+                {phone}
+              </a>
+              <div className="inline-flex rounded-lg bg-gray-100 p-0.5">
+                {languages.map((item) => (
+                  <button
+                    key={item.code}
+                    type="button"
+                    lang={item.code}
+                    onClick={() => setLang(item.code)}
+                    className={`px-3 py-1.5 rounded-md text-xs font-semibold ${
+                      lang === item.code ? 'bg-white text-[#003366] shadow-sm' : 'text-gray-500'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
               </div>
-            ))}
-            <a href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-center py-3 text-white/90">
-              <FaPhone className="mr-2 text-[#5fb8e1]" aria-hidden="true" />
-              {phone}
-            </a>
+            </div>
           </div>
         </nav>
       )}

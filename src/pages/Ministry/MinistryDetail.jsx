@@ -46,28 +46,38 @@ function MinistryDetail() {
   const { paragraphs, bullets } = parseBody(localized(ministry, 'body', lang));
   const scheduleLabel = localized(ministry, 'scheduleLabel', lang);
   const heroImage = ministry.heroImageUrl || ministry.aboutImageUrl;
+  const designed = /\/media\/dept-/.test(heroImage || '');
   const photo = ministry.aboutImageUrl;
   const meetings = sortByTime((schedule || []).filter((i) => i.ministrySlug === ministry.slug));
 
   return (
     <div className="-mt-24 md:-mt-[9.5rem]">
-      <section className="relative h-[70vh] min-h-[460px] flex items-end overflow-hidden bg-[#001d3a]">
+      <section
+        className={`relative flex items-end overflow-hidden bg-[#001d3a] ${
+          designed ? 'h-[50vh] min-h-[380px] md:h-[56vh] md:min-h-[440px]' : 'h-[70vh] min-h-[460px]'
+        }`}
+      >
         <img
           src={mediaUrl(heroImage)}
           alt=""
-          className="absolute inset-0 w-full h-full object-cover"
+          // Designed backgrounds have their symbol at ~72% / 42%: keep it in view on narrow screens
+          className={`absolute inset-0 w-full h-full object-cover ${designed ? 'object-[72%_38%]' : ''}`}
           fetchpriority="high"
           decoding="async"
         />
         {/* Bottom overlay so the title and text stay readable on any image */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#001d3a] via-[#001d3a]/55 to-transparent" />
-        <div className="relative z-10 container mx-auto px-4 lg:px-8 pb-12 md:pb-16 text-white">
+        <div
+          className={`absolute inset-0 bg-gradient-to-t ${
+            designed ? 'from-[#001d3a]/95 via-[#001d3a]/30 to-transparent' : 'from-[#001d3a] via-[#001d3a]/55 to-transparent'
+          }`}
+        />
+        <div className={`relative z-10 container mx-auto px-5 lg:px-8 text-white ${designed ? 'pb-8 md:pb-12' : 'pb-12 md:pb-16'}`}>
           <Link to="/ministries" className="inline-flex items-center text-sm text-white/80 hover:text-[#feed17] mb-4">
             <FaArrowLeft className="mr-2" aria-hidden="true" />
             {t('ministries.back')}
           </Link>
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 max-w-4xl">{name}</h1>
-          {short ? <p className="text-lg md:text-2xl text-white/90 max-w-3xl">{short}</p> : null}
+          <h1 className="text-3xl md:text-6xl font-bold mb-3 md:mb-4 max-w-4xl">{name}</h1>
+          {short ? <p className="text-base md:text-2xl text-white/90 max-w-3xl">{short}</p> : null}
           {ministry.youtubeUrl ? (
             <a
               href={ministry.youtubeUrl}

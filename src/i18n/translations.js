@@ -5,7 +5,7 @@ export const translations = {
     churchFullName: 'Eglise Methodiste Libre au Rwanda',
     parish: 'Kicukiro Parish',
     nav: {
-      notices: 'Announcements & Calendar',
+      notices: 'Announcements',
       aboutUs: 'About Us',
       ourChurch: 'Our Church',
       ourHistory: 'Our History',
@@ -86,7 +86,7 @@ export const translations = {
       expired: 'Expired',
     },
     schedule: {
-      pageTitle: 'Announcements & Church Calendar',
+      pageTitle: 'Announcements',
       pageSubtitle: 'Weekly programme, calendar of activities and official announcements of EMLR Kicukiro Parish.',
       tabWeek: 'Weekly programme',
       tabCalendar: 'Calendar',
@@ -227,7 +227,7 @@ export const translations = {
     },
     about: {
       badge: 'Our History',
-      title: 'Our Methodist Heritage',
+      title: 'Our Origins',
       p1: 'The Methodist movement began with John Wesley (1703-1791) in England. At Oxford University, John, his brother Charles and their friends prayed, studied the Bible and served others with such discipline that other students called them “Methodists”.',
       p2: 'Wesley’s preaching brought revival to England at a time of deep moral decline. The movement spread to America, where it grew into the Methodist Episcopal Church.',
       p3: 'In 1860 the Free Methodist Church was founded to restore holiness, freedom in worship and care for rich and poor alike. This heritage lives on in Rwanda through EMLR, including our parish in Kicukiro.',
@@ -286,7 +286,7 @@ export const translations = {
       badge: 'Visit Us',
       title: 'Location & Contacts',
       subtitle: 'You are welcome to worship with us.',
-      contactTitle: 'Contacts',
+      contactTitle: 'Call us',
       address: 'Address',
       email: 'Email',
       seniorPastor: 'Senior Pastor',
@@ -414,7 +414,7 @@ export const translations = {
       expired: 'Ryarangiye',
     },
     schedule: {
-      pageTitle: 'Amatangazo n’Ingengabihe',
+      pageTitle: 'Amatangazo',
       pageSubtitle: 'Gahunda y’icyumweru, ingengabihe y’ibikorwa n’amatangazo ya Paruwasi ya Kicukiro.',
       tabWeek: 'Gahunda y’icyumweru',
       tabCalendar: 'Ingengabihe',
@@ -556,7 +556,7 @@ export const translations = {
     },
     about: {
       badge: 'Amateka yacu',
-      title: 'Umurage wacu wa Methodiste',
+      title: 'Inkomoko yacu',
       p1: 'Itorero ry’Abametodisti ryatangiriye kuri John Wesley (1703-1791) mu Bwongereza. Muri Kaminuza ya Oxford, John, murumuna we Charles n’inshuti zabo basengaga, bakiga Bibiliya kandi bagafasha abandi bafite gahunda ihamye, bituma bagenzi babo babita “Abametodisti”.',
       p2: 'Kubwiriza kwa Wesley kwazanye ububyutse mu Bwongereza mu gihe imico myiza yari yarasubiye inyuma cyane. Uwo murimo wageze no muri Amerika, aho wavuyemo Itorero Methodiste Episcopal.',
       p3: 'Mu 1860 hashinzwe Itorero Methodiste Libre kugira ngo hagarurwe kwera, umudendezo mu kuramya no kwita ku bantu bose, abakire n’abakene. Uwo murage ukomeje mu Rwanda binyuze muri EMLR, harimo na Paruwasi yacu ya Kicukiro.',
@@ -615,7 +615,7 @@ export const translations = {
       badge: 'Tugane',
       title: 'Aho duherereye',
       subtitle: 'Urakaza neza kuramya Imana hamwe natwe.',
-      contactTitle: 'Aho watubariza',
+      contactTitle: 'Duhamagare',
       address: 'Aderesi',
       email: 'Imeyili',
       seniorPastor: 'Umushumba Mukuru',

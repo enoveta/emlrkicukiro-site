@@ -5,7 +5,7 @@ import { useSettings } from '../api/usePublicData';
 import { useLanguage } from '../i18n/LanguageContext';
 
 const LinkList = ({ title, links }) => (
-  <div>
+  <div className="hidden md:block">
     <h2 className="text-xl font-bold mb-6 pb-2 relative inline-block">
       {title}
       <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#fae924]" />
@@ -55,14 +55,14 @@ const Footer = () => {
   return (
     <footer className="defer-render bg-[#001d3a] text-white">
       <div className="w-full h-2 bg-gradient-to-r from-[#001d3a] via-[#5fb9e2] to-[#fae924]" />
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+      <div className="container mx-auto px-5 md:px-4 py-10 md:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-8 md:mb-12">
           <div>
-            <div className="flex items-center mb-6">
+            <div className="flex items-center mb-4 md:mb-6">
               <img src={logo} alt="" width="48" height="48" loading="lazy" className="h-12 w-12 object-contain mr-3" />
               <span className="text-2xl font-bold text-white">{churchName}</span>
             </div>
-            <p className="mb-6 text-gray-300 leading-relaxed">{t('footer.blurb')}</p>
+            <p className="hidden md:block mb-6 text-gray-300 leading-relaxed">{t('footer.blurb')}</p>
             <div className="flex space-x-3">
               {socials.map((social) => (
                 <a
@@ -83,12 +83,12 @@ const Footer = () => {
           <LinkList title={t('footer.resources')} links={involved} />
 
           <div>
-            <h2 className="text-xl font-bold mb-6 pb-2 relative inline-block">
+            <h2 className="hidden md:inline-block text-xl font-bold mb-6 pb-2 relative">
               {t('footer.contactUs')}
               <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#fae924]" />
             </h2>
-            <address className="not-italic space-y-4">
-              <div className="flex items-start">
+            <address className="not-italic space-y-3 md:space-y-4">
+              <div className="hidden md:flex items-start">
                 <FaMapMarkerAlt className="text-[#30b0d3] mt-1 mr-3 flex-shrink-0" aria-hidden="true" />
                 <span className="text-gray-300">
                   {churchName}
@@ -109,10 +109,21 @@ const Footer = () => {
                 </a>
               </div>
             </address>
+            <nav className="md:hidden mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm" aria-label="Footer">
+              {[
+                { name: t('footer.notices'), href: '/amatangazo' },
+                { name: t('footer.giving'), href: '/give' },
+                { name: t('footer.contact'), href: '/about/location' },
+              ].map((l) => (
+                <Link key={l.href} to={l.href} className="text-gray-300 underline-offset-4 hover:text-white hover:underline">
+                  {l.name}
+                </Link>
+              ))}
+            </nav>
           </div>
         </div>
 
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-sm text-gray-400">
+        <div className="pt-6 md:pt-8 border-t border-white/10 flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-3 text-xs md:text-sm text-gray-400">
           <p>
             &copy; {new Date().getFullYear()} EMLR Kicukiro. {t('footer.rights')}
             <span className="mx-2">|</span>

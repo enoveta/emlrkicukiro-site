@@ -57,10 +57,10 @@ function Give() {
         <PageHeader title={t('give.title')} subtitle={t('give.subtitle')} />
 
         {selected ? (
-          <div className="bg-white rounded-xl shadow-md p-6 md:p-8 space-y-8">
+          <div className="bg-white rounded-xl shadow-md p-5 md:p-8 space-y-6 md:space-y-8">
             <section>
               <h2 className="text-lg font-semibold text-[#001d3a] mb-3">{t('give.purpose')}</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label={t('give.purpose')}>
+              <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t('give.purpose')}>
                 {list.map((a) => {
                   const active = a.purposeKey === selected.purposeKey;
                   return (
@@ -70,8 +70,10 @@ function Give() {
                       role="radio"
                       aria-checked={active}
                       onClick={() => setPurpose(a.purposeKey)}
-                      className={`p-4 rounded-lg border-2 text-left font-medium transition-colors ${
-                        active ? 'border-[#5fb9e2] bg-[#e8f5fb] text-[#001d3a]' : 'border-gray-200 text-gray-700 hover:border-[#5fb9e2]'
+                      className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors ${
+                        active
+                          ? 'bg-[#003366] border-[#003366] text-white'
+                          : 'bg-white border-gray-300 text-gray-700 hover:border-[#003366]'
                       }`}
                     >
                       {localized(a, 'purposeName', lang)}

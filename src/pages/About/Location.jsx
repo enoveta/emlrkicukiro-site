@@ -26,7 +26,7 @@ function Location() {
   return (
     <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50">
       <div className="container mx-auto max-w-6xl">
-        <PageHeader badge={t('location.badge')} title={t('location.title')} subtitle={t('location.subtitle')} />
+        <PageHeader badge={t('location.badge')} title={t('location.title')} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div className="rounded-xl overflow-hidden shadow-lg bg-white">

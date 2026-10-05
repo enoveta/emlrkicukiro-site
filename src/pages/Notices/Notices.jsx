@@ -1,13 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FaPrint, FaCalendarAlt, FaListUl, FaBullhorn, FaBroadcastTower, FaArrowRight } from 'react-icons/fa';
+import { FaPrint, FaCalendarAlt, FaListUl, FaBullhorn } from 'react-icons/fa';
 import { usePublicData } from '../../api/usePublicData';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { localized } from '../../i18n/translations';
 import PageHeader from '../../components/ui/PageHeader';
 import { SkeletonCards } from '../../components/ui/Skeleton';
 import usePageMeta from '../../hooks/usePageMeta';
-import { DAY_NAMES, nowAndNext, sameDay, styleFor, timeRange } from '../../utils/schedule';
+import { styleFor } from '../../utils/schedule';
 import ProgrammeSummary from '../../components/ProgrammeSummary';
 import ChurchCalendar from './ChurchCalendar';
 import NoticeList from './NoticeList';
@@ -17,40 +16,6 @@ const VIEWS = [
   { key: 'calendar', label: 'schedule.tabCalendar', icon: FaCalendarAlt },
   { key: 'notices', label: 'schedule.tabNotices', icon: FaBullhorn },
 ];
-
-function NowNext({ items, lang, t }) {
-  const { current, next, nextDate } = useMemo(() => nowAndNext(items), [items]);
-  if (!current && !next) return null;
-  const today = new Date();
-  const when = (date) =>
-    sameDay(date, today) ? t('schedule.today') : DAY_NAMES[lang][date.getDay()];
-  return (
-    <div className="grid sm:grid-cols-2 gap-3 mb-8 print:hidden">
-      {current ? (
-        <div className="flex items-start gap-3 rounded-xl bg-[#003366] text-white p-4">
-          <FaBroadcastTower className="mt-1 text-[#feed17] animate-pulse motion-reduce:animate-none" aria-hidden="true" />
-          <div>
-            <p className="text-xs uppercase tracking-wide text-[#feed17] font-semibold">{t('schedule.now')}</p>
-            <p className="font-bold">{localized(current, 'title', lang)}</p>
-            <p className="text-sm text-white/80 tabular-nums">{timeRange(current)}</p>
-          </div>
-        </div>
-      ) : null}
-      {next ? (
-        <div className={`flex items-start gap-3 rounded-xl bg-white border border-gray-200 p-4 ${current ? '' : 'sm:col-span-2'}`}>
-          <FaArrowRight className="mt-1 text-[#1a6f99]" aria-hidden="true" />
-          <div>
-            <p className="text-xs uppercase tracking-wide text-[#1a6f99] font-semibold">{t('schedule.next')}</p>
-            <p className="font-bold text-[#001d3a]">{localized(next, 'title', lang)}</p>
-            <p className="text-sm text-gray-600">
-              {when(nextDate)} · {timeRange(next)}
-            </p>
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
-}
 
 function Notices() {
   const { t, lang } = useLanguage();
@@ -76,9 +41,7 @@ function Notices() {
   return (
     <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50 print:bg-white print:py-0">
       <div className="container mx-auto max-w-7xl">
-        <PageHeader title={t('schedule.pageTitle')} subtitle={t('schedule.pageSubtitle')} />
-
-        <NowNext items={items} lang={lang} t={t} />
+        <PageHeader title={t('schedule.pageTitle')} />
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 print:hidden">
           <div role="tablist" aria-label={t('schedule.pageTitle')} className="grid grid-cols-3 md:inline-flex w-full md:w-auto bg-white border border-gray-200 rounded-xl p-1 self-start">
