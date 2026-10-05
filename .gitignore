@@ -21,3 +21,11 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# env
+.env
+
+# large binaries (kept on disk / server, not in git)
+*.mp4
+*.gif
+Backend/public/media/uploads/
