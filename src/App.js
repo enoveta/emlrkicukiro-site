@@ -5,34 +5,57 @@ import { LanguageProvider } from './i18n/LanguageContext';
 import Header from './components/Header1';
 import Footer from './components/Footer1';
 import ErrorBoundary from './components/ui/ErrorBoundary';
+import PageLoader from './components/ui/PageLoader';
+import NavigationProgress from './components/ui/NavigationProgress';
 import API_BASE from './api/client';
 import Home from './pages/Home';
 
 // Every page except Home is split into its own file and loaded on demand.
-const About = lazy(() => import('./pages/About/About'));
-const MissionVision = lazy(() => import('./pages/About/MissionVision'));
-const Leadership = lazy(() => import('./pages/About/Leadership'));
-const Location = lazy(() => import('./pages/About/Location'));
-const Team = lazy(() => import('./pages/About/Team'));
-const Ministries = lazy(() => import('./pages/Ministry/Ministries'));
-const MinistryDetail = lazy(() => import('./pages/Ministry/MinistryDetail'));
-const Events = lazy(() => import('./pages/Events/Events'));
-const Notices = lazy(() => import('./pages/Notices/Notices'));
-const News = lazy(() => import('./pages/Media/News'));
-const NewsDetail = lazy(() => import('./pages/Media/NewsDetail'));
-const TV = lazy(() => import('./pages/Media/TV'));
-const Gallery = lazy(() => import('./pages/Media/Gallery'));
-const Give = lazy(() => import('./pages/Give/Give'));
-const PrayerRequests = lazy(() => import('./pages/PrayerRequests'));
-const Volunteer = lazy(() => import('./pages/Volunteer'));
-const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
-const TermsOfService = lazy(() => import('./pages/TermsOfService'));
-const NotFound = lazy(() => import('./pages/NotFound'));
+const PAGE_IMPORTS = {
+  About: () => import('./pages/About/About'),
+  MissionVision: () => import('./pages/About/MissionVision'),
+  Leadership: () => import('./pages/About/Leadership'),
+  Location: () => import('./pages/About/Location'),
+  Team: () => import('./pages/About/Team'),
+  Ministries: () => import('./pages/Ministry/Ministries'),
+  MinistryDetail: () => import('./pages/Ministry/MinistryDetail'),
+  Events: () => import('./pages/Events/Events'),
+  Notices: () => import('./pages/Notices/Notices'),
+  News: () => import('./pages/Media/News'),
+  NewsDetail: () => import('./pages/Media/NewsDetail'),
+  TV: () => import('./pages/Media/TV'),
+  Gallery: () => import('./pages/Media/Gallery'),
+  Give: () => import('./pages/Give/Give'),
+  PrayerRequests: () => import('./pages/PrayerRequests'),
+  Volunteer: () => import('./pages/Volunteer'),
+  PrivacyPolicy: () => import('./pages/PrivacyPolicy'),
+  TermsOfService: () => import('./pages/TermsOfService'),
+  NotFound: () => import('./pages/NotFound'),
+};
+const About = lazy(PAGE_IMPORTS.About);
+const MissionVision = lazy(PAGE_IMPORTS.MissionVision);
+const Leadership = lazy(PAGE_IMPORTS.Leadership);
+const Location = lazy(PAGE_IMPORTS.Location);
+const Team = lazy(PAGE_IMPORTS.Team);
+const Ministries = lazy(PAGE_IMPORTS.Ministries);
+const MinistryDetail = lazy(PAGE_IMPORTS.MinistryDetail);
+const Events = lazy(PAGE_IMPORTS.Events);
+const Notices = lazy(PAGE_IMPORTS.Notices);
+const News = lazy(PAGE_IMPORTS.News);
+const NewsDetail = lazy(PAGE_IMPORTS.NewsDetail);
+const TV = lazy(PAGE_IMPORTS.TV);
+const Gallery = lazy(PAGE_IMPORTS.Gallery);
+const Give = lazy(PAGE_IMPORTS.Give);
+const PrayerRequests = lazy(PAGE_IMPORTS.PrayerRequests);
+const Volunteer = lazy(PAGE_IMPORTS.Volunteer);
+const PrivacyPolicy = lazy(PAGE_IMPORTS.PrivacyPolicy);
+const TermsOfService = lazy(PAGE_IMPORTS.TermsOfService);
+const NotFound = lazy(PAGE_IMPORTS.NotFound);
 const AdminApp = lazy(() => import('./admin/AdminApp'));
 const ChatBot = lazy(() => import('./components/ChatBot1'));
 
-// Full-height placeholder keeps the footer below the fold while a page chunk loads (no layout jump).
-const PageFallback = () => <div className="min-h-screen" aria-busy="true" />;
+// Full-height loader keeps the footer below the fold while a page chunk loads (no layout jump).
+const PageFallback = () => <PageLoader />;
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -60,11 +83,22 @@ function usePageViews(pathname) {
   }, [pathname]);
 }
 
+/** After the first page is ready, quietly download the other pages so later clicks open instantly. */
+function usePreloadPages() {
+  useEffect(() => {
+    const run = () => Object.values(PAGE_IMPORTS).forEach((load) => load().catch(() => {}));
+    const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1500));
+    const handle = setTimeout(() => idle(run), 2500);
+    return () => clearTimeout(handle);
+  }, []);
+}
+
 function PublicLayout() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === '/';
   usePageViews(location.pathname);
+  usePreloadPages();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 100);
@@ -127,7 +161,7 @@ function Shell() {
   const location = useLocation();
   if (location.pathname.startsWith('/admin')) {
     return (
-      <Suspense fallback={<PageFallback />}>
+      <Suspense fallback={<PageLoader fullScreen />}>
         <Routes>
           <Route path="/admin/*" element={<AdminApp />} />
         </Routes>
@@ -141,6 +175,7 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
+      <NavigationProgress />
       <Shell />
     </Router>
   );
