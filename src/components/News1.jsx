@@ -38,20 +38,32 @@ export const NewsCard = ({ item, lang, t, heading: Heading = 'h3' }) => (
   </Link>
 );
 
-/** Compact news row: date, serif title, excerpt, arrow. */
+/** Compact news row: small featured image, date, serif title, excerpt, arrow. */
 export const NewsRow = ({ item, lang }) => (
   <Link
     to={`/news/${item.id}`}
-    className="group grid grid-cols-[72px_minmax(0,1fr)_12px] md:grid-cols-[92px_minmax(0,1fr)_14px] items-start gap-2.5 md:gap-3.5 py-4 border-b border-line transition-all duration-200 hover:px-1.5"
+    className="group grid grid-cols-[76px_minmax(0,1fr)_12px] md:grid-cols-[104px_minmax(0,1fr)_14px] items-start gap-3.5 md:gap-5 py-4 border-b border-line transition-colors"
   >
-    <time dateTime={item.date} className="pt-1 text-[11px] md:text-xs font-bold leading-[1.5] text-[#596c70]">
-      {formatDate(item.date, lang)}
-    </time>
-    <span className="flex min-w-0 flex-col gap-1">
-      <strong className="font-serif font-normal text-[1.15rem] md:text-[1.3rem] leading-[1.25] text-ink">{localized(item, 'title', lang)}</strong>
-      <span className="text-[13px] md:text-sm leading-[1.55] text-[#596c70] line-clamp-2">{localized(item, 'content', lang)}</span>
+    <span className="block aspect-[4/3] overflow-hidden bg-[#d5d0c4]">
+      <Img
+        src={item.imageUrl}
+        alt=""
+        thumb
+        width="208"
+        height="156"
+        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+      />
     </span>
-    <span className="pt-0.5 text-gold-dark text-sm" aria-hidden="true">
+    <span className="flex min-w-0 flex-col gap-1">
+      <time dateTime={item.date} className="text-[11px] md:text-xs font-bold uppercase tracking-[0.08em] text-gold-text">
+        {formatDate(item.date, lang)}
+      </time>
+      <strong className="font-serif font-normal text-[1.12rem] md:text-[1.3rem] leading-[1.25] text-ink transition-colors group-hover:text-gold-dark">
+        {localized(item, 'title', lang)}
+      </strong>
+      <span className="hidden sm:block text-[13px] md:text-sm leading-[1.55] text-[#596c70] line-clamp-2">{localized(item, 'content', lang)}</span>
+    </span>
+    <span className="pt-0.5 text-gold-dark text-sm transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true">
       ↗
     </span>
   </Link>
