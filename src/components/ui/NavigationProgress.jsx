@@ -39,8 +39,8 @@ export default function NavigationProgress() {
 
   if (!active) return null;
   return (
-    <div className="fixed top-0 left-0 right-0 h-[3px] z-[70] overflow-hidden bg-[#feed17]/20" role="progressbar" aria-label="Loading page">
-      <div className="h-full w-1/3 bg-[#feed17] page-loader-bar" />
+    <div className="fixed top-0 left-0 right-0 h-[3px] z-[70] overflow-hidden bg-gold/15" role="progressbar" aria-label="Loading page">
+      <div className="h-full w-1/3 bg-gold page-loader-bar" />
     </div>
   );
 }

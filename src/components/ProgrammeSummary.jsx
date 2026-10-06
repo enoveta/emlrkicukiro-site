@@ -1,59 +1,63 @@
-import { FaClock, FaMapMarkerAlt } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import { localized } from '../i18n/translations';
-import { daysLabel, daysOf, occursOn, sortProgramme, styleFor, timeRange } from '../utils/schedule';
+import { daysLabel, daysOf, occursOn, sortProgramme, timeRange } from '../utils/schedule';
 
 /**
  * The weekly programme in short: every activity once, with its days summarised
  * (e.g. "Ku wa Mbere - ku wa Gatandatu · 05:00 - 06:00"), like the parish slides.
+ * Square cards; services are highlighted.
  */
-export default function ProgrammeSummary({ items, lang, t, dark = false, showPlace = false }) {
+export default function ProgrammeSummary({ items, lang, t, showPlace = false, linkTo }) {
   const today = new Date();
   const list = sortProgramme(items);
 
   return (
-    <ul className={`grid gap-3 ${dark ? 'sm:grid-cols-2' : 'md:grid-cols-2 xl:grid-cols-3'}`}>
+    <ul className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 md:gap-3">
       {list.map((item) => {
         const isToday = occursOn(item, today);
         const place = localized(item, 'location', lang);
-        return (
-          <li
-            key={item.id}
-            className={`rounded-xl p-4 flex gap-4 items-start ${
-              dark
-                ? `bg-white/5 border ${isToday ? 'border-[#feed17]/70' : 'border-white/10'}`
-                : `bg-white border shadow-sm ${isToday ? 'border-[#feed17] ring-1 ring-[#feed17]' : 'border-gray-200'}`
-            }`}
-          >
+        const featured = item.category === 'service';
+        const body = (
+          <>
             <span
-              className={`mt-1.5 w-2.5 h-2.5 rounded-full shrink-0 ${
-                dark && item.category === 'service' ? 'bg-[#5fb9e2]' : styleFor(item.category).dot
-              }`}
+              className="absolute top-0 right-0 w-[3px] h-full bg-gold-light origin-bottom scale-y-0 transition-transform duration-200 group-hover:scale-y-100"
               aria-hidden="true"
             />
-            <div className="min-w-0 flex-1">
-              <p className={`font-semibold leading-snug ${dark ? 'text-white' : 'text-[#001d3a] text-lg'}`}>
-                {localized(item, 'title', lang)}
-              </p>
-              <p className={`text-sm mt-1 ${dark ? 'text-white/75' : 'text-gray-600'}`}>{daysLabel(daysOf(item), lang)}</p>
-              <p className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-sm mt-1 ${dark ? 'text-white' : 'text-[#003366]'}`}>
-                <span className="inline-flex items-center gap-1.5 font-semibold tabular-nums">
-                  <FaClock className={dark ? 'text-[#feed17]' : 'text-[#1a6f99]'} aria-hidden="true" />
-                  {timeRange(item)}
+            <span className="flex flex-wrap items-center gap-2 text-[11px] md:text-xs font-bold uppercase tracking-[0.1em] text-[#6b592f]">
+              {daysLabel(daysOf(item), lang)}
+              {isToday ? (
+                <span className="px-2 py-0.5 rounded-full bg-[#45645d] text-white text-[9px] md:text-[10px] tracking-[0.08em]">
+                  {t('schedule.today')}
                 </span>
-                {showPlace && place ? (
-                  <span className="inline-flex items-center gap-1.5 text-gray-600">
-                    <FaMapMarkerAlt className="text-gray-400" aria-hidden="true" />
-                    {place}
-                  </span>
-                ) : null}
-                {item.recurrence && item.recurrence !== 'every' ? (
-                  <span className={dark ? 'text-white/70' : 'text-gray-500'}>{t(`schedule.${item.recurrence}`)}</span>
-                ) : null}
-              </p>
-            </div>
-            {isToday ? (
-              <span className="shrink-0 px-2 py-0.5 rounded-full bg-[#feed17] text-[#001d3a] text-xs font-bold">{t('schedule.today')}</span>
+              ) : null}
+            </span>
+            <span className="text-[13px] md:text-sm font-semibold tracking-[0.03em] text-[#627276] tabular-nums">
+              {timeRange(item)}
+              {item.recurrence && item.recurrence !== 'every' ? ` · ${t(`schedule.${item.recurrence}`)}` : ''}
+            </span>
+            <span className="max-w-[calc(100%-18px)] font-serif text-[1.3rem] md:text-[1.4rem] leading-[1.18] text-ink">
+              {localized(item, 'title', lang)}
+            </span>
+            {showPlace && place ? <span className="text-sm text-muted">{place}</span> : null}
+            {linkTo ? (
+              <span className="absolute top-4 right-[18px] text-gold text-sm" aria-hidden="true">
+                ↗
+              </span>
             ) : null}
+          </>
+        );
+        const cls = `group relative flex h-full min-h-[128px] md:min-h-[150px] flex-col items-start justify-end gap-1.5 px-5 py-[18px] md:px-[22px] md:py-5 overflow-hidden border text-ink transition-all duration-200 hover:border-[#c8b98e] hover:shadow-[0_10px_24px_rgba(20,54,66,.07)] hover:-translate-y-0.5 ${
+          featured ? 'bg-paper-featured' : 'bg-paper-card'
+        } ${isToday ? 'border-[#c8b98e]' : 'border-line'}`;
+        return (
+          <li key={item.id}>
+            {linkTo ? (
+              <Link to={linkTo} className={cls}>
+                {body}
+              </Link>
+            ) : (
+              <div className={cls}>{body}</div>
+            )}
           </li>
         );
       })}

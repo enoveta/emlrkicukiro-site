@@ -1,4 +1,5 @@
 import { useLanguage } from '../../i18n/LanguageContext';
+import { PageShell } from '../../components/ui/PageHeader';
 import usePageMeta from '../../hooks/usePageMeta';
 
 function MissionVision() {
@@ -7,47 +8,38 @@ function MissionVision() {
   const objectives = [t('mission.obj1'), t('mission.obj2'), t('mission.obj3'), t('mission.obj4'), t('mission.obj5')];
 
   return (
-    <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50">
-      <div className="container mx-auto max-w-6xl">
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1 text-sm font-semibold text-[#1a6f99] bg-[#e8f5fb] rounded-full mb-4">
-            {t('mission.badge')}
-          </span>
-          <h1 className="text-3xl md:text-5xl font-bold text-[#001d3a] mb-6">{t('mission.title')}</h1>
-          <div className="w-24 h-1.5 bg-[#5fb9e2] mx-auto mb-6" />
-        </div>
+    <PageShell badge={t('mission.badge')} title={t('mission.title')}>
+      <div className="max-w-[860px] mb-14 md:mb-20">
+        <p className="eyebrow mb-4">{t('mission.foundational')}</p>
+        <p className="font-serif text-[1.5rem] md:text-[1.9rem] leading-[1.4] text-ink">{t('mission.foundationalText')}</p>
+      </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-8 md:p-12 mb-16">
-          <h2 className="text-3xl font-bold text-[#001d3a] mb-6 text-center">{t('mission.foundational')}</h2>
-          <p className="text-lg text-gray-700 text-center max-w-3xl mx-auto">{t('mission.foundationalText')}</p>
+      <div className="grid gap-3.5 md:grid-cols-2 md:gap-[18px] mb-14 md:mb-20">
+        <div className="relative overflow-hidden bg-ink text-white p-8 md:p-10">
+          <span className="absolute -top-8 -right-8 w-28 h-28 rounded-full border border-gold-light/50" aria-hidden="true" />
+          <p className="eyebrow eyebrow-light mb-4">01</p>
+          <h2 className="font-serif text-[2rem] md:text-[2.4rem] leading-tight mb-4">{t('mission.mission')}</h2>
+          <p className="text-[17px] leading-[1.75] text-[#d4dddc]">{t('mission.missionText')}</p>
         </div>
-
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
-          <div className="bg-gradient-to-br from-[#001d3a] to-[#0a2c52] rounded-xl p-8 text-white">
-            <h2 className="text-2xl font-bold mb-4">{t('mission.mission')}</h2>
-            <p className="text-lg">{t('mission.missionText')}</p>
-          </div>
-          <div className="bg-gradient-to-br from-[#1a6f99] to-[#3a9bc4] rounded-xl p-8 text-white">
-            <h2 className="text-2xl font-bold mb-4">{t('mission.vision')}</h2>
-            <p className="text-lg">{t('mission.visionText')}</p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-lg p-8 md:p-12 mb-16">
-          <h2 className="text-3xl font-bold text-[#001d3a] mb-8 text-center">{t('mission.objectives')}</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {objectives.map((objective, index) => (
-              <div key={index} className="bg-gray-50 p-6 rounded-lg border-l-4 border-[#5fb9e2]">
-                <div className="w-10 h-10 bg-[#e8f5fb] rounded-full flex items-center justify-center mb-4">
-                  <span className="font-bold text-[#001d3a]">{index + 1}</span>
-                </div>
-                <h3 className="font-semibold text-[#001d3a]">{objective}</h3>
-              </div>
-            ))}
-          </div>
+        <div className="relative overflow-hidden bg-paper-featured border border-line p-8 md:p-10">
+          <span className="absolute right-0 bottom-0 w-1/2 h-1/3 bg-gold-light/40" aria-hidden="true" />
+          <p className="eyebrow mb-4 relative">02</p>
+          <h2 className="relative font-serif text-[2rem] md:text-[2.4rem] leading-tight text-ink mb-4">{t('mission.vision')}</h2>
+          <p className="relative text-[17px] leading-[1.75] text-[#435b60]">{t('mission.visionText')}</p>
         </div>
       </div>
-    </div>
+
+      <p className="eyebrow mb-3">{t('mission.objectives')}</p>
+      <h2 className="h-section mb-8">{t('mission.objectives')}</h2>
+      <ol className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 md:gap-3">
+        {objectives.map((objective, index) => (
+          <li key={index} className="flex flex-col gap-3 min-h-[150px] p-6 border border-line bg-paper-card">
+            <span className="font-serif text-[2rem] leading-none text-gold">{String(index + 1).padStart(2, '0')}</span>
+            <span className="text-[17px] font-semibold leading-snug text-ink">{objective}</span>
+          </li>
+        ))}
+      </ol>
+    </PageShell>
   );
 }
 

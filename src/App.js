@@ -96,12 +96,11 @@ function usePreloadPages() {
 function PublicLayout() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const isHome = location.pathname === '/';
   usePageViews(location.pathname);
   usePreloadPages();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 100);
+    const handleScroll = () => setScrolled(window.scrollY > 40);
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -109,16 +108,15 @@ function PublicLayout() {
 
   return (
     <LanguageProvider>
-      <div className="font-sans text-gray-800 bg-white">
+      <div className="site min-h-screen">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-white focus:text-[#001d3a] focus:px-4 focus:py-2 focus:rounded"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-ink-deep focus:text-white focus:px-4 focus:py-2"
         >
           Skip to content
         </a>
         <Header scrolled={scrolled} />
-        {/* Offset the fixed header so inner pages don't sit under it */}
-        <main id="main" className={isHome ? '' : 'pt-24 md:pt-[9.5rem]'}>
+        <main id="main">
           <ErrorBoundary resetKey={location.pathname}>
             <Suspense fallback={<PageFallback />}>
               <Routes>

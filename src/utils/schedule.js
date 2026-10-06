@@ -14,7 +14,7 @@ export const DAY_SHORT = {
 
 /** Colour + label per activity type (labels live in translations under schedule.categories). */
 export const CATEGORY_STYLES = {
-  service: { dot: 'bg-[#003366]', chip: 'bg-[#e6eef7] text-[#003366] border-[#b9cde3]', bar: 'border-l-[#003366]' },
+  service: { dot: 'bg-ink', chip: 'bg-paper-featured text-ink border-[#d9cfb6]', bar: 'border-l-ink' },
   prayer: { dot: 'bg-purple-600', chip: 'bg-purple-50 text-purple-800 border-purple-200', bar: 'border-l-purple-600' },
   choir: { dot: 'bg-amber-500', chip: 'bg-amber-50 text-amber-900 border-amber-200', bar: 'border-l-amber-500' },
   fellowship: { dot: 'bg-emerald-600', chip: 'bg-emerald-50 text-emerald-800 border-emerald-200', bar: 'border-l-emerald-600' },

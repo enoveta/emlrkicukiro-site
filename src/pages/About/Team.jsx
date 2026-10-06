@@ -2,7 +2,7 @@ import { usePublicData } from '../../api/usePublicData';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { localized } from '../../i18n/translations';
 import Img from '../../components/ui/Img';
-import PageHeader from '../../components/ui/PageHeader';
+import { PageShell } from '../../components/ui/PageHeader';
 import { SkeletonCards } from '../../components/ui/Skeleton';
 import usePageMeta from '../../hooks/usePageMeta';
 
@@ -10,31 +10,28 @@ function PastorCard({ member, lang, featured = false }) {
   const position = localized(member, 'position', lang);
   return (
     <article
-      className={`group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden text-center transition-shadow hover:shadow-lg ${
-        featured ? 'max-w-md mx-auto w-full' : ''
+      className={`group bg-white border border-line overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_17px_35px_rgba(20,54,66,.12)] ${
+        featured ? 'grid sm:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]' : 'flex flex-col'
       }`}
     >
-      <div className={`bg-gradient-to-br from-[#003366] to-[#1a6f99] ${featured ? 'h-24 md:h-28' : 'h-14 md:h-20'}`} />
-      <div className={`${featured ? '-mt-16 md:-mt-20 px-6 pb-7' : '-mt-10 md:-mt-14 px-3 md:px-5 pb-5'}`}>
-        <div
-          className={`mx-auto rounded-full overflow-hidden bg-gray-100 ring-4 ring-white shadow-md ${
-            featured ? 'w-32 h-32 md:w-40 md:h-40' : 'w-20 h-20 md:w-28 md:h-28'
-          }`}
-        >
-          <Img src={member.imageUrl} alt={member.name} thumb className="w-full h-full object-cover object-top" />
-        </div>
-        <h2 className={`font-bold text-[#0b2540] leading-snug ${featured ? 'text-xl md:text-2xl mt-4' : 'text-sm md:text-lg mt-3'}`}>
-          {member.name}
-        </h2>
+      <div className={`relative overflow-hidden bg-paper-tint ${featured ? 'aspect-[4/4] sm:aspect-auto sm:min-h-[340px]' : 'aspect-[4/5]'}`}>
+        <Img
+          src={member.imageUrl}
+          alt={member.name}
+          thumb
+          className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+        />
+      </div>
+      <div className={`flex flex-col ${featured ? 'justify-center p-7 md:p-10' : 'p-4 md:p-5'}`}>
         {position ? (
-          <p
-            className={`inline-block mt-2 rounded-full bg-[#e8f5fb] text-[#1a6f99] font-semibold ${
-              featured ? 'text-sm px-3 py-1' : 'text-xs px-2.5 py-0.5'
-            }`}
-          >
+          <p className={`font-bold uppercase tracking-[0.1em] text-gold-text ${featured ? 'text-xs mb-3' : 'text-[10px] md:text-[11px] mb-1.5'}`}>
             {position}
           </p>
         ) : null}
+        <h2 className={`font-serif font-normal leading-[1.2] text-ink ${featured ? 'text-[1.9rem] md:text-[2.3rem]' : 'text-[1.1rem] md:text-[1.35rem]'}`}>
+          {member.name}
+        </h2>
+        {featured ? <span className="mt-5 block w-10 h-px bg-gold" aria-hidden="true" /> : null}
       </div>
     </article>
   );
@@ -48,26 +45,23 @@ function Team() {
   const others = (people || []).filter((p) => p.team !== 'NATIONAL');
 
   return (
-    <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50">
-      <div className="container mx-auto max-w-5xl">
-        <PageHeader title={t('team.title')} subtitle={t('team.subtitle')} />
-        {loading ? <SkeletonCards count={3} /> : null}
+    <PageShell title={t('team.title')} subtitle={t('team.subtitle')} tone="paper">
+      {loading ? <SkeletonCards count={3} /> : null}
 
-        {national.length ? (
-          <div className="grid gap-6 mb-8 md:mb-12">
-            {national.map((member) => (
-              <PastorCard key={member.id} member={member} lang={lang} featured />
-            ))}
-          </div>
-        ) : null}
-
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-          {others.map((member) => (
-            <PastorCard key={member.id} member={member} lang={lang} />
+      {national.length ? (
+        <div className="grid gap-4 mb-6 md:mb-8">
+          {national.map((member) => (
+            <PastorCard key={member.id} member={member} lang={lang} featured />
           ))}
         </div>
+      ) : null}
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 md:gap-4">
+        {others.map((member) => (
+          <PastorCard key={member.id} member={member} lang={lang} />
+        ))}
       </div>
-    </div>
+    </PageShell>
   );
 }
 

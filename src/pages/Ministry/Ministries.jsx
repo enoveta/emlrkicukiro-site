@@ -1,7 +1,7 @@
 import { usePublicData } from '../../api/usePublicData';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { MinistryCard } from '../../components/Programs1';
-import PageHeader from '../../components/ui/PageHeader';
+import { PageShell } from '../../components/ui/PageHeader';
 import { SkeletonCards } from '../../components/ui/Skeleton';
 import usePageMeta from '../../hooks/usePageMeta';
 
@@ -24,24 +24,24 @@ const Ministries = () => {
   ].filter((g) => g.items.length);
 
   return (
-    <section className="py-12 md:py-16 bg-gray-50 min-h-screen">
-      <div className="container mx-auto px-4 lg:px-8">
-        <PageHeader badge={t('nav.departments')} title={t('ministries.title')} subtitle={t('home.ministriesSubtitle')} />
-        {loading ? <SkeletonCards count={6} /> : null}
-        {groups.map((group) => (
-          <div key={group.title || 'other'} className="mb-14">
-            {group.title ? (
-              <h2 className="text-2xl font-bold text-[#003366] mb-6 pb-2 border-b border-gray-200">{group.title}</h2>
-            ) : null}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {group.items.map((ministry) => (
-                <MinistryCard key={ministry.id || ministry.slug} ministry={ministry} lang={lang} t={t} />
-              ))}
+    <PageShell badge={t('nav.departments')} title={t('ministries.title')} subtitle={t('home.ministriesSubtitle')} tone="paper">
+      {loading ? <SkeletonCards count={6} /> : null}
+      {groups.map((group, gi) => (
+        <div key={group.title || 'other'} className="mb-14 md:mb-20 last:mb-0">
+          {group.title ? (
+            <div className="flex items-end justify-between gap-4 mb-6 pb-4 border-b border-line">
+              <h2 className="h-display text-[2rem] md:text-[2.5rem] leading-tight">{group.title}</h2>
+              <span className="text-xs font-bold tracking-[0.08em] text-[#7f8a89]">{String(gi + 1).padStart(2, '0')}</span>
             </div>
+          ) : null}
+          <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-[18px]">
+            {group.items.map((ministry, i) => (
+              <MinistryCard key={ministry.id || ministry.slug} ministry={ministry} lang={lang} t={t} index={i} />
+            ))}
           </div>
-        ))}
-      </div>
-    </section>
+        </div>
+      ))}
+    </PageShell>
   );
 };
 

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { FaQuoteLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { usePublicData } from '../api/usePublicData';
 import Img from './ui/Img';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -31,51 +30,53 @@ const Testimonials = () => {
   const current = list[currentSlide] || list[0];
 
   return (
-    <section className="defer-render py-20 bg-[#f8f9fa]">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-[#001d3a] mb-4">{t('home.testimonials')}</h2>
-          <p className="max-w-2xl mx-auto text-lg text-gray-600">{t('home.testimonialsSubtitle')}</p>
+    <section className="defer-render section-pad bg-paper" aria-labelledby="home-testimonials">
+      <div className="site-container">
+        <div className="mb-8 md:mb-10">
+          <p className="eyebrow mb-3">{t('home.testimonials')}</p>
+          <h2 id="home-testimonials" className="h-section">
+            {t('home.testimonialsSubtitle')}
+          </h2>
         </div>
 
-        <div className="relative">
-          <button
-            onClick={prevSlide}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-3 rounded-full shadow-md hover:bg-[#001d3a] hover:text-white transition-colors"
-            aria-label="Previous"
-            type="button"
-          >
-            <FaChevronLeft className="text-[#001d3a]" aria-hidden="true" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-3 rounded-full shadow-md hover:bg-[#001d3a] hover:text-white transition-colors"
-            aria-label="Next"
-            type="button"
-          >
-            <FaChevronRight className="text-[#001d3a]" aria-hidden="true" />
-          </button>
-
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden max-w-4xl mx-auto">
-            <div className="p-8 md:p-10">
-              <div className="flex flex-col md:flex-row items-center">
-                <div className="mb-6 md:mb-0 md:mr-8">
-                  <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-[#5fb9e2]">
-                    <Img src={current.imageUrl} alt={current.author} thumb className="w-full h-full object-cover" />
-                  </div>
-                </div>
-                <div className="text-center md:text-left">
-                  <FaQuoteLeft className="text-3xl text-[#5fb9e2] opacity-30 mb-4 mx-auto md:mx-0" />
-                  <p className="text-lg md:text-xl text-gray-700 mb-6">{localized(current, 'text', lang)}</p>
-                  <div>
-                    <h4 className="text-xl font-bold text-[#001d3a]">{current.author}</h4>
-                    <p className="text-[#5fb9e2] font-medium">{localized(current, 'role', lang)}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <figure className="relative bg-white border border-line p-7 md:p-12 grid gap-6 md:grid-cols-[120px_minmax(0,1fr)] md:gap-10 items-start">
+          <div className="w-20 h-20 md:w-28 md:h-28 overflow-hidden bg-paper-tint">
+            <Img src={current.imageUrl} alt={current.author} thumb className="w-full h-full object-cover" />
           </div>
-        </div>
+          <div>
+            <span className="block font-serif text-6xl leading-[.6] text-gold-light mb-3" aria-hidden="true">
+              &ldquo;
+            </span>
+            <blockquote className="font-serif text-[1.45rem] md:text-[1.8rem] leading-[1.35] text-ink">
+              {localized(current, 'text', lang)}
+            </blockquote>
+            <figcaption className="mt-6">
+              <span className="block text-base font-bold text-ink">{current.author}</span>
+              <span className="block text-xs font-bold uppercase tracking-[0.1em] text-gold-text mt-1">{localized(current, 'role', lang)}</span>
+            </figcaption>
+          </div>
+          {list.length > 1 ? (
+            <div className="md:col-start-2 flex items-center gap-1.5">
+              {[
+                { label: t('home.prevSlide'), onClick: prevSlide, glyph: '←' },
+                { label: t('home.nextSlide'), onClick: nextSlide, glyph: '→' },
+              ].map((b) => (
+                <button
+                  key={b.glyph}
+                  type="button"
+                  onClick={b.onClick}
+                  aria-label={b.label}
+                  className="grid place-items-center w-9 h-9 rounded-full border border-ink/20 text-ink text-sm hover:bg-ink hover:text-white transition-colors"
+                >
+                  {b.glyph}
+                </button>
+              ))}
+              <span className="ml-3 text-xs font-bold tracking-[0.08em] text-[#7f8a89]">
+                <span className="text-ink">{String(currentSlide + 1).padStart(2, '0')}</span> / {String(list.length).padStart(2, '0')}
+              </span>
+            </div>
+          ) : null}
+        </figure>
       </div>
     </section>
   );

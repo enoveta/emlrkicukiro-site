@@ -1,59 +1,77 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import {
-  FaBars,
-  FaTimes,
-  FaPhone,
-  FaGlobe,
-  FaBullhorn,
-  FaChurch,
-  FaUserTie,
-  FaMapMarkerAlt,
-  FaBible,
-  FaHandsHelping,
-  FaChartLine,
-  FaGraduationCap,
-  FaChevronRight,
-  FaArrowRight,
-} from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaYoutube } from 'react-icons/fa';
 import { IoIosArrowDown } from 'react-icons/io';
 import logo from '../assets/emlr/logo1.png';
 import { useLanguage } from '../i18n/LanguageContext';
 import { localized } from '../i18n/translations';
 import { usePublicData, useSettings } from '../api/usePublicData';
 
-const DEFAULT_PHONE = '+250 788 524 792';
-const SOCIAL_DEFAULTS = {
+export const DEFAULT_PHONE = '+250 788 524 792';
+export const SOCIAL_DEFAULTS = {
   facebook: 'https://www.facebook.com/p/EMLR-Kicukiro-100083143130293/',
   instagram: 'https://www.instagram.com/emlrkicukiro/',
   youtube: 'https://www.youtube.com/@emlrparoissekicukiro',
 };
 const DEPARTMENTS = [
-  { key: 'evangelism', label: 'nav.evangelismDept', icon: FaBible },
-  { key: 'social', label: 'nav.socialDept', icon: FaHandsHelping },
-  { key: 'development', label: 'nav.planningDept', icon: FaChartLine },
-  { key: 'education', label: 'nav.educationDept', icon: FaGraduationCap },
+  { key: 'evangelism', label: 'nav.evangelismDept' },
+  { key: 'social', label: 'nav.socialDept' },
+  { key: 'development', label: 'nav.planningDept' },
+  { key: 'education', label: 'nav.educationDept' },
 ];
 
-const SocialIcon = ({ href, label, path }) => (
-  <a href={href} className="hover:text-[#feed17]" target="_blank" rel="noopener noreferrer" aria-label={label}>
-    <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-      <path d={path} />
-    </svg>
-  </a>
+export const socialLinks = (settings) => [
+  { label: 'Facebook', href: settings.facebook || SOCIAL_DEFAULTS.facebook, Icon: FaFacebookF },
+  { label: 'Instagram', href: settings.instagram || SOCIAL_DEFAULTS.instagram, Icon: FaInstagram },
+  { label: 'YouTube', href: settings.youtube || SOCIAL_DEFAULTS.youtube, Icon: FaYoutube },
+];
+
+export const PhoneIcon = ({ className = 'w-3.5 h-3.5' }) => (
+  <svg
+    viewBox="0 0 20 20"
+    className={`${className} fill-none stroke-current`}
+    strokeWidth="1.25"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M6.1 2.5 8.3 6l-1.5 1.4c.9 1.9 2.2 3.2 4.1 4.1l1.4-1.5 3.5 2.2-.7 3c-.2.7-.9 1.2-1.6 1.1C7.4 15.4 3.2 11.2 2.3 5.1c-.1-.7.4-1.4 1.1-1.6l2.7-1Z" />
+  </svg>
 );
 
-const MobileLink = ({ href, active, sub = false, icon, children }) => (
+/** Square brand mark + serif name, shared by header and footer. */
+export const Brand = ({ subtitle, dark = false }) => (
+  <Link to="/" className="inline-flex items-center gap-3 min-w-0" aria-label="EMLR Kicukiro Parish home">
+    <span className="grid place-items-center w-11 h-11 md:w-12 md:h-12 flex-none bg-white overflow-hidden">
+      <img src={logo} alt="" width="44" height="44" className="w-10 h-10 md:w-11 md:h-11 object-contain" />
+    </span>
+    <span className="flex flex-col min-w-0">
+      <span className={`font-serif text-lg md:text-xl leading-none ${dark ? 'text-white' : 'text-ink'}`}>EMLR</span>
+      <span
+        className={`mt-1.5 text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.075em] leading-tight ${
+          dark ? 'text-[#b5c0be]' : 'text-[#69797b]'
+        }`}
+      >
+        {subtitle}
+      </span>
+    </span>
+  </Link>
+);
+
+const MobileLink = ({ href, active, sub = false, children }) => (
   <Link
     to={href}
     aria-current={active ? 'page' : undefined}
-    className={`flex items-center gap-2.5 rounded-xl transition-colors ${sub ? 'px-3 py-2 text-[15px]' : 'px-3 py-3 font-semibold'} ${
-      active ? 'bg-[#e8f5fb] text-[#003366] font-semibold' : `${sub ? 'text-gray-700' : 'text-[#0b2540]'} hover:bg-gray-50`
+    className={`flex items-center justify-between gap-3 transition-colors ${
+      sub ? 'pl-4 pr-1 py-2.5 text-[15px] border-l-2' : 'px-0.5 py-3.5 text-base font-semibold'
+    } ${
+      active
+        ? `text-ink font-semibold ${sub ? 'border-gold bg-paper' : ''}`
+        : `text-[#334c51] hover:text-ink ${sub ? 'border-transparent' : ''}`
     }`}
   >
-    {icon ? <span className="text-[#1a6f99]">{icon}</span> : null}
-    <span className="flex-1">{children}</span>
-    {active ? <span className="w-1.5 h-1.5 rounded-full bg-[#1a6f99]" aria-hidden="true" /> : null}
+    <span>{children}</span>
+    {active ? <span className="w-1.5 h-1.5 rounded-full bg-gold" aria-hidden="true" /> : null}
   </Link>
 );
 
@@ -62,20 +80,14 @@ const Header = ({ scrolled }) => {
   const settings = useSettings();
   const { data: ministries } = usePublicData('/ministries', []);
   const phone = settings.phone || DEFAULT_PHONE;
-  const social = {
-    facebook: settings.facebook || SOCIAL_DEFAULTS.facebook,
-    instagram: settings.instagram || SOCIAL_DEFAULTS.instagram,
-    youtube: settings.youtube || SOCIAL_DEFAULTS.youtube,
-  };
+  const social = socialLinks(settings);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [languageOpen, setLanguageOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
   const [mobileSubmenu, setMobileSubmenu] = useState(null);
   const closeTimer = useRef(null);
   const headerRef = useRef(null);
   const location = useLocation();
-  const isHomePage = location.pathname === '/';
 
   const cancelClose = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -95,7 +107,6 @@ const Header = ({ scrolled }) => {
   useEffect(() => {
     setActiveMenu(null);
     setMobileMenuOpen(false);
-    setLanguageOpen(false);
     setMobileSubmenu(null);
   }, [location.pathname]);
 
@@ -104,13 +115,13 @@ const Header = ({ scrolled }) => {
     const onKey = (e) => {
       if (e.key === 'Escape') {
         setActiveMenu(null);
-        setLanguageOpen(false);
+        setMobileMenuOpen(false);
       }
     };
     const onClick = (e) => {
       if (headerRef.current && !headerRef.current.contains(e.target)) {
         setActiveMenu(null);
-        setLanguageOpen(false);
+        setMobileMenuOpen(false);
       }
     };
     document.addEventListener('keydown', onKey);
@@ -123,7 +134,6 @@ const Header = ({ scrolled }) => {
 
   const departmentColumns = DEPARTMENTS.map((dept) => ({
     title: t(dept.label),
-    icon: dept.icon,
     items: (ministries || [])
       .filter((m) => m.category === dept.key)
       .map((m) => ({ name: localized(m, 'name', lang), href: `/ministries/${m.slug}` })),
@@ -138,7 +148,6 @@ const Header = ({ scrolled }) => {
       columns: [
         {
           title: t('nav.ourChurch'),
-          icon: FaChurch,
           items: [
             { name: t('nav.ourHistory'), href: '/about' },
             { name: t('nav.missionVision'), href: '/about/mission-vision' },
@@ -146,7 +155,6 @@ const Header = ({ scrolled }) => {
         },
         {
           title: t('nav.churchLeadership'),
-          icon: FaUserTie,
           items: [
             { name: t('nav.orgStructure'), href: '/about/leadership' },
             { name: t('nav.pastoralTeam'), href: '/about/team' },
@@ -154,7 +162,6 @@ const Header = ({ scrolled }) => {
         },
         {
           title: t('nav.ourParish'),
-          icon: FaMapMarkerAlt,
           items: [
             { name: t('nav.locationDirections'), href: '/about/location' },
             { name: t('nav.notices'), href: '/amatangazo' },
@@ -179,7 +186,6 @@ const Header = ({ scrolled }) => {
       ],
     },
     { key: 'events', name: t('nav.events'), href: '/events' },
-    { key: 'give', name: t('nav.give'), href: '/give', cta: true },
   ];
 
   const isActive = (link) => {
@@ -188,164 +194,135 @@ const Header = ({ scrolled }) => {
       : (link.columns ? link.columns.flatMap((c) => c.items) : link.items || []).map((i) => i.href);
     return hrefs.some((h) => location.pathname === h || location.pathname.startsWith(`${h}/`));
   };
-
-  const languages = [
-    { code: 'en', label: 'EN', name: 'English' },
-    { code: 'rw', label: 'RW', name: 'Ikinyarwanda' },
-  ];
-
-  const LanguageMenu = ({ className = '' }) => (
-    <div className={`relative ${className}`}>
-      <button
-        type="button"
-        onClick={() => setLanguageOpen(!languageOpen)}
-        className="flex items-center hover:text-[#feed17] transition-colors"
-        aria-label={`${t('nav.language')}: ${lang === 'rw' ? 'RW' : 'EN'}`}
-        aria-expanded={languageOpen}
-        aria-haspopup="true"
-      >
-        <FaGlobe className="mr-1 text-[#feed17]" aria-hidden="true" />
-        <span>{lang === 'rw' ? 'RW' : 'EN'}</span>
-        <IoIosArrowDown className="ml-1 text-xs" aria-hidden="true" />
-      </button>
-      {languageOpen && (
-        <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-md py-1 z-50">
-          {languages.map((item) => (
-            <button
-              key={item.code}
-              type="button"
-              lang={item.code}
-              onClick={() => {
-                setLang(item.code);
-                setLanguageOpen(false);
-              }}
-              className={`block w-full text-left px-4 py-2 text-sm ${
-                lang === item.code ? 'bg-[#003366] text-white' : 'text-[#003366] hover:bg-[#003366] hover:text-white'
-              }`}
-            >
-              {item.name}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-
-  const megaLink = mainNavLinks.find((l) => l.key === activeMenu && l.columns);
   const isCurrent = (href) => location.pathname === href;
   const currentSection = mainNavLinks.find((l) => (l.columns || l.items) && isActive(l))?.key || '';
   const openSection = mobileSubmenu === null ? currentSection : mobileSubmenu;
+  const megaLink = mainNavLinks.find((l) => l.key === activeMenu && l.columns);
+
+  const languageSwitch = (
+    <div className="inline-flex items-center gap-0.5 p-0.5 rounded-full border border-white/20" role="group" aria-label={t('nav.language')}>
+      {['en', 'rw'].map((code) => (
+        <button
+          key={code}
+          type="button"
+          lang={code}
+          aria-pressed={lang === code}
+          onClick={() => setLang(code)}
+          className={`min-w-[32px] md:min-w-[36px] px-1.5 md:px-2 py-[3px] rounded-full text-[11px] md:text-xs font-bold tracking-[0.05em] transition-colors ${
+            lang === code ? 'bg-gold-light text-ink-deep' : 'text-[#bdc9c8] hover:text-white'
+          }`}
+        >
+          {code.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  );
 
   return (
-    <header ref={headerRef} className="fixed w-full z-50 top-0">
-      <div
-        className={`bg-gradient-to-r from-[#001a33] to-[#002244] text-white text-sm transition-all duration-300 hidden md:block ${
-          scrolled ? 'h-0 overflow-hidden' : 'py-2'
-        }`}
-      >
-        <div className="container mx-auto px-4 lg:px-8 flex justify-between items-center">
-          <div className="flex space-x-6">
-            <Link to="/amatangazo" className="flex items-center hover:text-[#feed17] transition-colors py-1">
-              <FaBullhorn className="mr-2 text-[#5fb8e1]" aria-hidden="true" />
-              {t('nav.notices')}
-            </Link>
-            <a href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-center hover:text-[#feed17] transition-colors py-1">
-              <FaPhone className="mr-2 text-[#5fb8e1]" aria-hidden="true" />
+    <>
+      {/* Utility bar */}
+      <div className="bg-ink-deep text-[#e2e8e7]">
+        <div className="site-container flex min-h-[38px] md:min-h-[42px] items-center justify-between gap-2 md:gap-6">
+          <Link
+            to="/amatangazo"
+            className="inline-flex items-center gap-2 md:gap-2.5 text-xs md:text-[13px] font-semibold text-[#f4eee1] hover:text-gold-light transition-colors"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-gold-light shadow-[0_0_0_3px_rgba(221,197,143,.12)]" aria-hidden="true" />
+            {t('nav.notices')}
+            <span className="text-[#d8c39a] text-xs" aria-hidden="true">
+              ↗
+            </span>
+          </Link>
+          <div className="flex items-center gap-2.5 md:gap-5">
+            <div className="hidden md:flex items-center gap-2" aria-label="Social media">
+              {social.map(({ label, href, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`EMLR Kicukiro on ${label}`}
+                  className="grid place-items-center w-6 h-6 rounded-full border border-white/[.17] text-[10px] text-[#dce4e3] hover:bg-gold-light hover:text-ink-deep transition-colors"
+                >
+                  <Icon aria-hidden="true" />
+                </a>
+              ))}
+            </div>
+            <a
+              href={`tel:${phone.replace(/\s/g, '')}`}
+              className="inline-flex items-center gap-1.5 md:gap-2 text-[11px] md:text-[13px] text-[#d4dddc] hover:text-white"
+            >
+              <PhoneIcon className="w-3 h-3 md:w-3.5 md:h-3.5" />
               {phone}
             </a>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="flex space-x-3 border-r border-white/20 pr-4">
-              <SocialIcon
-                href={social.facebook}
-                label="Facebook"
-                path="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
-              />
-              <SocialIcon
-                href={social.instagram}
-                label="Instagram"
-                path="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm10 2c1.654 0 3 1.346 3 3v10c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V7c0-1.654 1.346-3 3-3h10zm-5 3a5 5 0 100 10 5 5 0 000-10zm0 2c1.654 0 3 1.346 3 3s-1.346 3-3 3a3 3 0 110-6zm4.5-2a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"
-              />
-              <SocialIcon
-                href={social.youtube}
-                label="YouTube"
-                path="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"
-              />
-            </div>
-            <LanguageMenu />
+            {languageSwitch}
           </div>
         </div>
       </div>
 
-      <div className="h-px bg-[#5ebadf]" />
-      <div
-        className={`relative transition-all duration-300 ${
-          scrolled || !isHomePage ? 'py-2 bg-[#003366] shadow-lg' : 'py-3 bg-[#003366] lg:bg-[#003366]/70'
+      {/* Main header (sticky) */}
+      <header
+        ref={headerRef}
+        className={`sticky top-0 z-50 bg-white/[.97] backdrop-blur border-b border-ink/[.07] transition-shadow duration-300 ${
+          scrolled ? 'shadow-[0_8px_24px_rgba(20,54,66,.08)]' : ''
         }`}
         onMouseLeave={scheduleClose}
       >
-        <div className="container mx-auto px-4 lg:px-8 flex justify-between items-center">
-          <Link to="/" className="flex items-center">
-            <img src={logo} alt="" width="64" height="64" className="h-14 w-14 md:h-16 md:w-16 object-contain" />
-            <div className="ml-3">
-              <span className="block text-xl font-bold text-white leading-tight">EMLR</span>
-              <span className="block text-xs text-white/80">{t('parish')}</span>
-            </div>
-          </Link>
+        <div className="site-container relative flex min-h-[70px] md:min-h-[78px] lg:min-h-[86px] items-center justify-between gap-6">
+          <Brand subtitle={t('parish')} />
 
-          <nav className="hidden lg:flex items-center space-x-1" aria-label="Main">
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-[15px] font-semibold text-[#334c51]" aria-label="Main">
             {mainNavLinks.map((link) => {
               const hasMenu = Boolean(link.columns || link.items);
               const isOpen = activeMenu === link.key;
               const active = isActive(link);
-              const baseClass = `flex items-center py-3 px-3 font-medium transition-colors duration-200 ${
-                isOpen || active ? 'text-[#feed17]' : 'text-white hover:text-[#feed17]'
+              const linkClass = `group relative inline-flex items-center gap-1.5 py-2.5 whitespace-nowrap transition-colors ${
+                active || isOpen ? 'text-ink' : 'hover:text-ink'
               }`;
-              if (link.cta) {
-                return (
-                  <Link
-                    key={link.key}
-                    to={link.href}
-                    onMouseEnter={scheduleClose}
-                    className="ml-3 bg-[#feed17] text-[#003366] rounded-lg px-7 py-3 font-semibold hover:bg-white transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                );
-              }
+              const underline = (
+                <span
+                  className={`absolute left-0 right-0 bottom-0.5 h-px bg-gold origin-left transition-transform duration-200 ${
+                    active || isOpen ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100 group-focus-visible:scale-x-100'
+                  }`}
+                  aria-hidden="true"
+                />
+              );
               return (
-                <div
-                  key={link.key}
-                  className="relative px-1"
-                  onMouseEnter={() => (hasMenu ? openMenu(link.key) : scheduleClose())}
-                >
+                <div key={link.key} className="relative" onMouseEnter={() => (hasMenu ? openMenu(link.key) : scheduleClose())}>
                   {hasMenu ? (
                     <button
                       type="button"
-                      className={baseClass}
+                      className={linkClass}
                       aria-expanded={isOpen}
                       aria-haspopup="true"
                       onClick={() => (isOpen ? setActiveMenu(null) : openMenu(link.key))}
                     >
                       {link.name}
-                      <IoIosArrowDown className={`ml-1 text-xs transition-transform ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+                      <IoIosArrowDown className={`text-[11px] text-gold transition-transform ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+                      {underline}
                     </button>
                   ) : (
-                    <Link to={link.href} className={baseClass} aria-current={active ? 'page' : undefined}>
+                    <Link to={link.href} className={linkClass} aria-current={active ? 'page' : undefined}>
                       {link.name}
+                      {underline}
                     </Link>
                   )}
 
                   {link.items && isOpen && (
-                    <div className="absolute left-0 top-full z-40 pt-2" onMouseEnter={() => openMenu(link.key)}>
-                      <ul className="w-56 bg-white shadow-lg rounded-md py-1 border border-gray-100">
+                    <div className="absolute -left-5 top-full z-40 pt-4" onMouseEnter={() => openMenu(link.key)}>
+                      <ul className="w-64 bg-white border border-line shadow-[0_18px_40px_rgba(20,54,66,.12)] px-5 py-2">
                         {link.items.map((item) => (
-                          <li key={item.href}>
+                          <li key={item.href} className="border-b border-line last:border-b-0">
                             <Link
                               to={item.href}
-                              className="block px-4 py-2.5 text-[#003366] hover:bg-[#003366] hover:text-white focus:bg-[#003366] focus:text-white text-sm"
+                              className={`group/item flex items-center justify-between py-3 text-[15px] font-medium transition-colors ${
+                                isCurrent(item.href) ? 'text-gold' : 'text-ink hover:text-gold'
+                              }`}
                             >
                               {item.name}
+                              <span className="text-gold text-xs opacity-60 group-hover/item:opacity-100" aria-hidden="true">
+                                ↗
+                              </span>
                             </Link>
                           </li>
                         ))}
@@ -355,81 +332,85 @@ const Header = ({ scrolled }) => {
                 </div>
               );
             })}
+            <Link
+              to="/give"
+              onMouseEnter={scheduleClose}
+              className="inline-flex min-h-[46px] items-center gap-3 px-5 xl:px-6 bg-ink text-white text-sm font-bold whitespace-nowrap hover:bg-ink-soft hover:-translate-y-px transition-all"
+            >
+              {t('nav.give')}
+              <span className="text-gold-light" aria-hidden="true">
+                ↗
+              </span>
+            </Link>
           </nav>
 
-          <div className="flex items-center space-x-4 lg:hidden">
-            <Link
-              to="/amatangazo"
-              className="flex items-center gap-1.5 text-white text-sm font-medium px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20"
-            >
-              <FaBullhorn className="text-[#feed17]" aria-hidden="true" />
-              <span className="hidden sm:inline">{t('nav.notices')}</span>
-              <span className="sr-only sm:hidden">{t('nav.notices')}</span>
-            </Link>
-            <LanguageMenu className="md:hidden text-white" />
-            <button
-              className="text-white text-2xl p-1"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label={t('nav.menu')}
-              aria-expanded={mobileMenuOpen}
-              type="button"
-            >
-              {mobileMenuOpen ? <FaTimes /> : <FaBars />}
-            </button>
-          </div>
+          <button
+            className="lg:hidden grid place-items-center w-10 h-10 md:w-11 md:h-11 flex-none rounded-full border border-line text-ink"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={t('nav.menu')}
+            aria-expanded={mobileMenuOpen}
+            type="button"
+          >
+            <span className="relative block w-4 h-[9px]" aria-hidden="true">
+              <span
+                className={`absolute left-0 right-0 top-0 h-[1.5px] bg-current transition-transform duration-200 ${
+                  mobileMenuOpen ? 'translate-y-[3.75px] rotate-45' : ''
+                }`}
+              />
+              <span
+                className={`absolute left-0 right-0 bottom-0 h-[1.5px] bg-current transition-transform duration-200 ${
+                  mobileMenuOpen ? '-translate-y-[3.75px] -rotate-45' : ''
+                }`}
+              />
+            </span>
+          </button>
         </div>
 
+        {/* Mega menu */}
         {megaLink && (
           <div
-            className="absolute left-0 right-0 top-full z-40 pt-2 -mt-2 hidden lg:block"
+            className="absolute left-0 right-0 top-full z-40 hidden lg:block"
             onMouseEnter={() => openMenu(megaLink.key)}
             onMouseLeave={scheduleClose}
           >
-            <div className="bg-white shadow-2xl border-t-4 border-[#feed17]">
-              <div className="container mx-auto px-8 py-8 flex gap-10">
-                <div className={`flex-1 grid gap-8 ${megaLink.columns.length >= 4 ? 'grid-cols-4' : 'grid-cols-3'}`}>
-                  {megaLink.columns.map((column) => {
-                    const Icon = column.icon;
-                    return (
-                      <div key={column.title}>
-                        <h3 className="flex items-center gap-2.5 mb-3 text-xs font-bold uppercase tracking-wider text-[#1a6f99]">
-                          {Icon ? (
-                            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#e8f5fb] text-[#003366] text-sm">
-                              <Icon aria-hidden="true" />
-                            </span>
-                          ) : null}
-                          {column.title}
-                        </h3>
-                        <ul className="space-y-0.5">
-                          {column.items.map((item) => (
-                            <li key={item.href}>
-                              <Link
-                                to={item.href}
-                                className="group/item flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-[15px] text-gray-700 hover:text-[#003366] hover:bg-[#f2f7fb] focus:bg-[#f2f7fb] transition-colors"
-                              >
-                                <span>{item.name}</span>
-                                <FaChevronRight
-                                  className="text-[10px] text-[#1a6f99] opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all"
-                                  aria-hidden="true"
-                                />
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    );
-                  })}
+            <div className="bg-white border-t border-line shadow-[0_24px_40px_rgba(20,54,66,.10)]">
+              <div className="site-container py-10 flex gap-12">
+                <div className={`flex-1 grid gap-10 ${megaLink.columns.length >= 4 ? 'grid-cols-4' : 'grid-cols-3'}`}>
+                  {megaLink.columns.map((column) => (
+                    <div key={column.title}>
+                      <p className="eyebrow mb-4">{column.title}</p>
+                      <ul className="border-t border-line">
+                        {column.items.map((item) => (
+                          <li key={item.href} className="border-b border-line">
+                            <Link
+                              to={item.href}
+                              className={`group/item flex items-center justify-between gap-2 py-3 text-[15px] transition-colors ${
+                                isCurrent(item.href) ? 'text-gold font-semibold' : 'text-ink hover:text-gold'
+                              }`}
+                            >
+                              <span>{item.name}</span>
+                              <span className="text-gold text-xs opacity-50 group-hover/item:opacity-100" aria-hidden="true">
+                                ↗
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
                 </div>
                 {megaLink.feature ? (
-                  <Link
-                    to={megaLink.feature.href}
-                    className="group/feature w-72 shrink-0 rounded-2xl bg-gradient-to-br from-[#003366] to-[#001d3a] text-white p-6 flex flex-col"
-                  >
-                    <span className="text-lg font-bold mb-2">{megaLink.feature.title}</span>
-                    <span className="text-sm text-white/75 leading-relaxed mb-5">{megaLink.feature.text}</span>
-                    <span className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-[#feed17]">
+                  <Link to={megaLink.feature.href} className="group/feature w-80 flex-none bg-ink text-white p-7 flex flex-col relative overflow-hidden">
+                    <span className="absolute -top-8 -right-8 w-28 h-28 rounded-full border border-gold-light/50" aria-hidden="true" />
+                    <span className="absolute -top-3 -right-3 w-[4.5rem] h-[4.5rem] rounded-full border border-gold-light/50" aria-hidden="true" />
+                    <span className="eyebrow eyebrow-light mb-4">EMLR Kicukiro</span>
+                    <span className="font-serif text-[1.75rem] leading-tight mb-3">{megaLink.feature.title}</span>
+                    <span className="text-[15px] text-[#c6d0cf] leading-relaxed mb-6">{megaLink.feature.text}</span>
+                    <span className="mt-auto inline-flex items-center gap-2 text-sm font-bold text-gold-light">
                       {megaLink.feature.cta}
-                      <FaArrowRight className="transition-transform group-hover/feature:translate-x-1" aria-hidden="true" />
+                      <span className="transition-transform group-hover/feature:translate-x-1" aria-hidden="true">
+                        →
+                      </span>
                     </span>
                   </Link>
                 ) : null}
@@ -437,45 +418,39 @@ const Header = ({ scrolled }) => {
             </div>
           </div>
         )}
-      </div>
 
-      {mobileMenuOpen && (
-        <nav
-          className="lg:hidden bg-white text-[#0b2540] shadow-2xl rounded-b-2xl max-h-[calc(100vh-4.5rem)] overflow-y-auto"
-          aria-label="Mobile"
-        >
-          <div className="p-3 space-y-1">
-            <MobileLink href="/amatangazo" active={isCurrent('/amatangazo')} icon={<FaBullhorn aria-hidden="true" />}>
-              {t('nav.notices')}
-            </MobileLink>
-            {mainNavLinks
-              .filter((link) => !link.cta)
-              .map((link) =>
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <nav
+            className="lg:hidden absolute left-0 right-0 top-full bg-white border-t border-line shadow-[0_16px_25px_rgba(20,54,66,.12)] max-h-[calc(100dvh-4.5rem)] overflow-y-auto"
+            aria-label="Mobile"
+          >
+            <div className="site-container pt-2 pb-6">
+              {mainNavLinks.map((link) =>
                 link.columns || link.items ? (
-                  <div key={link.key} className="rounded-xl">
+                  <div key={link.key} className="border-b border-ink/[.08]">
                     <button
                       type="button"
-                      className={`w-full flex justify-between items-center px-3 py-3 rounded-xl text-left font-semibold ${
-                        isActive(link) ? 'text-[#003366]' : 'text-[#0b2540]'
+                      className={`w-full flex justify-between items-center px-0.5 py-3.5 text-left text-base font-semibold ${
+                        isActive(link) ? 'text-ink' : 'text-[#334c51]'
                       }`}
                       aria-expanded={openSection === link.key}
                       onClick={() => setMobileSubmenu(openSection === link.key ? '' : link.key)}
                     >
-                      <span>{link.name}</span>
+                      <span className="inline-flex items-center gap-2.5">
+                        {link.name}
+                        {isActive(link) ? <span className="w-1.5 h-1.5 rounded-full bg-gold" aria-hidden="true" /> : null}
+                      </span>
                       <IoIosArrowDown
-                        className={`text-gray-400 transition-transform ${openSection === link.key ? 'rotate-180' : ''}`}
+                        className={`text-gold transition-transform ${openSection === link.key ? 'rotate-180' : ''}`}
                         aria-hidden="true"
                       />
                     </button>
                     {openSection === link.key && (
-                      <div className="pb-2 pl-2">
+                      <div className="pb-3">
                         {(link.columns || [{ title: '', items: link.items }]).map((column) => (
                           <div key={column.title || 'items'} className="mb-1">
-                            {column.title ? (
-                              <p className="px-3 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
-                                {column.title}
-                              </p>
-                            ) : null}
+                            {column.title ? <p className="eyebrow !text-[10px] pl-4 pt-2.5 pb-1.5">{column.title}</p> : null}
                             {column.items.map((item) => (
                               <MobileLink key={item.href} href={item.href} active={isCurrent(item.href)} sub>
                                 {item.name}
@@ -487,44 +462,41 @@ const Header = ({ scrolled }) => {
                     )}
                   </div>
                 ) : (
-                  <MobileLink key={link.key} href={link.href} active={isCurrent(link.href)}>
-                    {link.name}
-                  </MobileLink>
+                  <div key={link.key} className="border-b border-ink/[.08]">
+                    <MobileLink href={link.href} active={isCurrent(link.href)}>
+                      {link.name}
+                    </MobileLink>
+                  </div>
                 )
               )}
-          </div>
-          <div className="border-t border-gray-100 p-4 space-y-3">
-            <Link
-              to="/give"
-              className="block text-center rounded-xl bg-[#feed17] text-[#001d3a] font-semibold py-3 hover:bg-[#ffe600]"
-            >
-              {t('nav.give')}
-            </Link>
-            <div className="flex items-center justify-between gap-3 text-sm">
-              <a href={`tel:${phone.replace(/\s/g, '')}`} className="inline-flex items-center gap-2 text-gray-600">
-                <FaPhone className="text-[#1a6f99]" aria-hidden="true" />
-                {phone}
-              </a>
-              <div className="inline-flex rounded-lg bg-gray-100 p-0.5">
-                {languages.map((item) => (
-                  <button
-                    key={item.code}
-                    type="button"
-                    lang={item.code}
-                    onClick={() => setLang(item.code)}
-                    className={`px-3 py-1.5 rounded-md text-xs font-semibold ${
-                      lang === item.code ? 'bg-white text-[#003366] shadow-sm' : 'text-gray-500'
-                    }`}
+              <Link
+                to="/give"
+                className="mt-4 flex min-h-[50px] items-center justify-center gap-3 bg-ink text-white text-[15px] font-bold hover:bg-ink-soft"
+              >
+                {t('nav.give')}
+                <span className="text-gold-light" aria-hidden="true">
+                  ↗
+                </span>
+              </Link>
+              <div className="mt-4 flex items-center justify-center gap-2">
+                {social.map(({ label, href, Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`EMLR Kicukiro on ${label}`}
+                    className="grid place-items-center w-9 h-9 rounded-full border border-line text-sm text-ink hover:bg-gold-light"
                   >
-                    {item.label}
-                  </button>
+                    <Icon aria-hidden="true" />
+                  </a>
                 ))}
               </div>
             </div>
-          </div>
-        </nav>
-      )}
-    </header>
+          </nav>
+        )}
+      </header>
+    </>
   );
 };
 

@@ -1,5 +1,6 @@
 import { useLanguage } from '../i18n/LanguageContext';
 import { useSettings } from '../api/usePublicData';
+import { PageShell } from '../components/ui/PageHeader';
 import usePageMeta from '../hooks/usePageMeta';
 
 /** Shared layout for Privacy Policy and Terms. `content` = { en: [{h, p}], rw: [{h, p}] }. */
@@ -11,19 +12,18 @@ export default function LegalPage({ title, content, updated }) {
   const sections = content[lang] || content.en;
 
   return (
-    <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50">
-      <div className="container mx-auto max-w-3xl bg-white p-6 md:p-10 rounded-xl shadow-md">
-        <h1 className="text-3xl md:text-4xl font-bold text-[#001d3a] mb-2">{title}</h1>
-        <p className="text-sm text-gray-500 mb-8">{updated}</p>
-        <div className="space-y-6 text-gray-700 leading-relaxed">
-          {sections.map((s) => (
-            <section key={s.h}>
-              <h2 className="text-xl font-semibold mb-2 text-[#003366]">{s.h}</h2>
-              <p>{s.p.replace('{email}', email)}</p>
-            </section>
-          ))}
-        </div>
+    <PageShell badge="EMLR Kicukiro Parish" title={title} subtitle={updated} narrow>
+      <div className="border-t border-line">
+        {sections.map((s, i) => (
+          <section key={s.h} className="grid gap-2 md:grid-cols-[56px_minmax(0,1fr)] py-7 border-b border-line">
+            <span className="font-serif text-xl text-gold">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h2 className="font-serif text-[1.45rem] leading-tight text-ink mb-2.5">{s.h}</h2>
+              <p className="text-[17px] leading-[1.8] text-[#435b60]">{s.p.replace('{email}', email)}</p>
+            </div>
+          </section>
+        ))}
       </div>
-    </div>
+    </PageShell>
   );
 }

@@ -8,9 +8,9 @@ import { isExpired, noticePeriod, sortNotices } from '../../utils/notices';
 const TABS = ['today', 'week', 'month', 'earlier'];
 
 const CATEGORY_STYLE = {
-  urgent: 'bg-red-100 text-red-700',
+  urgent: 'bg-[#9b2c2c] text-white',
   daily: 'bg-amber-100 text-amber-800',
-  weekly: 'bg-[#e8f5fb] text-[#1f6f96]',
+  weekly: 'bg-paper-featured text-gold-text',
   monthly: 'bg-purple-100 text-purple-700',
 };
 
@@ -22,39 +22,37 @@ function NoticeCard({ notice, lang, t }) {
 
   return (
     <article
-      className={`bg-white rounded-xl border p-6 shadow-sm ${
-        notice.pinned ? 'border-[#feed17] ring-1 ring-[#feed17]' : 'border-gray-200'
-      } ${expired ? 'opacity-75' : ''}`}
+      className={`relative bg-white border p-6 md:p-8 ${notice.pinned ? 'border-[#c8b98e]' : 'border-line'} ${expired ? 'opacity-75' : ''}`}
     >
-      <div className="flex flex-wrap items-center gap-2 mb-3 text-xs font-semibold">
-        <time dateTime={notice.publishDate} className="text-gray-500">
+      <div className="flex flex-wrap items-center gap-2 mb-3 text-[11px] font-bold uppercase tracking-[0.08em]">
+        <time dateTime={notice.publishDate} className="text-[#596c70] mr-1">
           {formatDate(notice.publishDate, lang)}
         </time>
         <span className={`px-2 py-0.5 rounded-full ${CATEGORY_STYLE[notice.category] || CATEGORY_STYLE.weekly}`}>
           {t(`notices.${notice.category}`)}
         </span>
         {notice.pinned ? (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#fff8c2] text-[#6b5d00]">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gold-light text-ink-deep">
             <FaThumbtack className="mr-1" aria-hidden="true" />
             {t('notices.pinned')}
           </span>
         ) : null}
-        {expired ? <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{t('notices.expired')}</span> : null}
+        {expired ? <span className="px-2 py-0.5 rounded-full bg-paper text-muted">{t('notices.expired')}</span> : null}
       </div>
-      <h2 className="text-xl font-bold text-[#001d3a] mb-2">{title}</h2>
-      <p className="text-gray-700 whitespace-pre-line leading-relaxed">{body}</p>
-      <div className="flex flex-wrap items-center gap-4 mt-4 text-sm">
+      <h2 className="font-serif text-[1.55rem] md:text-[1.75rem] leading-tight text-ink mb-3">{title}</h2>
+      <p className="text-[17px] text-[#435b60] whitespace-pre-line leading-[1.75]">{body}</p>
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mt-5 pt-4 border-t border-line text-sm">
         {notice.expiresAt && !expired ? (
-          <span className="text-gray-500">{t('notices.validUntil', { date: formatDate(notice.expiresAt, lang) })}</span>
+          <span className="text-muted">{t('notices.validUntil', { date: formatDate(notice.expiresAt, lang) })}</span>
         ) : null}
         {notice.attachmentUrl ? (
           <a
             href={mediaUrl(notice.attachmentUrl)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center font-medium text-[#1a6f99] hover:text-[#003366]"
+            className="small-link"
           >
-            <FaFileDownload className="mr-1" aria-hidden="true" />
+            <FaFileDownload className="text-gold" aria-hidden="true" />
             {t('notices.download')}
           </a>
         ) : null}
@@ -63,9 +61,9 @@ function NoticeCard({ notice, lang, t }) {
             href={`https://wa.me/?text=${shareText}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center font-medium text-green-700 hover:text-green-900"
+            className="small-link"
           >
-            <FaWhatsapp className="mr-1" aria-hidden="true" />
+            <FaWhatsapp className="text-[#2f6b4f]" aria-hidden="true" />
             {t('notices.share')}
           </a>
         ) : null}
@@ -94,8 +92,8 @@ export default function NoticeList({ data, loading, lang, t }) {
   const list = grouped[activeTab];
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div role="tablist" aria-label={t('notices.title')} className="flex flex-wrap justify-center gap-2 mb-8">
+    <div className="max-w-[920px]">
+      <div role="tablist" aria-label={t('notices.title')} className="flex flex-wrap gap-2 mb-8">
         {TABS.map((key) => (
           <button
             key={key}
@@ -103,10 +101,8 @@ export default function NoticeList({ data, loading, lang, t }) {
             role="tab"
             aria-selected={activeTab === key}
             onClick={() => setTab(key)}
-            className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
-              activeTab === key
-                ? 'bg-[#003366] border-[#003366] text-white'
-                : 'bg-white border-gray-300 text-[#003366] hover:border-[#003366]'
+            className={`px-4 py-2.5 text-sm font-semibold border transition-colors ${
+              activeTab === key ? 'bg-ink border-ink text-white' : 'bg-white border-line text-[#334c51] hover:border-ink/40'
             }`}
           >
             {t(`notices.${key}`)}
@@ -117,9 +113,9 @@ export default function NoticeList({ data, loading, lang, t }) {
 
       {loading ? <SkeletonCards count={2} className="h-40" /> : null}
       {!loading && !list.length ? (
-        <p className="text-center text-gray-600 bg-white rounded-xl p-8 border border-gray-200">{t('notices.empty')}</p>
+        <p className="text-[17px] text-[#596c70] bg-white p-8 border border-line">{t('notices.empty')}</p>
       ) : null}
-      <div className="space-y-5" role="tabpanel">
+      <div className="space-y-3.5" role="tabpanel">
         {list.map((notice) => (
           <NoticeCard key={notice.id} notice={notice} lang={lang} t={t} />
         ))}

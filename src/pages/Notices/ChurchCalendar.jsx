@@ -52,13 +52,13 @@ export default function ChurchCalendar({ items, events, notices, lang, t, filter
 
   return (
     <div className="grid lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-3 md:p-5">
+      <div className="lg:col-span-2 bg-white border border-line p-3 md:p-6">
         <div className="flex items-center justify-between mb-4">
-          <button type="button" onClick={() => move(-1)} className="p-2.5 rounded-lg hover:bg-gray-100" aria-label={t('schedule.prevMonth')}>
+          <button type="button" onClick={() => move(-1)} className="grid place-items-center w-10 h-10 rounded-full border border-ink/20 text-ink text-xs hover:bg-ink hover:text-white transition-colors" aria-label={t('schedule.prevMonth')}>
             <FaChevronLeft aria-hidden="true" />
           </button>
           <div className="text-center">
-            <h3 className="text-xl font-bold text-[#003366]">
+            <h3 className="font-serif text-[1.6rem] md:text-[1.9rem] leading-tight text-ink">
               {MONTHS[lang][cursor.m]} {cursor.y}
             </h3>
             <button
@@ -67,19 +67,19 @@ export default function ChurchCalendar({ items, events, notices, lang, t, filter
                 setCursor({ y: today.getFullYear(), m: today.getMonth() });
                 setSelected(today);
               }}
-              className="text-xs font-semibold text-[#1a6f99] hover:underline"
+              className="text-xs font-bold uppercase tracking-[0.1em] text-gold-text hover:text-gold"
             >
               {t('schedule.thisMonth')}
             </button>
           </div>
-          <button type="button" onClick={() => move(1)} className="p-2.5 rounded-lg hover:bg-gray-100" aria-label={t('schedule.nextMonth')}>
+          <button type="button" onClick={() => move(1)} className="grid place-items-center w-10 h-10 rounded-full border border-ink/20 text-ink text-xs hover:bg-ink hover:text-white transition-colors" aria-label={t('schedule.nextMonth')}>
             <FaChevronRight aria-hidden="true" />
           </button>
         </div>
 
-        <div className="grid grid-cols-7 gap-px bg-gray-200 rounded-lg overflow-hidden" role="grid">
+        <div className="grid grid-cols-7 gap-px bg-line border border-line" role="grid">
           {WEEK_ORDER.map((d) => (
-            <div key={d} className="bg-gray-50 text-center text-[11px] md:text-xs font-semibold text-gray-600 py-2" role="columnheader">
+            <div key={d} className="bg-paper text-center text-[11px] md:text-xs font-bold uppercase tracking-[0.08em] text-[#627276] py-2.5" role="columnheader">
               {DAY_SHORT[lang][d]}
             </div>
           ))}
@@ -97,12 +97,12 @@ export default function ChurchCalendar({ items, events, notices, lang, t, filter
                 aria-label={`${DAY_NAMES[lang][date.getDay()]} ${date.getDate()} ${MONTHS[lang][date.getMonth()]}: ${entries.length}`}
                 onClick={() => setSelected(date)}
                 className={`relative flex flex-col items-stretch justify-start text-left min-h-[64px] md:min-h-[96px] p-1 md:p-1.5 transition-colors ${
-                  isSelected ? 'bg-[#e8f5fb] ring-2 ring-inset ring-[#5fb9e2]' : inMonth ? 'bg-white hover:bg-gray-50' : 'bg-gray-50 text-gray-400'
+                  isSelected ? 'bg-paper-featured ring-2 ring-inset ring-gold' : inMonth ? 'bg-white hover:bg-paper-card' : 'bg-paper text-[#aaa99f]'
                 }`}
               >
                 <span
                   className={`inline-flex items-center justify-center w-6 h-6 md:w-7 md:h-7 rounded-full text-xs md:text-sm font-semibold ${
-                    isToday ? 'bg-[#003366] text-white' : inMonth ? 'text-[#001d3a]' : ''
+                    isToday ? 'bg-ink text-white' : inMonth ? 'text-ink' : ''
                   }`}
                 >
                   {date.getDate()}
@@ -115,13 +115,13 @@ export default function ChurchCalendar({ items, events, notices, lang, t, filter
                 </span>
                 <span className="hidden md:block space-y-0.5 mt-0.5">
                   {entries.slice(0, 3).map((e, i) => (
-                    <span key={i} className={`block truncate text-[11px] leading-tight px-1 py-0.5 rounded border ${colour(e).chip}`}>
+                    <span key={i} className={`block truncate text-[11px] leading-tight px-1 py-0.5 border ${colour(e).chip}`}>
                       {e.kind === 'activity' ? `${e.item.startTime} ` : ''}
                       {label(e)}
                     </span>
                   ))}
                   {entries.length > 3 ? (
-                    <span className="block text-[11px] text-gray-500 px-1">{t('schedule.more', { n: entries.length - 3 })}</span>
+                    <span className="block text-[11px] text-muted px-1">{t('schedule.more', { n: entries.length - 3 })}</span>
                   ) : null}
                 </span>
               </button>
@@ -130,45 +130,45 @@ export default function ChurchCalendar({ items, events, notices, lang, t, filter
         </div>
       </div>
 
-      <aside className="bg-white rounded-xl border border-gray-200 p-4 md:p-5 self-start lg:sticky lg:top-40" aria-live="polite">
-        <h3 className="text-lg font-bold text-[#003366] mb-1">{DAY_NAMES[lang][selected.getDay()]}</h3>
-        <p className="text-sm text-gray-500 mb-4">
+      <aside className="bg-white border border-line p-5 md:p-6 self-start lg:sticky lg:top-28" aria-live="polite">
+        <h3 className="font-serif text-[1.6rem] leading-tight text-ink mb-1">{DAY_NAMES[lang][selected.getDay()]}</h3>
+        <p className="text-xs font-bold uppercase tracking-[0.1em] text-gold-text mb-4 pb-4 border-b border-line">
           {selected.getDate()} {MONTHS[lang][selected.getMonth()]} {selected.getFullYear()}
           {sameDay(selected, today) ? ` · ${t('schedule.today')}` : ''}
         </p>
         {selectedEntries.length ? (
-          <div className="space-y-3">
+          <div className="divide-y divide-line">
             {selectedEntries.map((entry, i) =>
               entry.kind === 'activity' ? (
                 <ActivityCard key={`a${i}`} item={entry.item} lang={lang} t={t} />
               ) : entry.kind === 'event' ? (
-                <Link key={`e${i}`} to="/events" className={`block bg-white rounded-lg border border-gray-200 border-l-4 ${styleFor('event').bar} p-3 hover:shadow`}>
-                  <p className="text-xs font-semibold text-red-700 uppercase">{t('schedule.categories.event')}</p>
-                  <h4 className="font-bold text-[#001d3a]">{localized(entry.item, 'title', lang)}</h4>
+                <Link key={`e${i}`} to="/events" className="block py-4 hover:bg-paper-card">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#9b2c2c]">{t('schedule.categories.event')}</p>
+                  <h4 className="font-serif text-[1.2rem] text-ink mt-0.5">{localized(entry.item, 'title', lang)}</h4>
                   {localized(entry.item, 'time', lang) ? (
-                    <p className="flex items-center text-xs text-gray-600 mt-1">
-                      <FaClock className="mr-1.5 text-gray-400" aria-hidden="true" />
+                    <p className="flex items-center text-sm text-[#596c70] mt-1">
+                      <FaClock className="mr-1.5 text-gold" aria-hidden="true" />
                       {localized(entry.item, 'time', lang)}
                     </p>
                   ) : null}
                   {localized(entry.item, 'location', lang) ? (
-                    <p className="flex items-center text-xs text-gray-600">
-                      <FaMapMarkerAlt className="mr-1.5 text-gray-400" aria-hidden="true" />
+                    <p className="flex items-center text-sm text-[#596c70]">
+                      <FaMapMarkerAlt className="mr-1.5 text-gold" aria-hidden="true" />
                       {localized(entry.item, 'location', lang)}
                     </p>
                   ) : null}
                 </Link>
               ) : (
-                <div key={`n${i}`} className={`bg-white rounded-lg border border-gray-200 border-l-4 ${styleFor('notice').bar} p-3`}>
-                  <p className="text-xs font-semibold text-yellow-800 uppercase">{t('schedule.categories.notice')}</p>
-                  <h4 className="font-bold text-[#001d3a]">{localized(entry.item, 'title', lang)}</h4>
-                  <p className="text-sm text-gray-600 line-clamp-3">{localized(entry.item, 'body', lang)}</p>
+                <div key={`n${i}`} className="py-4">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-gold-text">{t('schedule.categories.notice')}</p>
+                  <h4 className="font-serif text-[1.2rem] text-ink mt-0.5">{localized(entry.item, 'title', lang)}</h4>
+                  <p className="text-sm text-[#596c70] line-clamp-3 mt-1">{localized(entry.item, 'body', lang)}</p>
                 </div>
               )
             )}
           </div>
         ) : (
-          <p className="text-gray-500">{t('schedule.empty')}</p>
+          <p className="text-[#596c70]">{t('schedule.empty')}</p>
         )}
       </aside>
     </div>

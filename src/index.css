@@ -2,6 +2,79 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------- Public-site design system (editorial: paper, ink, gold) ----------
+   Matches the "new look" reference with type sizes raised ~2-3px for readability.
+   Scoped to .site so the dashboard keeps its own look. */
+@layer components {
+  .site {
+    @apply font-body bg-paper text-ink antialiased;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+  .site-container {
+    @apply mx-auto w-[calc(100%-40px)] max-w-site sm:w-[calc(100%-48px)] lg:w-[calc(100%-64px)];
+  }
+  .eyebrow {
+    @apply flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.14em] text-gold-text md:text-xs;
+  }
+  .eyebrow::before {
+    content: '';
+    @apply h-px w-[26px] flex-none bg-gold;
+  }
+  .eyebrow-light {
+    @apply text-[#e0ca9b];
+  }
+  .eyebrow-light::before {
+    @apply bg-[#d8bf8d];
+  }
+  .h-display {
+    @apply font-serif font-normal tracking-[-0.035em] text-ink;
+  }
+  .h-section {
+    @apply font-serif text-[2.4rem] font-normal leading-[1.06] tracking-[-0.035em] text-ink md:text-[3.2rem] lg:text-[3.6rem];
+  }
+  .h-section em,
+  .h-display em {
+    @apply font-serif italic text-gold;
+  }
+  .section-pad {
+    @apply py-16 md:py-24;
+  }
+  .btn {
+    @apply inline-flex min-h-[50px] items-center justify-center gap-4 border border-transparent px-6 text-sm font-bold transition-all duration-200 hover:-translate-y-0.5;
+  }
+  .btn-primary {
+    @apply bg-ink text-white hover:bg-ink-soft;
+  }
+  .btn-primary .btn-arrow {
+    @apply text-gold-light;
+  }
+  .btn-light {
+    @apply border-white bg-white text-ink hover:bg-transparent hover:text-white;
+  }
+  .btn-outline-light {
+    @apply border-white/50 bg-transparent text-white hover:border-white hover:bg-white hover:text-ink-deep;
+  }
+  .btn-outline {
+    @apply border-ink/25 bg-transparent text-ink hover:border-ink hover:bg-ink hover:text-white;
+  }
+  .text-link {
+    @apply inline-flex items-center gap-2.5 border-b border-ink/30 py-2 text-sm font-bold text-ink transition-colors hover:border-gold hover:text-gold;
+  }
+  .text-link-light {
+    @apply border-[#f3ebda]/40 text-[#f3ebda] hover:border-[#ecd8aa] hover:text-[#ecd8aa];
+  }
+  .small-link {
+    @apply inline-flex items-center gap-2 whitespace-nowrap border-b border-ink/25 pb-1 text-[13px] font-bold text-ink hover:border-gold hover:text-gold;
+  }
+  .card-line {
+    @apply border border-line bg-paper-card;
+  }
+  .field {
+    @apply w-full border border-line bg-white px-4 py-3 text-base text-ink placeholder:text-muted/60 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/25;
+  }
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -11,8 +84,12 @@ body {
 
 /* Visible keyboard focus everywhere */
 :focus-visible {
-  outline: 3px solid #5fb9e2;
+  outline: 3px solid #9b6f2d;
   outline-offset: 2px;
+}
+.site :focus-visible {
+  outline-color: #9b6f2d;
+  outline-offset: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -49,7 +126,7 @@ body {
 
 /* Organisation chart (Church structure page). Desktop: top-down tree. Phones: vertical tree. */
 .org-tree {
-  --org-line: #9fb7cc;
+  --org-line: #c8b98e;
 }
 .org-tree ul {
   position: relative;
@@ -99,10 +176,10 @@ body {
 }
 .org-tree li:last-child::before {
   border-right: 2px solid var(--org-line);
-  border-radius: 0 0.5rem 0 0;
+  border-radius: 0;
 }
 .org-tree li:first-child::after {
-  border-radius: 0.5rem 0 0 0;
+  border-radius: 0;
 }
 .org-tree ul ul::before {
   content: '';
@@ -188,4 +265,9 @@ body {
   to {
     opacity: 1;
   }
+}
+
+@keyframes heroIn {
+  from { opacity: 0.4; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
 }

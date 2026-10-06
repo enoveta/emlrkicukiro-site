@@ -1,5 +1,4 @@
 import { Link, useParams } from 'react-router-dom';
-import { FaArrowLeft } from 'react-icons/fa';
 import { usePublicData } from '../../api/usePublicData';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { formatDate, localized } from '../../i18n/translations';
@@ -20,26 +19,41 @@ function NewsDetail() {
   if (!item) return <NotFound message={t('news.notFound')} />;
 
   return (
-    <article className="py-12 md:py-16 px-4 bg-white">
-      <div className="max-w-3xl mx-auto">
-        <Link to="/news" className="inline-flex items-center text-sm text-[#1a6f99] hover:text-[#003366] mb-6">
-          <FaArrowLeft className="mr-2" aria-hidden="true" />
-          {t('news.back')}
-        </Link>
-        <time dateTime={item.date} className="block text-sm font-semibold text-gray-500 mb-2">
-          {formatDate(item.date, lang)}
-        </time>
-        <h1 className="text-3xl md:text-4xl font-bold text-[#001d3a] mb-8 leading-tight">{title}</h1>
-        {item.imageUrl ? (
-          <div className="rounded-xl overflow-hidden shadow-lg mb-8 aspect-video">
-            <Img src={item.imageUrl} alt={title} eager className="w-full h-full object-cover" />
+    <article>
+      <header className="relative overflow-hidden bg-paper border-b border-line">
+        <span className="absolute top-0 right-0 hidden sm:block w-[34%] h-full bg-paper-tint" aria-hidden="true" />
+        <div className="site-container relative pt-10 pb-10 md:pt-14 md:pb-14">
+          <Link to="/news" className="small-link mb-7">
+            <span aria-hidden="true">←</span>
+            <span>{t('news.back')}</span>
+          </Link>
+          <time dateTime={item.date} className="eyebrow mb-4">
+            {formatDate(item.date, lang)}
+          </time>
+          <h1 className="h-display max-w-[900px] text-[2.3rem] sm:text-[2.9rem] lg:text-[3.5rem] leading-[1.06]">{title}</h1>
+        </div>
+      </header>
+      <div className="bg-white">
+        <div className="site-container py-10 md:py-16">
+          <div className="max-w-[820px]">
+            {item.imageUrl ? (
+              <div className="relative mb-10 pr-3 pb-3 md:pr-4 md:pb-4">
+                <span className="absolute right-0 bottom-0 w-1/2 h-1/2 bg-gold-light" aria-hidden="true" />
+                <div className="relative aspect-video overflow-hidden bg-[#d5d0c4] shadow-[0_18px_50px_rgba(20,54,66,.12)]">
+                  <Img src={item.imageUrl} alt={title} eager className="w-full h-full object-cover" />
+                </div>
+              </div>
+            ) : null}
+            {content.split(/\n\s*\n/).map((p, i) => (
+              <p
+                key={i}
+                className={`mb-6 whitespace-pre-line leading-[1.85] ${i === 0 ? 'font-serif text-[1.35rem] md:text-[1.5rem] leading-[1.5] text-ink' : 'text-[17px] text-[#435b60]'}`}
+              >
+                {p}
+              </p>
+            ))}
           </div>
-        ) : null}
-        {content.split(/\n\s*\n/).map((p, i) => (
-          <p key={i} className="text-lg text-gray-700 leading-relaxed mb-5 whitespace-pre-line">
-            {p}
-          </p>
-        ))}
+        </div>
       </div>
     </article>
   );

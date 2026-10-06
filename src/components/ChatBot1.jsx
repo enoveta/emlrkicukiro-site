@@ -29,7 +29,7 @@ function RichText({ text, onNavigate }) {
           return (
             <Fragment key={i}>
               {part.startsWith(' ') ? ' ' : ''}
-              <Link to={path} onClick={onNavigate} className="font-semibold text-[#1a6f99] underline underline-offset-2">
+              <Link to={path} onClick={onNavigate} className="font-semibold text-gold-dark underline underline-offset-2">
                 {path}
               </Link>
             </Fragment>
@@ -42,7 +42,7 @@ function RichText({ text, onNavigate }) {
 }
 
 const Avatar = () => (
-  <span className="shrink-0 w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center overflow-hidden">
+  <span className="shrink-0 w-8 h-8 bg-white border border-line flex items-center justify-center overflow-hidden">
     <img src={logo} alt="" className="w-6 h-6 object-contain" />
   </span>
 );
@@ -123,7 +123,7 @@ const ChatBot = () => {
       <button
         type="button"
         onClick={() => setIsOpen((v) => !v)}
-        className={`fixed bottom-5 right-5 md:bottom-8 md:right-8 bg-[#003366] hover:bg-[#001d3a] text-white rounded-full p-4 shadow-lg z-40 transition-colors ${
+        className={`fixed bottom-5 right-5 md:bottom-8 md:right-8 bg-ink hover:bg-ink-soft text-white rounded-full p-4 shadow-[0_12px_30px_rgba(20,54,66,.28)] ring-1 ring-gold-light/40 z-40 transition-colors ${
           isOpen ? 'hidden sm:block' : ''
         }`}
         aria-label={isOpen ? t('chat.close') : t('chat.open')}
@@ -134,22 +134,22 @@ const ChatBot = () => {
 
       {isOpen && (
         <div
-          className="fixed z-50 flex flex-col bg-white shadow-2xl overflow-hidden border border-gray-200
-            inset-x-0 bottom-0 top-[8vh] rounded-t-2xl
-            sm:inset-auto sm:bottom-24 sm:right-6 md:right-8 sm:w-[420px] sm:h-[min(640px,calc(100vh-8rem))] sm:rounded-2xl"
+          className="fixed z-50 flex flex-col bg-white shadow-[0_24px_60px_rgba(20,54,66,.22)] overflow-hidden border border-line font-body
+            inset-x-0 bottom-0 top-[8vh]
+            sm:inset-auto sm:bottom-24 sm:right-6 md:right-8 sm:w-[420px] sm:h-[min(640px,calc(100vh-8rem))]"
           role="dialog"
           aria-modal="false"
           aria-label={t('chat.title')}
         >
           {/* Header */}
-          <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-[#001d3a] to-[#003366] text-white">
-            <span className="w-11 h-11 rounded-full bg-white flex items-center justify-center shrink-0">
+          <div className="flex items-center gap-3 px-4 py-3.5 bg-ink text-white border-b border-gold-light/30">
+            <span className="w-11 h-11 bg-white flex items-center justify-center shrink-0">
               <img src={logo} alt="" className="w-8 h-8 object-contain" />
             </span>
             <div className="min-w-0 flex-1">
-              <h2 className="font-semibold text-base leading-tight">{t('chat.title')}</h2>
-              <p className="flex items-center gap-1.5 text-xs text-white/75">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" aria-hidden="true" />
+              <h2 className="font-serif text-[1.25rem] leading-tight">{t('chat.title')}</h2>
+              <p className="flex items-center gap-1.5 text-xs text-[#c6d0cf]">
+                <span className="w-2 h-2 rounded-full bg-gold-light" aria-hidden="true" />
                 {t('chat.status')}
               </p>
             </div>
@@ -170,23 +170,23 @@ const ChatBot = () => {
           </div>
 
           {/* Conversation */}
-          <div className="flex-1 overflow-y-auto bg-[#f5f8fb] px-4 py-5 space-y-4" aria-live="polite">
+          <div className="flex-1 overflow-y-auto bg-paper px-4 py-5 space-y-4" aria-live="polite">
             {messages.length === 0 ? (
               <div>
                 <div className="flex items-end gap-2">
                   <Avatar />
-                  <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-white border border-gray-200 px-4 py-3 text-[15px] leading-relaxed text-gray-800 shadow-sm">
+                  <div className="max-w-[85%] bg-white border border-line px-4 py-3 text-[15px] leading-relaxed text-ink">
                     {t('chat.welcome')}
                   </div>
                 </div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mt-6 mb-2">{t('chat.tryAsking')}</p>
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-gold-text mt-6 mb-2.5">{t('chat.tryAsking')}</p>
                 <div className="flex flex-wrap gap-2">
                   {suggestions.map((q) => (
                     <button
                       key={q}
                       type="button"
                       onClick={() => send(q)}
-                      className="text-left text-sm bg-white border border-[#c9d8e6] text-[#003366] hover:bg-[#e8f5fb] hover:border-[#5fb9e2] rounded-full px-3.5 py-2 transition-colors"
+                      className="text-left text-sm bg-white border border-line text-ink hover:border-gold hover:bg-paper-featured px-3.5 py-2 transition-colors"
                     >
                       {q}
                     </button>
@@ -197,7 +197,7 @@ const ChatBot = () => {
               messages.map((msg, i) =>
                 msg.role === 'user' ? (
                   <div key={i} className="flex justify-end">
-                    <div className="max-w-[85%] rounded-2xl rounded-br-md bg-[#003366] text-white px-4 py-2.5 text-[15px] leading-relaxed whitespace-pre-line shadow-sm">
+                    <div className="max-w-[85%] bg-ink text-white px-4 py-2.5 text-[15px] leading-relaxed whitespace-pre-line">
                       {msg.text}
                     </div>
                   </div>
@@ -205,8 +205,8 @@ const ChatBot = () => {
                   <div key={i} className="flex items-end gap-2">
                     <Avatar />
                     <div
-                      className={`max-w-[85%] rounded-2xl rounded-bl-md px-4 py-3 text-[15px] leading-relaxed shadow-sm border ${
-                        msg.error ? 'bg-red-50 border-red-200 text-red-800' : 'bg-white border-gray-200 text-gray-800'
+                      className={`max-w-[85%] px-4 py-3 text-[15px] leading-relaxed border ${
+                        msg.error ? 'bg-[#fbf1f1] border-[#e7c9c9] text-[#7b2424]' : 'bg-white border-line text-ink'
                       }`}
                     >
                       <RichText text={msg.text} onNavigate={close} />
@@ -218,9 +218,9 @@ const ChatBot = () => {
             {sending && (
               <div className="flex items-end gap-2" aria-label="…">
                 <Avatar />
-                <div className="rounded-2xl rounded-bl-md bg-white border border-gray-200 px-4 py-3.5 flex gap-1.5 shadow-sm">
+                <div className="bg-white border border-line px-4 py-3.5 flex gap-1.5">
                   {[0, 0.15, 0.3].map((d) => (
-                    <span key={d} className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: `${d}s` }} />
+                    <span key={d} className="w-2 h-2 bg-gold rounded-full animate-bounce" style={{ animationDelay: `${d}s` }} />
                   ))}
                 </div>
               </div>
@@ -230,13 +230,13 @@ const ChatBot = () => {
 
           {/* Composer */}
           <form
-            className="border-t border-gray-200 bg-white px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+            className="border-t border-line bg-white px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
             onSubmit={(e) => {
               e.preventDefault();
               send(input);
             }}
           >
-            <div className="flex items-end gap-2 rounded-2xl border border-gray-300 bg-white pl-4 pr-1.5 py-1.5 focus-within:border-[#5fb9e2] focus-within:ring-2 focus-within:ring-[#5fb9e2]/30">
+            <div className="flex items-end gap-2 border border-line bg-white pl-4 pr-1.5 py-1.5 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/25">
               <textarea
                 ref={inputRef}
                 rows={1}
@@ -256,13 +256,13 @@ const ChatBot = () => {
               <button
                 type="submit"
                 disabled={!input.trim() || sending}
-                className="shrink-0 w-10 h-10 rounded-full bg-[#003366] text-white flex items-center justify-center disabled:opacity-40 hover:bg-[#001d3a] transition-colors"
+                className="shrink-0 w-10 h-10 bg-ink text-gold-light flex items-center justify-center disabled:opacity-40 hover:bg-ink-soft transition-colors"
                 aria-label={t('chat.send')}
               >
                 <FaPaperPlane aria-hidden="true" />
               </button>
             </div>
-            <p className="text-[11px] text-gray-500 mt-2 text-center">{t('chat.disclaimer')}</p>
+            <p className="text-[11px] text-muted mt-2 text-center">{t('chat.disclaimer')}</p>
           </form>
         </div>
       )}

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { publicApi } from '../api/client';
 import { useLanguage } from '../i18n/LanguageContext';
 import FormField, { Honeypot } from '../components/ui/FormField';
-import PageHeader from '../components/ui/PageHeader';
+import { PageShell } from '../components/ui/PageHeader';
 import usePageMeta from '../hooks/usePageMeta';
 
 const EMPTY = { name: '', email: '', phone: '', areaOfInterest: '', message: '', website: '' };
@@ -28,10 +28,9 @@ function Volunteer() {
   };
 
   return (
-    <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50">
-      <div className="container mx-auto max-w-2xl">
-        <PageHeader title={t('volunteer.title')} subtitle={t('volunteer.subtitle')} />
-        <form className="relative bg-white p-6 md:p-8 rounded-xl shadow-md space-y-5" onSubmit={onSubmit}>
+    <PageShell title={t('volunteer.title')} subtitle={t('volunteer.subtitle')} tone="paper">
+      <div className="max-w-[760px]">
+        <form className="relative bg-white border border-line p-6 md:p-10 space-y-6" onSubmit={onSubmit}>
           <FormField id="name" label={t('volunteer.fullName')} required maxLength={120} value={form.name} onChange={set('name')} autoComplete="name" />
           <div className="grid sm:grid-cols-2 gap-5">
             <FormField id="email" label={t('volunteer.email')} type="email" required maxLength={200} value={form.email} onChange={set('email')} autoComplete="email" />
@@ -48,19 +47,22 @@ function Volunteer() {
           <FormField id="message" as="textarea" rows={3} label={t('volunteer.message')} maxLength={4000} value={form.message} onChange={set('message')} />
           <Honeypot value={form.website} onChange={set('website')} />
           <div aria-live="polite">
-            {status.message ? <p className="text-green-700 font-medium">{status.message}</p> : null}
-            {status.error ? <p className="text-red-600">{status.error}</p> : null}
+            {status.message ? <p className="text-[#2f6b4f] font-semibold">{status.message}</p> : null}
+            {status.error ? <p className="text-[#9b2c2c]">{status.error}</p> : null}
           </div>
           <button
             type="submit"
             disabled={status.loading}
-            className="w-full sm:w-auto bg-[#001d3a] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#003366] transition-colors disabled:opacity-60"
+            className="btn btn-primary w-full sm:w-auto disabled:opacity-60"
           >
             {status.loading ? t('volunteer.submitting') : t('volunteer.submit')}
+            <span className="text-gold-light" aria-hidden="true">
+              ↗
+            </span>
           </button>
         </form>
       </div>
-    </div>
+    </PageShell>
   );
 }
 

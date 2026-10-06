@@ -1,7 +1,7 @@
-import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 import { useSettings } from '../../api/usePublicData';
 import { useLanguage } from '../../i18n/LanguageContext';
-import PageHeader from '../../components/ui/PageHeader';
+import { PageShell } from '../../components/ui/PageHeader';
+import { PhoneIcon } from '../../components/Header1';
 import usePageMeta from '../../hooks/usePageMeta';
 
 const MAP_EMBED =
@@ -24,74 +24,60 @@ function Location() {
   const address = settings.address || 'Kicukiro, Kigali, Rwanda';
 
   return (
-    <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50">
-      <div className="container mx-auto max-w-6xl">
-        <PageHeader badge={t('location.badge')} title={t('location.title')} />
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <div className="rounded-xl overflow-hidden shadow-lg bg-white">
-            <iframe
-              src={MAP_EMBED}
-              title="EMLR Kicukiro map"
-              className="w-full h-80 md:h-[420px] border-0"
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-            <div className="p-5 space-y-3">
-              <p className="flex items-start text-gray-700">
-                <FaMapMarkerAlt className="mt-1 mr-3 text-[#1a6f99] shrink-0" aria-hidden="true" />
-                <span>
-                  <strong className="text-[#001d3a]">EMLR Kicukiro</strong>
-                  <br />
-                  {address}
-                </span>
-              </p>
-              <a
-                href={DIRECTIONS}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block px-5 py-2.5 rounded-lg bg-[#001d3a] text-white font-medium hover:bg-[#003366]"
-              >
-                {t('location.directions')}
-              </a>
+    <PageShell badge={t('location.badge')} title={t('location.title')}>
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,.85fr)] lg:gap-14">
+        <div>
+          <div className="relative pr-3 pb-3 md:pr-4 md:pb-4">
+            <span className="absolute right-0 bottom-0 w-[56%] h-[46%] bg-gold-light" aria-hidden="true" />
+            <div className="relative bg-[#d5d0c4] shadow-[0_18px_50px_rgba(20,54,66,.12)]">
+              <iframe
+                src={MAP_EMBED}
+                title="EMLR Kicukiro map"
+                className="block w-full h-80 md:h-[460px] border-0"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
           </div>
-
-          <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
-            <h2 className="text-2xl font-bold text-[#001d3a] mb-6">{t('location.contactTitle')}</h2>
-            <ul className="space-y-6">
-              {CONTACTS.map((c) => (
-                <li key={c.name} className="flex items-start">
-                  <span className="bg-[#e8f5fb] p-3 rounded-full mr-4">
-                    <FaUser className="text-[#1a6f99]" aria-hidden="true" />
-                  </span>
-                  <div>
-                    <h3 className="font-semibold text-[#001d3a]">{c.name}</h3>
-                    <p className="text-gray-600">{t(`location.${c.role}`)}</p>
-                    <a href={tel(c.phone)} className="inline-flex items-center mt-1 text-[#1a6f99] hover:text-[#001d3a]">
-                      <FaPhone className="mr-2 text-sm" aria-hidden="true" />
-                      {c.phone}
-                    </a>
-                  </div>
-                </li>
-              ))}
-              <li className="flex items-start pt-5 border-t border-gray-100">
-                <span className="bg-[#e8f5fb] p-3 rounded-full mr-4">
-                  <FaEnvelope className="text-[#1a6f99]" aria-hidden="true" />
-                </span>
-                <div>
-                  <h3 className="font-semibold text-[#001d3a]">{t('location.email')}</h3>
-                  <a href={`mailto:${email}`} className="text-[#1a6f99] hover:text-[#001d3a] break-all">
-                    {email}
-                  </a>
-                </div>
-              </li>
-            </ul>
+          <div className="mt-7 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-[17px] leading-relaxed text-[#435b60]">
+              <strong className="block font-serif font-normal text-[1.35rem] text-ink">EMLR Kicukiro</strong>
+              {address}
+            </p>
+            <a href={DIRECTIONS} target="_blank" rel="noopener noreferrer" className="btn btn-primary flex-none">
+              {t('location.directions')}
+              <span className="text-gold-light" aria-hidden="true">
+                ↗
+              </span>
+            </a>
           </div>
         </div>
+
+        <div>
+          <p className="eyebrow mb-3">{t('location.badge')}</p>
+          <h2 className="h-display text-[2.2rem] md:text-[2.6rem] leading-tight mb-6">{t('location.contactTitle')}</h2>
+          <ul className="border-t border-line">
+            {CONTACTS.map((c) => (
+              <li key={c.name} className="py-5 border-b border-line">
+                <p className="text-[11px] md:text-xs font-bold uppercase tracking-[0.1em] text-gold-text">{t(`location.${c.role}`)}</p>
+                <h3 className="mt-1 font-serif text-[1.35rem] leading-snug text-ink">{c.name}</h3>
+                <a href={tel(c.phone)} className="mt-1.5 inline-flex items-center gap-2 text-[15px] font-semibold text-[#334c51] hover:text-gold">
+                  <PhoneIcon className="w-4 h-4 text-gold" />
+                  {c.phone}
+                </a>
+              </li>
+            ))}
+            <li className="py-5 border-b border-line">
+              <p className="text-[11px] md:text-xs font-bold uppercase tracking-[0.1em] text-gold-text">{t('location.email')}</p>
+              <a href={`mailto:${email}`} className="mt-1 inline-block font-serif text-[1.25rem] text-ink hover:text-gold break-all">
+                {email}
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
+    </PageShell>
   );
 }
 

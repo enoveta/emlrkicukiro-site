@@ -17,7 +17,7 @@ export default function Img({ src, alt = '', thumb = false, eager = false, class
   }, [preferred]);
 
   if (!src || failed) {
-    return <div className={`bg-gradient-to-br from-[#001d3a] to-[#5fb9e2] ${className}`} aria-hidden="true" />;
+    return <div className={`bg-gradient-to-br from-paper-tint to-gold-light ${className}`} aria-hidden="true" />;
   }
 
   return (

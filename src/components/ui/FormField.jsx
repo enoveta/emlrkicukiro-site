@@ -1,12 +1,11 @@
-const inputClass =
-  'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5fb9e2] focus:border-transparent';
+const inputClass = 'field';
 
 /** Labelled input/textarea/select. `as` picks the element. */
 export default function FormField({ id, label, as = 'input', children, ...props }) {
   const Tag = as;
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+      <label htmlFor={id} className="block text-[13px] font-bold uppercase tracking-[0.08em] text-[#435b60] mb-2">
         {label}
       </label>
       <Tag id={id} name={id} className={inputClass} {...props}>

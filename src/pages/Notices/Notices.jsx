@@ -39,12 +39,14 @@ function Notices() {
   };
 
   return (
-    <div className="min-h-screen py-12 md:py-16 px-4 bg-gray-50 print:bg-white print:py-0">
-      <div className="container mx-auto max-w-7xl">
+    <div className="min-h-screen bg-paper print:bg-white">
+      <div className="print:hidden">
         <PageHeader title={t('schedule.pageTitle')} />
+      </div>
+      <div className="site-container py-10 md:py-16 print:py-0">
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 print:hidden">
-          <div role="tablist" aria-label={t('schedule.pageTitle')} className="grid grid-cols-3 md:inline-flex w-full md:w-auto bg-white border border-gray-200 rounded-xl p-1 self-start">
+          <div role="tablist" aria-label={t('schedule.pageTitle')} className="grid grid-cols-3 md:inline-flex w-full md:w-auto bg-white border border-line self-start">
             {VIEWS.map(({ key, label, icon: Icon }) => (
               <button
                 key={key}
@@ -52,11 +54,11 @@ function Notices() {
                 role="tab"
                 aria-selected={view === key}
                 onClick={() => setView(key)}
-                className={`inline-flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-2 md:px-4 py-2 rounded-lg text-xs md:text-sm font-semibold text-center leading-tight transition-colors ${
-                  view === key ? 'bg-[#003366] text-white' : 'text-[#003366] hover:bg-gray-100'
+                className={`inline-flex flex-col md:flex-row items-center justify-center gap-1.5 md:gap-2.5 px-2 md:px-5 py-3 text-[13px] md:text-[15px] font-semibold text-center leading-tight transition-colors border-r border-line last:border-r-0 ${
+                  view === key ? 'bg-ink text-white' : 'text-[#334c51] hover:bg-paper'
                 }`}
               >
-                <Icon aria-hidden="true" />
+                <Icon className={view === key ? 'text-gold-light' : 'text-gold'} aria-hidden="true" />
                 <span>{t(label)}</span>
               </button>
             ))}
@@ -65,7 +67,7 @@ function Notices() {
             <button
               type="button"
               onClick={() => window.print()}
-              className="hidden md:inline-flex items-center gap-2 self-start px-4 py-2 rounded-lg border border-gray-300 bg-white text-sm font-medium text-[#003366] hover:border-[#003366]"
+              className="hidden md:inline-flex btn btn-outline !min-h-[46px] self-start"
             >
               <FaPrint aria-hidden="true" />
               {t('schedule.print')}
@@ -83,8 +85,8 @@ function Notices() {
                   type="button"
                   aria-pressed={active}
                   onClick={() => setFilter(cat)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors ${
-                    active ? 'bg-[#001d3a] border-[#001d3a] text-white' : 'bg-white border-gray-300 text-gray-700 hover:border-[#001d3a]'
+                  className={`inline-flex items-center gap-2 px-3.5 py-2 text-sm font-semibold border transition-colors ${
+                    active ? 'bg-ink border-ink text-white' : 'bg-white border-line text-[#334c51] hover:border-ink/40'
                   }`}
                 >
                   {cat !== 'all' ? <span className={`w-2.5 h-2.5 rounded-full ${styleFor(cat).dot}`} aria-hidden="true" /> : null}
@@ -95,7 +97,7 @@ function Notices() {
           </div>
         ) : null}
 
-        <h2 className="hidden print:block text-xl font-bold mb-4">{t('schedule.tabWeek')}, EMLR Kicukiro</h2>
+        <h2 className="hidden print:block font-serif text-2xl mb-4">{t('schedule.tabWeek')}, EMLR Kicukiro</h2>
 
         {view === 'week' ? (
           loadingSchedule ? (
@@ -104,7 +106,7 @@ function Notices() {
             visible.length ? (
               <ProgrammeSummary items={visible} lang={lang} t={t} showPlace />
             ) : (
-              <p className="text-center text-gray-600 bg-white rounded-xl p-8 border border-gray-200">{t('schedule.emptyWeek')}</p>
+              <p className="text-[17px] text-[#596c70] bg-white p-8 border border-line">{t('schedule.emptyWeek')}</p>
             )
           )
         ) : null}

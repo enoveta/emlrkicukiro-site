@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { FaPlay, FaArrowLeft, FaArrowRight, FaYoutube, FaTimes } from 'react-icons/fa';
+import { FaPlay, FaYoutube, FaTimes } from 'react-icons/fa';
 import { usePublicData, useSettings } from '../../api/usePublicData';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { formatDate } from '../../i18n/translations';
 import Img from '../../components/ui/Img';
-import PageHeader from '../../components/ui/PageHeader';
+import { PageShell } from '../../components/ui/PageHeader';
 import { SkeletonCards } from '../../components/ui/Skeleton';
 import usePageMeta from '../../hooks/usePageMeta';
 
@@ -28,14 +28,14 @@ function VideoModal({ videoId, onClose, t }) {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 bg-black/85 flex justify-center items-center z-[60] p-4" role="dialog" aria-modal="true" onClick={onClose}>
+    <div className="fixed inset-0 bg-ink-footer/90 flex justify-center items-center z-[60] p-4" role="dialog" aria-modal="true" onClick={onClose}>
       <div className="relative w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
-        <button type="button" onClick={onClose} className="absolute -top-11 right-0 text-3xl text-white hover:text-[#fae924]" aria-label={t('tv.close')}>
+        <button type="button" onClick={onClose} className="absolute -top-11 right-0 text-3xl text-white hover:text-gold-light" aria-label={t('tv.close')}>
           <FaTimes />
         </button>
         <div className="relative pt-[56.25%]">
           <iframe
-            className="absolute inset-0 w-full h-full rounded-lg"
+            className="absolute inset-0 w-full h-full"
             src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
@@ -52,40 +52,40 @@ function PlaylistVideos({ playlist, onBack, onPlay, t, lang, channel }) {
   const { data: videos, loading, error } = usePublicData(`/youtube/playlists/${playlist.id}`, []);
   return (
     <>
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <button type="button" className="inline-flex items-center text-[#003366] hover:text-[#1a6f99] font-medium" onClick={onBack}>
-          <FaArrowLeft className="mr-2" aria-hidden="true" /> {t('tv.back')}
+      <div className="mb-8 flex flex-col-reverse sm:flex-row sm:items-end sm:justify-between gap-4">
+        <h2 className="h-display text-[2.1rem] md:text-[2.6rem] leading-tight">{t(`tv.playlists.${playlist.key}`)}</h2>
+        <button type="button" className="small-link self-start sm:self-auto" onClick={onBack}>
+          <span aria-hidden="true">←</span> {t('tv.back')}
         </button>
-        <h2 className="text-2xl font-bold text-[#003366]">{t(`tv.playlists.${playlist.key}`)}</h2>
       </div>
       {loading ? <SkeletonCards count={6} className="h-64" /> : null}
       {error && !videos.length ? (
-        <div className="bg-amber-50 border border-amber-200 text-amber-900 px-4 py-4 rounded-lg mb-8 text-center">
+        <div className="bg-paper-featured border border-line text-ink px-5 py-5 mb-8">
           <p className="mb-3">{t('tv.error')}</p>
-          <a href={channel} target="_blank" rel="noopener noreferrer" className="inline-flex items-center font-semibold text-red-700">
+          <a href={channel} target="_blank" rel="noopener noreferrer" className="small-link">
             <FaYoutube className="mr-2" aria-hidden="true" /> {t('tv.channel')}
           </a>
         </div>
       ) : null}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 lg:gap-[18px]">
         {videos.map((video) => (
           <button
             key={video.id}
             type="button"
-            className="group text-left bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow border border-gray-100"
+            className="group text-left bg-white border border-line overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_17px_35px_rgba(20,54,66,.12)]"
             onClick={() => onPlay(video.id)}
           >
-            <div className="relative aspect-video overflow-hidden">
-              <img src={video.thumbnail} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            <div className="relative aspect-video overflow-hidden bg-[#d5d0c4]">
+              <img src={video.thumbnail} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
               <span className="absolute inset-0 flex items-center justify-center">
-                <span className="bg-[#fae924] text-[#003366] p-3 rounded-full shadow-lg">
-                  <FaPlay aria-hidden="true" />
+                <span className="grid place-items-center w-12 h-12 rounded-full bg-white/95 text-ink shadow-lg">
+                  <FaPlay className="ml-0.5 text-sm" aria-hidden="true" />
                 </span>
               </span>
             </div>
-            <div className="p-4">
-              <h3 className="font-medium text-gray-800 line-clamp-2 mb-1">{video.title}</h3>
-              <p className="text-xs text-gray-500">{formatDate(video.publishedAt, lang)}</p>
+            <div className="p-5">
+              <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-gold-text mb-1.5">{formatDate(video.publishedAt, lang)}</p>
+              <h3 className="font-serif text-[1.2rem] leading-snug text-ink line-clamp-2">{video.title}</h3>
             </div>
           </button>
         ))}
@@ -103,9 +103,8 @@ const TV = () => {
   const [videoId, setVideoId] = useState('');
 
   return (
-    <section className="py-12 md:py-16 bg-white min-h-screen">
-      <div className="container mx-auto px-4 lg:px-8 max-w-6xl">
-        <PageHeader title="EMLR Kicukiro TV" subtitle={t('tv.subtitle')} />
+    <PageShell badge="EMLR TV" title="EMLR Kicukiro TV" subtitle={t('tv.subtitle')} tone="paper">
+      <div>
 
         {playlist ? (
           <PlaylistVideos
@@ -117,46 +116,44 @@ const TV = () => {
             channel={channel}
           />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 lg:gap-[18px]">
             {PLAYLISTS.map((p) => (
               <button
                 key={p.id}
                 type="button"
-                className="group relative text-left bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all border border-gray-100"
+                className="group relative flex flex-col text-left bg-white border border-line overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_17px_35px_rgba(20,54,66,.12)]"
                 onClick={() => setPlaylist(p)}
               >
-                <div className="relative h-52 overflow-hidden">
-                  <Img src={p.image} alt="" thumb className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                  <span className="absolute top-4 right-4 bg-[#fae924] text-[#003366] p-2 rounded-full">
-                    <FaPlay aria-hidden="true" />
+                <div className="relative h-56 overflow-hidden bg-[#d5d0c4]">
+                  <Img src={p.image} alt="" thumb className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+                  <span className="absolute right-3.5 bottom-3.5 grid place-items-center w-11 h-11 rounded-full bg-white/95 text-ink">
+                    <FaPlay className="ml-0.5 text-xs" aria-hidden="true" />
                   </span>
                 </div>
-                <div className="p-6">
-                  <h2 className="text-xl font-bold text-[#001d3a] mb-2">{t(`tv.playlists.${p.key}`)}</h2>
-                  <span className="inline-flex items-center font-medium text-[#1a6f99]">
+                <div className="px-5 pt-5 pb-[18px] md:px-[22px]">
+                  <p className="text-[11px] font-bold tracking-[0.08em] text-[#7f8a89] mb-1.5">{String(PLAYLISTS.indexOf(p) + 1).padStart(2, '0')}</p>
+                  <h2 className="font-serif text-[1.5rem] leading-[1.18] text-ink mb-3">{t(`tv.playlists.${p.key}`)}</h2>
+                  <span className="inline-flex items-center gap-2 text-[13px] font-bold text-gold-dark">
                     {t('tv.browse')}
-                    <FaArrowRight className="ml-2 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                    <span className="text-gold" aria-hidden="true">↗</span>
                   </span>
                 </div>
-                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#fae924] to-[#5fb9e2]" />
               </button>
             ))}
           </div>
         )}
 
-        <div className="text-center mt-12">
-          <a
-            href={channel}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center px-6 py-3 rounded-full bg-red-600 text-white font-semibold hover:bg-red-700"
-          >
-            <FaYoutube className="mr-2" aria-hidden="true" /> {t('tv.channel')}
+        <div className="mt-12">
+          <a href={channel} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+            <FaYoutube className="text-gold-light text-lg" aria-hidden="true" /> {t('tv.channel')}
+            <span className="text-gold-light" aria-hidden="true">
+              ↗
+            </span>
           </a>
         </div>
       </div>
       {videoId ? <VideoModal videoId={videoId} onClose={() => setVideoId('')} t={t} /> : null}
-    </section>
+    </PageShell>
   );
 };
 
