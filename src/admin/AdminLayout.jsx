@@ -105,20 +105,20 @@ export default function AdminLayout() {
 
   const NavBody = (
     <div className="flex h-full flex-col">
-      <div className="flex h-16 items-center gap-3 border-b border-[#efebe3] px-5">
-        <span className="grid h-10 w-10 flex-none place-items-center rounded-lg border border-[#efebe3] bg-white">
+      <div className="flex h-16 items-center gap-3 border-b border-white/10 px-5">
+        <span className="grid h-10 w-10 flex-none place-items-center rounded-lg bg-white">
           <img src={logo} alt="" className="h-8 w-8 object-contain" />
         </span>
         <div className="min-w-0">
-          <div className="font-serif text-[1.15rem] leading-none text-ink">EMLR Kicukiro</div>
-          <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.14em] text-gold">Dashboard</div>
+          <div className="font-serif text-[1.15rem] leading-none text-white">EMLR Kicukiro</div>
+          <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.14em] text-gold-light">Dashboard</div>
         </div>
       </div>
 
       <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4" aria-label="Dashboard">
         {NAV.map((group) => (
           <div key={group.title}>
-            <div className="mb-1.5 px-3 text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#9aa6a7]">{group.title}</div>
+            <div className="mb-1.5 px-3 text-[10.5px] font-bold uppercase tracking-[0.12em] text-white/40">{group.title}</div>
             <div className="space-y-0.5">
               {group.items.map((item) => {
                 const active = isActive(item);
@@ -129,14 +129,14 @@ export default function AdminLayout() {
                     to={item.to}
                     aria-current={active ? 'page' : undefined}
                     className={`group relative flex h-9 items-center gap-3 rounded-lg px-3 text-[14px] transition-colors ${
-                      active ? 'bg-[#f3efe6] font-semibold text-ink' : 'text-[#4b5d61] hover:bg-[#f7f5f0] hover:text-ink'
+                      active ? 'bg-white/10 font-semibold text-white' : 'text-white/70 hover:bg-white/[.06] hover:text-white'
                     }`}
                   >
-                    {active ? <span className="absolute -left-3 top-1.5 bottom-1.5 w-[3px] rounded-r bg-gold" aria-hidden="true" /> : null}
-                    <Icon className={`flex-none text-[16px] ${active ? 'text-gold' : 'text-[#8a979a] group-hover:text-ink'}`} aria-hidden="true" />
+                    {active ? <span className="absolute -left-3 top-1.5 bottom-1.5 w-[3px] rounded-r bg-gold-light" aria-hidden="true" /> : null}
+                    <Icon className={`flex-none text-[16px] ${active ? 'text-gold-light' : 'text-white/45 group-hover:text-white/80'}`} aria-hidden="true" />
                     <span className="flex-1 truncate">{item.label}</span>
                     {item.badge === 'inbox' && inboxNew > 0 ? (
-                      <span className="min-w-[20px] rounded-full bg-gold px-1.5 text-center text-[11px] font-bold leading-5 text-white">{inboxNew}</span>
+                      <span className="min-w-[20px] rounded-full bg-gold-light px-1.5 text-center text-[11px] font-bold leading-5 text-ink-deep">{inboxNew}</span>
                     ) : null}
                   </Link>
                 );
@@ -146,14 +146,14 @@ export default function AdminLayout() {
         ))}
       </nav>
 
-      <div className="border-t border-[#efebe3] p-3">
+      <div className="border-t border-white/10 p-3">
         <div className="flex items-center gap-3 rounded-lg px-2 py-2">
-          <span className="grid h-9 w-9 flex-none place-items-center rounded-full bg-ink text-sm font-bold text-gold-light">{initials}</span>
+          <span className="grid h-9 w-9 flex-none place-items-center rounded-full bg-gold-light text-sm font-bold text-ink-deep">{initials}</span>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-[13px] font-semibold text-ink">{user.email || 'Signed in'}</div>
-            <div className="text-[11px] text-[#7b8a8c]">{user.role === 'ADMIN' ? 'Administrator' : 'Content manager'}</div>
+            <div className="truncate text-[13px] font-semibold text-white">{user.email || 'Signed in'}</div>
+            <div className="text-[11px] text-white/50">{user.role === 'ADMIN' ? 'Administrator' : 'Content manager'}</div>
           </div>
-          <button type="button" onClick={logout} className="a-icon-btn" aria-label="Sign out" title="Sign out">
+          <button type="button" onClick={logout} className="a-icon-btn !text-white/60 hover:!bg-white/10 hover:!text-white" aria-label="Sign out" title="Sign out">
             <FiLogOut aria-hidden="true" />
           </button>
         </div>
@@ -164,11 +164,11 @@ export default function AdminLayout() {
   return (
     <ToastProvider>
       <div className="admin-ui flex min-h-screen bg-[#f6f5f1]">
-        <aside className="sticky top-0 hidden h-screen w-[264px] flex-none border-r border-[#e9e5dc] bg-white lg:block">{NavBody}</aside>
+        <aside className="sticky top-0 hidden h-screen w-[264px] flex-none bg-ink-deep lg:block">{NavBody}</aside>
 
         {open ? (
           <div className="fixed inset-0 z-50 flex lg:hidden">
-            <div className="h-full w-[280px] max-w-[85vw] bg-white shadow-2xl">{NavBody}</div>
+            <div className="h-full w-[280px] max-w-[85vw] bg-ink-deep shadow-2xl">{NavBody}</div>
             <button type="button" className="flex-1 bg-ink-deep/40 backdrop-blur-[1px]" onClick={() => setOpen(false)} aria-label="Close menu" />
           </div>
         ) : null}
