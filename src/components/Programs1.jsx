@@ -5,13 +5,15 @@ import { localized } from '../i18n/translations';
 import Img from './ui/Img';
 import SectionHeading from './ui/SectionHeading';
 
-export const MinistryCard = ({ ministry, lang, t, index }) => {
+export const MinistryCard = ({ ministry, lang, t, index, dark = false }) => {
   const image = ministry.aboutImageUrl || ministry.heroImageUrl;
   const designed = /\/media\/dept-/.test(image || '');
   return (
     <Link
       to={`/ministries/${ministry.slug}`}
-      className="group flex w-full min-w-0 flex-col overflow-hidden bg-white text-ink border border-line transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_17px_35px_rgba(20,54,66,.16)]"
+      className={`group flex w-full min-w-0 flex-col overflow-hidden bg-white text-ink transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_17px_35px_rgba(20,54,66,.16)] ${
+        dark ? '' : 'ring-1 ring-ink/[.05]'
+      }`}
     >
       <span className="relative block h-[clamp(190px,52vw,250px)] sm:h-[210px] lg:h-[230px] overflow-hidden bg-[#c9c6bb]">
         <Img
@@ -79,7 +81,7 @@ const Programs = () => {
         <div className="-mx-5 px-5 sm:mx-0 sm:px-0 flex sm:grid gap-3 sm:gap-3.5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-[18px] overflow-x-auto sm:overflow-visible snap-x snap-mandatory scroll-px-5 pb-2 sm:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {featured.map((ministry, i) => (
             <div key={ministry.id || ministry.slug} className="flex w-[82%] flex-none snap-start sm:w-auto">
-              <MinistryCard ministry={ministry} lang={lang} t={t} index={i} />
+              <MinistryCard ministry={ministry} lang={lang} t={t} index={i} dark />
             </div>
           ))}
         </div>

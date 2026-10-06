@@ -252,7 +252,7 @@ const PLACE = { location: "EMLR Kicukiro", locationRw: "EMLR Kicukiro" };
 const schedule = [
   { title: "First Sunday Service", titleRw: "Iteraniro rya mbere", category: "service", days: [0], startTime: "08:00", endTime: "11:00", ...PLACE, sortOrder: 0 },
   { title: "Second Sunday Service", titleRw: "Iteraniro rya kabiri", category: "service", days: [0], startTime: "11:30", endTime: "13:15", ...PLACE, sortOrder: 1 },
-  { title: "Morning Prayer (Nibature)", titleRw: "Amasengesho ya mu gitondo (Nibature)", category: "prayer", days: [1, 2, 3, 4, 5, 6], startTime: "05:00", endTime: "06:00", ministrySlug: "prayer-ministry", ...PLACE, sortOrder: 0 },
+  { title: "Morning Devotion", titleRw: "Amasengesho ya mu gitondo (Nibature)", category: "prayer", days: [1, 2, 3, 4, 5, 6], startTime: "05:00", endTime: "06:00", ministrySlug: "prayer-ministry", ...PLACE, sortOrder: 0 },
   { title: "General Prayer: Fasting", titleRw: "Amasengesho rusange: Kwiyiriza ubusa", category: "prayer", days: [2], startTime: "09:00", endTime: "15:00", ministrySlug: "prayer-ministry", ...PLACE, sortOrder: 1 },
   { title: "Women's Prayer", titleRw: "Amasengesho y’Abari n’Abategarugori", category: "prayer", days: [4], startTime: "09:00", endTime: "15:00", ministrySlug: "women-fellowship", ...PLACE, sortOrder: 1 },
   { title: "General Service", titleRw: "Amateraniro rusange", category: "service", days: [4], startTime: "18:00", endTime: "20:00", ...PLACE, sortOrder: 2 }

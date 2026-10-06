@@ -42,7 +42,7 @@ function RichText({ text, onNavigate }) {
 }
 
 const Avatar = () => (
-  <span className="shrink-0 w-8 h-8 bg-white border border-line flex items-center justify-center overflow-hidden">
+  <span className="shrink-0 w-8 h-8 rounded-full bg-white shadow-[0_1px_3px_rgba(20,54,66,.12)] flex items-center justify-center overflow-hidden">
     <img src={logo} alt="" className="w-6 h-6 object-contain" />
   </span>
 );
@@ -123,7 +123,7 @@ const ChatBot = () => {
       <button
         type="button"
         onClick={() => setIsOpen((v) => !v)}
-        className={`fixed bottom-5 right-5 md:bottom-8 md:right-8 bg-ink hover:bg-ink-soft text-white rounded-full p-4 shadow-[0_12px_30px_rgba(20,54,66,.28)] ring-1 ring-gold-light/40 z-40 transition-colors ${
+        className={`fixed bottom-5 right-5 md:bottom-8 md:right-8 bg-ink hover:bg-ink-soft text-white rounded-full p-4 shadow-[0_12px_30px_rgba(20,54,66,.28)] z-40 transition-colors ${
           isOpen ? 'hidden sm:block' : ''
         }`}
         aria-label={isOpen ? t('chat.close') : t('chat.open')}
@@ -134,22 +134,23 @@ const ChatBot = () => {
 
       {isOpen && (
         <div
-          className="fixed z-50 flex flex-col bg-white shadow-[0_24px_60px_rgba(20,54,66,.22)] overflow-hidden border border-line font-body
-            inset-x-0 bottom-0 top-[8vh]
-            sm:inset-auto sm:bottom-24 sm:right-6 md:right-8 sm:w-[420px] sm:h-[min(640px,calc(100vh-8rem))]"
+          className="fixed z-50 flex flex-col bg-[#f7f5f0] shadow-[0_24px_70px_rgba(15,41,48,.28)] overflow-hidden font-body
+            inset-x-0 bottom-0 top-[8vh] rounded-t-[22px]
+            sm:inset-auto sm:bottom-24 sm:right-6 md:right-8 sm:w-[420px] sm:h-[min(640px,calc(100vh-8rem))] sm:rounded-[22px]"
           role="dialog"
           aria-modal="false"
           aria-label={t('chat.title')}
         >
           {/* Header */}
-          <div className="flex items-center gap-3 px-4 py-3.5 bg-ink text-white border-b border-gold-light/30">
-            <span className="w-11 h-11 bg-white flex items-center justify-center shrink-0">
+          <div className="relative flex items-center gap-3 px-4 py-4 bg-ink text-white overflow-hidden">
+            <span className="absolute -top-10 -right-10 w-32 h-32 rounded-full border border-gold-light/20" aria-hidden="true" />
+            <span className="relative w-11 h-11 rounded-full bg-white flex items-center justify-center shrink-0">
               <img src={logo} alt="" className="w-8 h-8 object-contain" />
             </span>
-            <div className="min-w-0 flex-1">
+            <div className="relative min-w-0 flex-1">
               <h2 className="font-serif text-[1.25rem] leading-tight">{t('chat.title')}</h2>
               <p className="flex items-center gap-1.5 text-xs text-[#c6d0cf]">
-                <span className="w-2 h-2 rounded-full bg-gold-light" aria-hidden="true" />
+                <span className="w-2 h-2 rounded-full bg-[#5fd39a] shadow-[0_0_0_3px_rgba(95,211,154,.18)]" aria-hidden="true" />
                 {t('chat.status')}
               </p>
             </div>
@@ -157,36 +158,36 @@ const ChatBot = () => {
               <button
                 type="button"
                 onClick={() => setMessages([])}
-                className="p-2 rounded-full hover:bg-white/10"
+                className="relative grid place-items-center w-9 h-9 rounded-full text-white/80 hover:bg-white/10 hover:text-white"
                 aria-label={t('chat.newChat')}
                 title={t('chat.newChat')}
               >
                 <FaRedo aria-hidden="true" />
               </button>
             ) : null}
-            <button type="button" onClick={close} className="p-2 rounded-full hover:bg-white/10" aria-label={t('chat.close')}>
+            <button type="button" onClick={close} className="relative grid place-items-center w-9 h-9 rounded-full text-white/80 hover:bg-white/10 hover:text-white" aria-label={t('chat.close')}>
               <FaTimes className="text-lg" aria-hidden="true" />
             </button>
           </div>
 
           {/* Conversation */}
-          <div className="flex-1 overflow-y-auto bg-paper px-4 py-5 space-y-4" aria-live="polite">
+          <div className="flex-1 overflow-y-auto px-4 py-5 space-y-3.5" aria-live="polite">
             {messages.length === 0 ? (
               <div>
                 <div className="flex items-end gap-2">
                   <Avatar />
-                  <div className="max-w-[85%] bg-white border border-line px-4 py-3 text-[15px] leading-relaxed text-ink">
+                  <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-white px-4 py-3 text-[15px] leading-relaxed text-ink shadow-[0_1px_3px_rgba(20,54,66,.08)]">
                     {t('chat.welcome')}
                   </div>
                 </div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-gold-text mt-6 mb-2.5">{t('chat.tryAsking')}</p>
-                <div className="flex flex-wrap gap-2">
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-gold-text mt-6 mb-2.5 pl-10">{t('chat.tryAsking')}</p>
+                <div className="flex flex-col items-start gap-2 pl-10">
                   {suggestions.map((q) => (
                     <button
                       key={q}
                       type="button"
                       onClick={() => send(q)}
-                      className="text-left text-sm bg-white border border-line text-ink hover:border-gold hover:bg-paper-featured px-3.5 py-2 transition-colors"
+                      className="text-left text-sm rounded-full bg-white text-ink shadow-[0_1px_2px_rgba(20,54,66,.08)] hover:bg-ink hover:text-white px-4 py-2 transition-colors"
                     >
                       {q}
                     </button>
@@ -197,7 +198,7 @@ const ChatBot = () => {
               messages.map((msg, i) =>
                 msg.role === 'user' ? (
                   <div key={i} className="flex justify-end">
-                    <div className="max-w-[85%] bg-ink text-white px-4 py-2.5 text-[15px] leading-relaxed whitespace-pre-line">
+                    <div className="max-w-[85%] rounded-2xl rounded-br-md bg-ink text-white px-4 py-2.5 text-[15px] leading-relaxed whitespace-pre-line">
                       {msg.text}
                     </div>
                   </div>
@@ -205,8 +206,8 @@ const ChatBot = () => {
                   <div key={i} className="flex items-end gap-2">
                     <Avatar />
                     <div
-                      className={`max-w-[85%] px-4 py-3 text-[15px] leading-relaxed border ${
-                        msg.error ? 'bg-[#fbf1f1] border-[#e7c9c9] text-[#7b2424]' : 'bg-white border-line text-ink'
+                      className={`max-w-[85%] rounded-2xl rounded-bl-md px-4 py-3 text-[15px] leading-relaxed shadow-[0_1px_3px_rgba(20,54,66,.08)] ${
+                        msg.error ? 'bg-[#fbf1f1] text-[#7b2424]' : 'bg-white text-ink'
                       }`}
                     >
                       <RichText text={msg.text} onNavigate={close} />
@@ -218,9 +219,9 @@ const ChatBot = () => {
             {sending && (
               <div className="flex items-end gap-2" aria-label="…">
                 <Avatar />
-                <div className="bg-white border border-line px-4 py-3.5 flex gap-1.5">
+                <div className="rounded-2xl rounded-bl-md bg-white px-4 py-3.5 flex gap-1.5 shadow-[0_1px_3px_rgba(20,54,66,.08)]">
                   {[0, 0.15, 0.3].map((d) => (
-                    <span key={d} className="w-2 h-2 bg-gold rounded-full animate-bounce" style={{ animationDelay: `${d}s` }} />
+                    <span key={d} className="w-1.5 h-1.5 bg-gold rounded-full animate-bounce" style={{ animationDelay: `${d}s` }} />
                   ))}
                 </div>
               </div>
@@ -230,13 +231,13 @@ const ChatBot = () => {
 
           {/* Composer */}
           <form
-            className="border-t border-line bg-white px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+            className="bg-[#f7f5f0] px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
             onSubmit={(e) => {
               e.preventDefault();
               send(input);
             }}
           >
-            <div className="flex items-end gap-2 border border-line bg-white pl-4 pr-1.5 py-1.5 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/25">
+            <div className="flex items-end gap-2 rounded-[22px] bg-white pl-4 pr-1.5 py-1.5 shadow-[0_2px_10px_rgba(20,54,66,.08)] focus-within:ring-1 focus-within:ring-gold/25">
               <textarea
                 ref={inputRef}
                 rows={1}
@@ -256,13 +257,12 @@ const ChatBot = () => {
               <button
                 type="submit"
                 disabled={!input.trim() || sending}
-                className="shrink-0 w-10 h-10 bg-ink text-gold-light flex items-center justify-center disabled:opacity-40 hover:bg-ink-soft transition-colors"
+                className="shrink-0 w-10 h-10 rounded-full bg-ink text-gold-light flex items-center justify-center disabled:opacity-40 hover:bg-ink-soft transition-colors"
                 aria-label={t('chat.send')}
               >
                 <FaPaperPlane aria-hidden="true" />
               </button>
             </div>
-            <p className="text-[11px] text-muted mt-2 text-center">{t('chat.disclaimer')}</p>
           </form>
         </div>
       )}
