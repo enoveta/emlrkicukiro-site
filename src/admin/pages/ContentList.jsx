@@ -60,12 +60,12 @@ export default function ContentList({ resourceKey }) {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[#001d3a]">{cfg.label}</h1>
+          <h1 className="text-3xl font-bold text-ink">{cfg.label}</h1>
           <p className="text-slate-500 mt-1">{cfg.description || 'Manage and publish content'}</p>
         </div>
         <Link
           to={`/admin/${resourceKey}/new`}
-          className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-[#001d3a] text-white text-sm font-medium hover:bg-[#5fb9e2] transition"
+          className="inline-flex items-center justify-center px-4 py-2.5 rounded-md bg-ink text-white text-sm font-medium hover:bg-ink-soft transition"
         >
           + Add new
         </Link>
@@ -76,7 +76,7 @@ export default function ContentList({ resourceKey }) {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={`Search ${cfg.label.toLowerCase()}...`}
-          className="border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white min-w-[220px]"
+          className="border border-slate-200 rounded-md px-3 py-2 text-sm bg-white min-w-[220px]"
         />
         {['ALL', 'PUBLISHED', 'DRAFT', 'IN_REVIEW'].map((s) => (
           <button
@@ -84,7 +84,7 @@ export default function ContentList({ resourceKey }) {
             type="button"
             onClick={() => setStatus(s)}
             className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
-              status === s ? 'bg-[#001d3a] text-white' : 'bg-white border border-slate-200 text-slate-600'
+              status === s ? 'bg-ink text-white' : 'bg-white border border-slate-200 text-slate-600'
             }`}
           >
             {s === 'ALL' ? 'All' : s.replace('_', ' ')}
@@ -110,18 +110,18 @@ export default function ContentList({ resourceKey }) {
             return (
               <div
                 key={item.id}
-                className="bg-white rounded-2xl border border-slate-200 p-4 flex flex-col md:flex-row md:items-center gap-4 hover:shadow-sm transition"
+                className="bg-white rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center gap-4 hover:shadow-sm transition"
               >
                 {cfg.noMedia ? null : image ? (
-                  <img src={mediaUrl(image)} alt="" className="w-full md:w-24 h-24 rounded-xl object-cover bg-slate-100" />
+                  <img src={mediaUrl(image)} alt="" className="w-full md:w-24 h-24 rounded-md object-cover bg-slate-100" />
                 ) : (
-                  <div className="w-full md:w-24 h-24 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 text-xs">
+                  <div className="w-full md:w-24 h-24 rounded-md bg-slate-100 flex items-center justify-center text-slate-400 text-xs">
                     No media
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-semibold text-[#001d3a] truncate">{title}</h3>
+                    <h3 className="font-semibold text-ink truncate">{title}</h3>
                     <StatusPill status={item.status} />
                   </div>
                   {cfg.subtitle ? <p className="text-sm text-slate-600 mt-1">{cfg.subtitle(item)}</p> : null}
@@ -154,7 +154,7 @@ export default function ContentList({ resourceKey }) {
             );
           })}
           {filtered.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
+            <div className="bg-white rounded-lg border border-dashed border-slate-300 p-10 text-center text-slate-500">
               No items found. Create your first {cfg.label.toLowerCase().slice(0, -1) || 'item'}.
             </div>
           ) : null}

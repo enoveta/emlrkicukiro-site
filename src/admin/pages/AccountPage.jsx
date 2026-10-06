@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { adminApi } from '../../api/client';
 import { useToast } from '../ui/Toast';
 
-const input = 'w-full border border-slate-200 rounded-xl p-3 text-sm';
+const input = 'w-full border border-slate-200 rounded-md p-3 text-sm';
 
 function ChangePassword() {
   const { push } = useToast();
@@ -29,13 +29,13 @@ function ChangePassword() {
   };
 
   return (
-    <form onSubmit={onSubmit} className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-      <h2 className="font-semibold text-[#001d3a]">Change my password</h2>
+    <form onSubmit={onSubmit} className="bg-white rounded-lg border border-slate-200 p-6 space-y-4">
+      <h2 className="font-semibold text-ink">Change my password</h2>
       <input className={input} type="password" autoComplete="current-password" placeholder="Current password" required value={form.currentPassword} onChange={(e) => setForm({ ...form, currentPassword: e.target.value })} />
       <input className={input} type="password" autoComplete="new-password" placeholder="New password (min. 10 characters)" required value={form.newPassword} onChange={(e) => setForm({ ...form, newPassword: e.target.value })} />
       <input className={input} type="password" autoComplete="new-password" placeholder="Repeat new password" required value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })} />
       {error ? <p className="text-red-600 text-sm">{error}</p> : null}
-      <button type="submit" disabled={saving} className="bg-[#001d3a] text-white px-5 py-2.5 rounded-xl hover:bg-[#5fb9e2] disabled:opacity-50 text-sm font-medium">
+      <button type="submit" disabled={saving} className="bg-ink text-white px-5 py-2.5 rounded-md hover:bg-ink-soft disabled:opacity-50 text-sm font-medium">
         {saving ? 'Saving...' : 'Change password'}
       </button>
     </form>
@@ -67,8 +67,8 @@ function Users() {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-      <h2 className="font-semibold text-[#001d3a]">Dashboard users</h2>
+    <div className="bg-white rounded-lg border border-slate-200 p-6 space-y-4">
+      <h2 className="font-semibold text-ink">Dashboard users</h2>
       <p className="text-xs text-slate-500">
         Content managers can write drafts; only admins can publish. Share the password privately and ask the person to
         change it after first login.
@@ -88,7 +88,7 @@ function Users() {
           <option value="CONTENT_MANAGER">Content manager</option>
           <option value="ADMIN">Admin</option>
         </select>
-        <button type="submit" className="md:col-span-4 justify-self-start bg-[#001d3a] text-white px-5 py-2.5 rounded-xl hover:bg-[#5fb9e2] text-sm font-medium">
+        <button type="submit" className="md:col-span-4 justify-self-start bg-ink text-white px-5 py-2.5 rounded-md hover:bg-ink-soft text-sm font-medium">
           Add user
         </button>
       </form>
@@ -107,7 +107,7 @@ export default function AccountPage() {
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-[#001d3a]">Account & users</h1>
+        <h1 className="text-3xl font-bold text-ink">Account & users</h1>
         <p className="text-slate-500 mt-1">Signed in as {user.email}</p>
       </div>
       <ChangePassword />

@@ -12,7 +12,7 @@ export default function ProgrammeSummary({ items, lang, t, showPlace = false, li
   const list = sortProgramme(items);
 
   return (
-    <ul className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 md:gap-3">
+    <ul className="grid gap-2 sm:gap-2.5 sm:grid-cols-2 lg:grid-cols-3 md:gap-3">
       {list.map((item) => {
         const isToday = occursOn(item, today);
         const place = localized(item, 'location', lang);
@@ -35,18 +35,18 @@ export default function ProgrammeSummary({ items, lang, t, showPlace = false, li
               {timeRange(item)}
               {item.recurrence && item.recurrence !== 'every' ? ` · ${t(`schedule.${item.recurrence}`)}` : ''}
             </span>
-            <span className="max-w-[calc(100%-18px)] font-serif text-[1.3rem] md:text-[1.4rem] leading-[1.18] text-ink">
+            <span className="max-w-[calc(100%-18px)] font-serif text-[1.2rem] sm:text-[1.3rem] md:text-[1.4rem] leading-[1.18] text-ink">
               {localized(item, 'title', lang)}
             </span>
             {showPlace && place ? <span className="text-sm text-muted">{place}</span> : null}
             {linkTo ? (
-              <span className="absolute top-4 right-[18px] text-gold text-sm" aria-hidden="true">
+              <span className="absolute top-3.5 right-4 sm:top-4 sm:right-[18px] text-gold text-sm" aria-hidden="true">
                 ↗
               </span>
             ) : null}
           </>
         );
-        const cls = `group relative flex h-full min-h-[128px] md:min-h-[150px] flex-col items-start justify-end gap-1.5 px-5 py-[18px] md:px-[22px] md:py-5 overflow-hidden border text-ink transition-all duration-200 hover:border-[#c8b98e] hover:shadow-[0_10px_24px_rgba(20,54,66,.07)] hover:-translate-y-0.5 ${
+        const cls = `group relative flex h-full sm:min-h-[128px] md:min-h-[150px] flex-col items-start justify-end gap-1 sm:gap-1.5 px-4 py-3.5 sm:px-5 sm:py-[18px] md:px-[22px] md:py-5 overflow-hidden border text-ink transition-all duration-200 hover:border-[#c8b98e] hover:shadow-[0_10px_24px_rgba(20,54,66,.07)] hover:-translate-y-0.5 ${
           featured ? 'bg-paper-featured' : 'bg-paper-card'
         } ${isToday ? 'border-[#c8b98e]' : 'border-line'}`;
         return (

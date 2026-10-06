@@ -58,25 +58,25 @@ export default function MediaPicker({ open, onClose, onSelect, accept = 'all' })
 
   return (
     <div className="fixed inset-0 z-[90] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col">
+      <div className="bg-white rounded-lg w-full max-w-5xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col">
         <div className="px-5 py-4 border-b flex items-center justify-between gap-3">
           <div>
-            <h3 className="font-bold text-[#001d3a] text-lg">Media library</h3>
+            <h3 className="font-bold text-ink text-lg">Media library</h3>
             <p className="text-xs text-gray-500">Pick existing media or upload new files</p>
           </div>
-          <button type="button" onClick={onClose} className="text-gray-500 hover:text-[#001d3a] px-2 py-1">
+          <button type="button" onClick={onClose} className="text-gray-500 hover:text-ink px-2 py-1">
             Close
           </button>
         </div>
 
-        <div className="p-4 border-b flex flex-wrap gap-3 items-center bg-[#f8fafc]">
+        <div className="p-4 border-b flex flex-wrap gap-3 items-center bg-paper-card">
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search media..."
-            className="flex-1 min-w-[180px] border rounded-xl px-3 py-2 text-sm"
+            className="flex-1 min-w-[180px] border rounded-md px-3 py-2 text-sm"
           />
-          <label className="cursor-pointer bg-[#001d3a] text-white px-4 py-2 rounded-xl text-sm hover:bg-[#5fb9e2] transition">
+          <label className="cursor-pointer bg-ink text-white px-4 py-2 rounded-md text-sm hover:bg-ink-soft transition">
             {uploading ? 'Uploading...' : 'Upload files'}
             <input
               type="file"
@@ -101,7 +101,7 @@ export default function MediaPicker({ open, onClose, onSelect, accept = 'all' })
                   onSelect(mediaUrl(item.url));
                   onClose();
                 }}
-                className="group text-left border rounded-xl overflow-hidden hover:border-[#5fb9e2] hover:shadow-md transition bg-white"
+                className="group text-left border rounded-md overflow-hidden hover:border-gold hover:shadow-md transition bg-white"
               >
                 <div className="aspect-square bg-gray-100 relative">
                   {item.type === 'video' ? (

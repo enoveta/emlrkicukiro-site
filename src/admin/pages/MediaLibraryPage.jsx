@@ -90,10 +90,10 @@ export default function MediaLibraryPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[#001d3a]">Media library</h1>
+          <h1 className="text-3xl font-bold text-ink">Media library</h1>
           <p className="text-slate-500 mt-1">Upload once and reuse across slides, news, ministries, and gallery.</p>
         </div>
-        <label className="inline-flex cursor-pointer items-center justify-center px-4 py-2.5 rounded-xl bg-[#001d3a] text-white text-sm font-medium hover:bg-[#5fb9e2] transition">
+        <label className="inline-flex cursor-pointer items-center justify-center px-4 py-2.5 rounded-md bg-ink text-white text-sm font-medium hover:bg-ink-soft transition">
           {uploading ? 'Uploading...' : 'Upload media'}
           <input
             type="file"
@@ -117,11 +117,11 @@ export default function MediaLibraryPage() {
           setDragOver(false);
           uploadFiles(e.dataTransfer.files);
         }}
-        className={`rounded-2xl border-2 border-dashed p-8 text-center transition ${
-          dragOver ? 'border-[#5fb9e2] bg-[#e8f5fb]' : 'border-slate-300 bg-white'
+        className={`rounded-lg border-2 border-dashed p-8 text-center transition ${
+          dragOver ? 'border-gold bg-paper-featured' : 'border-slate-300 bg-white'
         }`}
       >
-        <p className="text-[#001d3a] font-medium">Drag & drop images or videos here</p>
+        <p className="text-ink font-medium">Drag & drop images or videos here</p>
         <p className="text-sm text-slate-500 mt-1">Supports JPG, PNG, WEBP, GIF, MP4 · up to 40MB each</p>
       </div>
 
@@ -130,7 +130,7 @@ export default function MediaLibraryPage() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search files..."
-          className="border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white min-w-[220px]"
+          className="border border-slate-200 rounded-md px-3 py-2 text-sm bg-white min-w-[220px]"
         />
         {['all', 'image', 'video'].map((f) => (
           <button
@@ -138,7 +138,7 @@ export default function MediaLibraryPage() {
             type="button"
             onClick={() => setFilter(f)}
             className={`px-3 py-1.5 rounded-full text-xs font-semibold capitalize ${
-              filter === f ? 'bg-[#001d3a] text-white' : 'bg-white border border-slate-200 text-slate-600'
+              filter === f ? 'bg-ink text-white' : 'bg-white border border-slate-200 text-slate-600'
             }`}
           >
             {f}
@@ -157,7 +157,7 @@ export default function MediaLibraryPage() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {filtered.map((item) => (
-            <div key={item.url} className="bg-white rounded-2xl border border-slate-200 overflow-hidden group">
+            <div key={item.url} className="bg-white rounded-lg border border-slate-200 overflow-hidden group">
               <div className="aspect-square bg-slate-100 relative">
                 {item.type === 'video' ? (
                   <video src={mediaUrl(item.url)} className="w-full h-full object-cover" muted preload="metadata" />

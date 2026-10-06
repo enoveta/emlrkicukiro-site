@@ -136,7 +136,7 @@ function Give() {
         </div>
       ) : null}
 
-      <blockquote className="mt-12 md:mt-16 max-w-[820px] border-l border-gold pl-6 md:pl-8 font-serif text-[1.35rem] md:text-[1.65rem] leading-[1.45] text-ink">
+      <blockquote className="mt-12 md:mt-16 max-w-[820px] font-serif text-[1.35rem] md:text-[1.65rem] leading-[1.45] text-ink">
         {t('give.verse')}
       </blockquote>
     </PageShell>

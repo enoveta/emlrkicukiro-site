@@ -58,12 +58,12 @@ export default function AdminLayout() {
   const NavBody = (
     <>
       <div className="px-5 py-5 border-b border-white/10 flex items-center gap-3">
-        <span className="w-11 h-11 rounded-full bg-white flex items-center justify-center shrink-0">
+        <span className="w-11 h-11 bg-white flex items-center justify-center shrink-0">
           <img src={logo} alt="" className="w-8 h-8 object-contain" />
         </span>
         <div>
-          <div className="font-bold text-lg leading-tight">EMLR Kicukiro</div>
-          <div className="text-xs text-white/60">Dashboard</div>
+          <div className="font-serif text-xl leading-tight">EMLR Kicukiro</div>
+          <div className="text-xs text-gold-light text-[11px] uppercase tracking-[0.12em] font-bold">Dashboard</div>
         </div>
       </div>
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
@@ -76,9 +76,9 @@ export default function AdminLayout() {
                   key={item.to}
                   to={item.to}
                   onClick={() => setOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition ${
                     isActive(item)
-                      ? 'bg-[#5fb9e2] text-[#001d3a] font-semibold shadow-sm'
+                      ? 'bg-gold-light text-ink-deep font-semibold shadow-sm'
                       : 'text-white/80 hover:bg-white/10 hover:text-white'
                   }`}
                 >
@@ -95,7 +95,7 @@ export default function AdminLayout() {
           href="/"
           target="_blank"
           rel="noreferrer"
-          className="block w-full text-center text-sm bg-white/10 hover:bg-[#fae924] hover:text-[#001d3a] rounded-xl py-2.5 transition"
+          className="block w-full text-center text-sm bg-white/10 hover:bg-gold-light hover:text-ink-deep rounded-md py-2.5 transition"
         >
           Open website ↗
         </a>
@@ -112,14 +112,14 @@ export default function AdminLayout() {
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-[#eef3f8] flex">
-        <aside className="hidden lg:flex w-72 bg-[#001628] text-white flex-col shrink-0 sticky top-0 h-screen">
+      <div className="admin-ui min-h-screen bg-paper flex">
+        <aside className="hidden lg:flex w-72 bg-ink-deep text-white flex-col shrink-0 sticky top-0 h-screen">
           {NavBody}
         </aside>
 
         {open ? (
           <div className="lg:hidden fixed inset-0 z-50 flex">
-            <div className="w-72 bg-[#001628] text-white flex flex-col h-full">{NavBody}</div>
+            <div className="w-72 bg-ink-deep text-white flex flex-col h-full">{NavBody}</div>
             <button type="button" className="flex-1 bg-black/40" onClick={() => setOpen(false)} aria-label="Close menu" />
           </div>
         ) : null}
@@ -134,10 +134,10 @@ export default function AdminLayout() {
               >
                 Menu
               </button>
-              <div className="text-base font-semibold text-[#001d3a]">Dashboard</div>
+              <div className="text-base font-semibold text-ink">Dashboard</div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="hidden sm:inline text-xs px-2.5 py-1 rounded-full bg-[#e8f5fb] text-[#003366] font-medium">
+              <span className="hidden sm:inline text-xs px-2.5 py-1 rounded-full bg-paper-featured text-ink font-medium">
                 {user.role || 'ADMIN'}
               </span>
             </div>

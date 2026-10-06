@@ -34,22 +34,22 @@ const DEVICE_COLORS = { mobile: SERIES[0], desktop: SERIES[1], tablet: SERIES[2]
 const DEVICE_LABELS = { mobile: 'Phone', desktop: 'Computer', tablet: 'Tablet' };
 
 const Card = ({ title, subtitle, children, className = '' }) => (
-  <section className={`bg-white rounded-2xl border border-slate-200 p-5 md:p-6 ${className}`}>
-    <h2 className="font-semibold text-[#0b2540]">{title}</h2>
+  <section className={`bg-white rounded-lg border border-slate-200 p-5 md:p-6 ${className}`}>
+    <h2 className="font-semibold text-ink">{title}</h2>
     {subtitle ? <p className="text-sm text-slate-500 mt-0.5">{subtitle}</p> : null}
     <div className="mt-5">{children}</div>
   </section>
 );
 
 const QUICK = [
-  { to: '/admin/hero', title: 'Home slides', desc: 'Edit hero carousel media & CTAs', tone: 'from-[#001d3a] to-[#0a4a7a]' },
-  { to: '/admin/media', title: 'Media library', desc: 'Upload images & videos once, reuse everywhere', tone: 'from-[#0d7377] to-[#14919b]' },
-  { to: '/admin/schedule', title: 'Weekly programme', desc: 'Services, prayer, choir practice: days & hours', tone: 'from-[#0f766e] to-[#115e59]' },
-  { to: '/admin/notices', title: 'Amatangazo', desc: 'Weekly / daily church announcements', tone: 'from-[#b45309] to-[#92400e]' },
-  { to: '/admin/events', title: 'Events (Ibikorwa)', desc: 'Upcoming church events', tone: 'from-[#5fb9e2] to-[#3a9bc4]' },
-  { to: '/admin/announcements', title: 'News (Amakuru)', desc: 'News stories with photos', tone: 'from-[#c9a227] to-[#a8871c]' },
-  { to: '/admin/ministries', title: 'Ministries', desc: 'Pages & home featured cards', tone: 'from-[#1f4e79] to-[#2e6da4]' },
-  { to: '/admin/submissions', title: 'Inbox', desc: 'Prayer & volunteer requests', tone: 'from-[#7c3aed] to-[#6d28d9]' },
+  { to: '/admin/hero', title: 'Home slides', desc: 'Edit hero carousel media & CTAs', tone: 'from-ink to-ink-soft' },
+  { to: '/admin/media', title: 'Media library', desc: 'Upload images & videos once, reuse everywhere', tone: 'from-ink-deep to-ink' },
+  { to: '/admin/schedule', title: 'Weekly programme', desc: 'Services, prayer, choir practice: days & hours', tone: 'from-[#725322] to-gold' },
+  { to: '/admin/notices', title: 'Amatangazo', desc: 'Weekly / daily church announcements', tone: 'from-ink to-ink-soft' },
+  { to: '/admin/events', title: 'Events (Ibikorwa)', desc: 'Upcoming church events', tone: 'from-ink-deep to-ink' },
+  { to: '/admin/announcements', title: 'News (Amakuru)', desc: 'News stories with photos', tone: 'from-[#725322] to-gold' },
+  { to: '/admin/ministries', title: 'Ministries', desc: 'Pages & home featured cards', tone: 'from-ink to-ink-soft' },
+  { to: '/admin/submissions', title: 'Inbox', desc: 'Prayer & volunteer requests', tone: 'from-ink-deep to-ink' },
 ];
 
 export default function DashboardHome() {
@@ -105,10 +105,10 @@ export default function DashboardHome() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-[#001d3a] tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-ink tracking-tight">Dashboard</h1>
           <p className="text-slate-500 mt-1">Website visits, requests and content at a glance.</p>
         </div>
-        <div className="inline-flex bg-white border border-slate-200 rounded-xl p-1 self-start" role="tablist" aria-label="Period">
+        <div className="inline-flex bg-white border border-slate-200 rounded-md p-1 self-start" role="tablist" aria-label="Period">
           {PERIODS.map((p) => (
             <button
               key={p}
@@ -117,7 +117,7 @@ export default function DashboardHome() {
               aria-selected={days === p}
               onClick={() => setDays(p)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                days === p ? 'bg-[#001d3a] text-white' : 'text-slate-600 hover:bg-slate-50'
+                days === p ? 'bg-ink text-white' : 'text-slate-600 hover:bg-slate-50'
               }`}
             >
               Last {p} days
@@ -185,16 +185,16 @@ export default function DashboardHome() {
               <Skeleton className="h-28" />
             ) : (
               <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="rounded-xl bg-slate-50 py-4">
-                  <p className="text-2xl font-semibold text-[#0b2540]">{publishedTotal}</p>
+                <div className="rounded-md bg-slate-50 py-4">
+                  <p className="text-2xl font-semibold text-ink">{publishedTotal}</p>
                   <p className="text-xs text-slate-500 mt-1">Published</p>
                 </div>
-                <div className="rounded-xl bg-slate-50 py-4">
-                  <p className="text-2xl font-semibold text-[#0b2540]">{draftTotal}</p>
+                <div className="rounded-md bg-slate-50 py-4">
+                  <p className="text-2xl font-semibold text-ink">{draftTotal}</p>
                   <p className="text-xs text-slate-500 mt-1">Drafts</p>
                 </div>
-                <div className="rounded-xl bg-slate-50 py-4">
-                  <p className="text-2xl font-semibold text-[#0b2540]">{(data?.inbox?.prayerNew || 0) + (data?.inbox?.volunteerNew || 0)}</p>
+                <div className="rounded-md bg-slate-50 py-4">
+                  <p className="text-2xl font-semibold text-ink">{(data?.inbox?.prayerNew || 0) + (data?.inbox?.volunteerNew || 0)}</p>
                   <p className="text-xs text-slate-500 mt-1">New in inbox</p>
                 </div>
               </div>
@@ -208,7 +208,7 @@ export default function DashboardHome() {
           <Link
             key={item.to}
             to={item.to}
-            className={`rounded-2xl p-5 text-white bg-gradient-to-br ${item.tone} shadow-sm hover:shadow-md hover:-translate-y-0.5 transition`}
+            className={`rounded-lg p-5 text-white bg-gradient-to-br ${item.tone} shadow-sm hover:shadow-md hover:-translate-y-0.5 transition`}
           >
             <div className="text-lg font-semibold">{item.title}</div>
             <p className="text-sm text-white/80 mt-1">{item.desc}</p>
@@ -217,10 +217,10 @@ export default function DashboardHome() {
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        <section className="bg-white rounded-2xl border border-slate-200 p-5">
+        <section className="bg-white rounded-lg border border-slate-200 p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-[#001d3a]">Recent inbox</h2>
-            <Link to="/admin/submissions" className="text-sm text-[#5fb9e2] hover:underline">
+            <h2 className="font-semibold text-ink">Recent inbox</h2>
+            <Link to="/admin/submissions" className="text-sm text-gold hover:underline">
               View all
             </Link>
           </div>
@@ -229,18 +229,18 @@ export default function DashboardHome() {
           ) : (
             <div className="space-y-3">
               {(data?.recent?.prayers || []).slice(0, 3).map((item) => (
-                <div key={item.id} className="border border-slate-100 rounded-xl p-3">
+                <div key={item.id} className="border border-slate-100 rounded-md p-3">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="font-medium text-sm text-[#001d3a]">{item.name}</div>
+                    <div className="font-medium text-sm text-ink">{item.name}</div>
                     <StatusPill status={item.status} />
                   </div>
                   <p className="text-xs text-slate-500 mt-1 line-clamp-2">{item.request}</p>
                 </div>
               ))}
               {(data?.recent?.volunteers || []).slice(0, 2).map((item) => (
-                <div key={item.id} className="border border-slate-100 rounded-xl p-3">
+                <div key={item.id} className="border border-slate-100 rounded-md p-3">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="font-medium text-sm text-[#001d3a]">{item.name} · Volunteer</div>
+                    <div className="font-medium text-sm text-ink">{item.name} · Volunteer</div>
                     <StatusPill status={item.status} />
                   </div>
                   <p className="text-xs text-slate-500 mt-1">{item.areaOfInterest}</p>

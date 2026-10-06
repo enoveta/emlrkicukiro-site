@@ -63,12 +63,8 @@ const MobileLink = ({ href, active, sub = false, children }) => (
     to={href}
     aria-current={active ? 'page' : undefined}
     className={`flex items-center justify-between gap-3 transition-colors ${
-      sub ? 'pl-4 pr-1 py-2.5 text-[15px] border-l-2' : 'px-0.5 py-3.5 text-base font-semibold'
-    } ${
-      active
-        ? `text-ink font-semibold ${sub ? 'border-gold bg-paper' : ''}`
-        : `text-[#334c51] hover:text-ink ${sub ? 'border-transparent' : ''}`
-    }`}
+      sub ? 'pl-4 pr-3 py-2.5 text-[15px]' : 'px-3 py-3.5 text-[17px] font-semibold'
+    } ${active ? 'bg-paper-featured text-ink font-semibold' : 'text-[#334c51] active:bg-paper'}`}
   >
     <span>{children}</span>
     {active ? <span className="w-1.5 h-1.5 rounded-full bg-gold" aria-hidden="true" /> : null}
@@ -103,6 +99,15 @@ const Header = ({ scrolled }) => {
   };
 
   useEffect(() => () => cancelClose(), []);
+
+  // Mobile menu is full height: stop the page behind it from scrolling.
+  useEffect(() => {
+    if (!mobileMenuOpen) return undefined;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   useEffect(() => {
     setActiveMenu(null);
@@ -250,10 +255,11 @@ const Header = ({ scrolled }) => {
             </div>
             <a
               href={`tel:${phone.replace(/\s/g, '')}`}
-              className="inline-flex items-center gap-1.5 md:gap-2 text-[11px] md:text-[13px] text-[#d4dddc] hover:text-white"
+              className="inline-flex items-center justify-center gap-2 w-7 h-7 sm:w-auto sm:h-auto rounded-full border border-white/20 sm:border-0 text-[13px] text-[#d4dddc] hover:text-white"
+              aria-label={phone}
             >
-              <PhoneIcon className="w-3 h-3 md:w-3.5 md:h-3.5" />
-              {phone}
+              <PhoneIcon className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{phone}</span>
             </a>
             {languageSwitch}
           </div>
@@ -310,18 +316,23 @@ const Header = ({ scrolled }) => {
 
                   {link.items && isOpen && (
                     <div className="absolute -left-5 top-full z-40 pt-4" onMouseEnter={() => openMenu(link.key)}>
-                      <ul className="w-64 bg-white border border-line shadow-[0_18px_40px_rgba(20,54,66,.12)] px-5 py-2">
+                      <ul className="w-60 bg-white shadow-[0_22px_45px_rgba(20,54,66,.14)] ring-1 ring-ink/[.06] p-2">
                         {link.items.map((item) => (
-                          <li key={item.href} className="border-b border-line last:border-b-0">
+                          <li key={item.href}>
                             <Link
                               to={item.href}
-                              className={`group/item flex items-center justify-between py-3 text-[15px] font-medium transition-colors ${
-                                isCurrent(item.href) ? 'text-gold' : 'text-ink hover:text-gold'
+                              className={`group/item flex items-center justify-between px-3.5 py-2.5 text-[15px] font-medium transition-colors ${
+                                isCurrent(item.href) ? 'bg-paper-featured text-ink' : 'text-[#334c51] hover:bg-paper hover:text-ink'
                               }`}
                             >
                               {item.name}
-                              <span className="text-gold text-xs opacity-60 group-hover/item:opacity-100" aria-hidden="true">
-                                ↗
+                              <span
+                                className={`text-gold text-xs transition-all ${
+                                  isCurrent(item.href) ? 'opacity-100' : 'opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0'
+                                }`}
+                                aria-hidden="true"
+                              >
+                                →
                               </span>
                             </Link>
                           </li>
@@ -373,24 +384,29 @@ const Header = ({ scrolled }) => {
             onMouseEnter={() => openMenu(megaLink.key)}
             onMouseLeave={scheduleClose}
           >
-            <div className="bg-white border-t border-line shadow-[0_24px_40px_rgba(20,54,66,.10)]">
-              <div className="site-container py-10 flex gap-12">
-                <div className={`flex-1 grid gap-10 ${megaLink.columns.length >= 4 ? 'grid-cols-4' : 'grid-cols-3'}`}>
+            <div className="bg-white border-t border-line shadow-[0_30px_50px_rgba(20,54,66,.12)]">
+              <div className="site-container py-9 flex gap-10 xl:gap-14">
+                <div className={`flex-1 grid gap-x-8 gap-y-6 ${megaLink.columns.length >= 4 ? 'grid-cols-4' : 'grid-cols-3'}`}>
                   {megaLink.columns.map((column) => (
                     <div key={column.title}>
-                      <p className="eyebrow mb-4">{column.title}</p>
-                      <ul className="border-t border-line">
+                      <p className="eyebrow mb-3 px-3">{column.title}</p>
+                      <ul>
                         {column.items.map((item) => (
-                          <li key={item.href} className="border-b border-line">
+                          <li key={item.href}>
                             <Link
                               to={item.href}
-                              className={`group/item flex items-center justify-between gap-2 py-3 text-[15px] transition-colors ${
-                                isCurrent(item.href) ? 'text-gold font-semibold' : 'text-ink hover:text-gold'
+                              className={`group/item flex items-center justify-between gap-2 px-3 py-2 text-[15px] leading-snug transition-colors ${
+                                isCurrent(item.href) ? 'bg-paper-featured text-ink font-semibold' : 'text-[#334c51] hover:bg-paper hover:text-ink'
                               }`}
                             >
                               <span>{item.name}</span>
-                              <span className="text-gold text-xs opacity-50 group-hover/item:opacity-100" aria-hidden="true">
-                                ↗
+                              <span
+                                className={`text-gold text-xs transition-all ${
+                                  isCurrent(item.href) ? 'opacity-100' : 'opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0'
+                                }`}
+                                aria-hidden="true"
+                              >
+                                →
                               </span>
                             </Link>
                           </li>
@@ -400,7 +416,7 @@ const Header = ({ scrolled }) => {
                   ))}
                 </div>
                 {megaLink.feature ? (
-                  <Link to={megaLink.feature.href} className="group/feature w-80 flex-none bg-ink text-white p-7 flex flex-col relative overflow-hidden">
+                  <Link to={megaLink.feature.href} className="group/feature w-[300px] flex-none bg-ink text-white p-7 flex flex-col relative overflow-hidden">
                     <span className="absolute -top-8 -right-8 w-28 h-28 rounded-full border border-gold-light/50" aria-hidden="true" />
                     <span className="absolute -top-3 -right-3 w-[4.5rem] h-[4.5rem] rounded-full border border-gold-light/50" aria-hidden="true" />
                     <span className="eyebrow eyebrow-light mb-4">EMLR Kicukiro</span>
@@ -422,75 +438,93 @@ const Header = ({ scrolled }) => {
         {/* Mobile menu */}
         {mobileMenuOpen && (
           <nav
-            className="lg:hidden absolute left-0 right-0 top-full bg-white border-t border-line shadow-[0_16px_25px_rgba(20,54,66,.12)] max-h-[calc(100dvh-4.5rem)] overflow-y-auto"
+            className={`lg:hidden absolute left-0 right-0 top-full bg-white border-t border-line shadow-[0_24px_40px_rgba(20,54,66,.16)] overflow-y-auto overscroll-contain ${
+              scrolled ? 'h-[calc(100dvh-70px)] md:h-[calc(100dvh-78px)]' : 'h-[calc(100dvh-108px)] md:h-[calc(100dvh-120px)]'
+            }`}
             aria-label="Mobile"
           >
-            <div className="site-container pt-2 pb-6">
-              {mainNavLinks.map((link) =>
-                link.columns || link.items ? (
-                  <div key={link.key} className="border-b border-ink/[.08]">
-                    <button
-                      type="button"
-                      className={`w-full flex justify-between items-center px-0.5 py-3.5 text-left text-base font-semibold ${
-                        isActive(link) ? 'text-ink' : 'text-[#334c51]'
-                      }`}
-                      aria-expanded={openSection === link.key}
-                      onClick={() => setMobileSubmenu(openSection === link.key ? '' : link.key)}
-                    >
-                      <span className="inline-flex items-center gap-2.5">
-                        {link.name}
-                        {isActive(link) ? <span className="w-1.5 h-1.5 rounded-full bg-gold" aria-hidden="true" /> : null}
-                      </span>
-                      <IoIosArrowDown
-                        className={`text-gold transition-transform ${openSection === link.key ? 'rotate-180' : ''}`}
-                        aria-hidden="true"
-                      />
-                    </button>
-                    {openSection === link.key && (
-                      <div className="pb-3">
-                        {(link.columns || [{ title: '', items: link.items }]).map((column) => (
-                          <div key={column.title || 'items'} className="mb-1">
-                            {column.title ? <p className="eyebrow !text-[10px] pl-4 pt-2.5 pb-1.5">{column.title}</p> : null}
-                            {column.items.map((item) => (
-                              <MobileLink key={item.href} href={item.href} active={isCurrent(item.href)} sub>
-                                {item.name}
-                              </MobileLink>
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div key={link.key} className="border-b border-ink/[.08]">
-                    <MobileLink href={link.href} active={isCurrent(link.href)}>
+            <div className="site-container flex min-h-full flex-col pt-3 pb-6">
+              <div className="space-y-0.5">
+                {mainNavLinks.map((link) =>
+                  link.columns || link.items ? (
+                    <div key={link.key} className={openSection === link.key ? 'bg-paper pb-2' : ''}>
+                      <button
+                        type="button"
+                        className={`w-full flex justify-between items-center px-3 py-3.5 text-left text-[17px] font-semibold ${
+                          isActive(link) ? 'text-ink' : 'text-[#334c51]'
+                        }`}
+                        aria-expanded={openSection === link.key}
+                        onClick={() => setMobileSubmenu(openSection === link.key ? '' : link.key)}
+                      >
+                        <span className="inline-flex items-center gap-2.5">
+                          {link.name}
+                          {isActive(link) ? <span className="w-1.5 h-1.5 rounded-full bg-gold" aria-hidden="true" /> : null}
+                        </span>
+                        <span
+                          className={`grid place-items-center w-8 h-8 rounded-full transition-colors ${
+                            openSection === link.key ? 'bg-ink text-white' : 'bg-paper text-gold'
+                          }`}
+                          aria-hidden="true"
+                        >
+                          <IoIosArrowDown className={`text-sm transition-transform ${openSection === link.key ? 'rotate-180' : ''}`} />
+                        </span>
+                      </button>
+                      {openSection === link.key && (
+                        <div className="px-1">
+                          {(link.columns || [{ title: '', items: link.items }]).map((column) => (
+                            <div key={column.title || 'items'} className="mb-1.5">
+                              {column.title ? <p className="eyebrow !text-[10px] pl-4 pt-2 pb-1">{column.title}</p> : null}
+                              {column.items.map((item) => (
+                                <MobileLink key={item.href} href={item.href} active={isCurrent(item.href)} sub>
+                                  {item.name}
+                                </MobileLink>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <MobileLink key={link.key} href={link.href} active={isCurrent(link.href)}>
                       {link.name}
                     </MobileLink>
-                  </div>
-                )
-              )}
-              <Link
-                to="/give"
-                className="mt-4 flex min-h-[50px] items-center justify-center gap-3 bg-ink text-white text-[15px] font-bold hover:bg-ink-soft"
-              >
-                {t('nav.give')}
-                <span className="text-gold-light" aria-hidden="true">
-                  ↗
-                </span>
-              </Link>
-              <div className="mt-4 flex items-center justify-center gap-2">
-                {social.map(({ label, href, Icon }) => (
+                  )
+                )}
+              </div>
+
+              <div className="mt-auto pt-6 space-y-3">
+                <Link
+                  to="/give"
+                  className="flex min-h-[52px] items-center justify-center gap-3 bg-ink text-white text-[15px] font-bold active:bg-ink-soft"
+                >
+                  {t('nav.give')}
+                  <span className="text-gold-light" aria-hidden="true">
+                    ↗
+                  </span>
+                </Link>
+                <div className="grid grid-cols-[1fr_auto] items-center gap-3">
                   <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`EMLR Kicukiro on ${label}`}
-                    className="grid place-items-center w-9 h-9 rounded-full border border-line text-sm text-ink hover:bg-gold-light"
+                    href={`tel:${phone.replace(/\s/g, '')}`}
+                    className="flex min-h-[48px] items-center justify-center gap-2 border border-line text-[15px] font-semibold text-ink"
                   >
-                    <Icon aria-hidden="true" />
+                    <PhoneIcon className="w-4 h-4 text-gold" />
+                    {phone}
                   </a>
-                ))}
+                  <div className="flex gap-1.5">
+                    {social.map(({ label, href, Icon }) => (
+                      <a
+                        key={label}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`EMLR Kicukiro on ${label}`}
+                        className="grid place-items-center w-11 h-11 rounded-full bg-paper text-sm text-ink"
+                      >
+                        <Icon aria-hidden="true" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </nav>

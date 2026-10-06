@@ -107,16 +107,16 @@ export default function ContentForm({ resourceKey }) {
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <Link to={`/admin/${resourceKey}`} className="text-sm text-[#5fb9e2] hover:underline">
+        <Link to={`/admin/${resourceKey}`} className="text-sm text-gold hover:underline">
           ← Back to {cfg.label}
         </Link>
         <div className="flex items-center gap-3 mt-2">
-          <h1 className="text-3xl font-bold text-[#001d3a]">{isNew ? `New ${cfg.label}` : `Edit ${cfg.label}`}</h1>
+          <h1 className="text-3xl font-bold text-ink">{isNew ? `New ${cfg.label}` : `Edit ${cfg.label}`}</h1>
           {!isNew ? <StatusPill status={existingStatus} /> : null}
         </div>
       </div>
 
-      <form onSubmit={(e) => onSave(e, false)} className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
+      <form onSubmit={(e) => onSave(e, false)} className="bg-white rounded-lg border border-slate-200 p-6 space-y-4">
         <p className="text-xs text-slate-500 bg-slate-50 rounded-lg p-3">
           Fields marked <span className="font-semibold">EN / RW</span> have an English and a Kinyarwanda box. If the
           Kinyarwanda box is empty, the English text is shown to Kinyarwanda readers.
@@ -126,7 +126,7 @@ export default function ContentForm({ resourceKey }) {
             <label className="block text-sm font-medium text-slate-700 mb-1">
               {field.label}
               {field.required ? <span className="text-red-500"> *</span> : null}
-              {field.rw ? <span className="ml-2 text-xs font-semibold text-[#5fb9e2]">EN / RW</span> : null}
+              {field.rw ? <span className="ml-2 text-xs font-semibold text-gold">EN / RW</span> : null}
             </label>
             {field.rw ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -152,7 +152,7 @@ export default function ContentForm({ resourceKey }) {
               <DaysPicker value={form[field.key] || []} onChange={(v) => setForm((f) => ({ ...f, [field.key]: v }))} />
             ) : field.type === 'select' ? (
               <select
-                className="w-full border border-slate-200 rounded-xl p-3 text-sm"
+                className="w-full border border-slate-200 rounded-md p-3 text-sm"
                 value={form[field.key] ?? ''}
                 onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
               >
@@ -179,12 +179,12 @@ export default function ContentForm({ resourceKey }) {
                   <button
                     type="button"
                     onClick={() => setPickerField(field.key)}
-                    className="px-3 py-2 rounded-xl bg-[#e8f5fb] text-[#001d3a] text-sm font-medium hover:bg-[#5fb9e2] hover:text-white transition"
+                    className="px-3 py-2 rounded-md bg-paper-featured text-ink text-sm font-medium hover:bg-ink-soft hover:text-white transition"
                   >
                     Choose from library
                   </button>
                   <input
-                    className="flex-1 min-w-[180px] border border-slate-200 rounded-xl p-2 text-sm"
+                    className="flex-1 min-w-[180px] border border-slate-200 rounded-md p-2 text-sm"
                     value={form[field.key] || ''}
                     onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
                     placeholder="Or paste media URL"
@@ -193,14 +193,14 @@ export default function ContentForm({ resourceKey }) {
                     <button
                       type="button"
                       onClick={() => setForm({ ...form, [field.key]: '' })}
-                      className="px-3 py-2 rounded-xl border border-slate-200 text-sm text-red-600"
+                      className="px-3 py-2 rounded-md border border-slate-200 text-sm text-red-600"
                     >
                       Remove
                     </button>
                   ) : null}
                 </div>
                 {form[field.key] && !/\.pdf$/i.test(form[field.key]) ? (
-                  <img src={mediaUrl(form[field.key])} alt="" className="h-28 rounded-xl object-cover border" />
+                  <img src={mediaUrl(form[field.key])} alt="" className="h-28 rounded-md object-cover border" />
                 ) : null}
               </div>
             ) : (
@@ -215,7 +215,7 @@ export default function ContentForm({ resourceKey }) {
           <button
             type="submit"
             disabled={saving}
-            className="px-5 py-2.5 rounded-xl border border-slate-300 text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
+            className="px-5 py-2.5 rounded-md border border-slate-300 text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Save'}
           </button>
@@ -223,7 +223,7 @@ export default function ContentForm({ resourceKey }) {
             type="button"
             disabled={saving}
             onClick={(e) => onSave(e, true)}
-            className="px-5 py-2.5 rounded-xl bg-[#001d3a] text-white text-sm font-medium hover:bg-[#5fb9e2] disabled:opacity-50"
+            className="px-5 py-2.5 rounded-md bg-ink text-white text-sm font-medium hover:bg-ink-soft disabled:opacity-50"
           >
             Save & publish
           </button>
@@ -246,7 +246,7 @@ function FieldInput({ field, value, onChange, placeholder, lang }) {
   if (field.type === 'textarea') {
     return (
       <textarea
-        className="w-full border border-slate-200 rounded-xl p-3 min-h-[120px] text-sm"
+        className="w-full border border-slate-200 rounded-md p-3 min-h-[120px] text-sm"
         value={value || ''}
         required={field.required}
         placeholder={placeholder}
@@ -257,7 +257,7 @@ function FieldInput({ field, value, onChange, placeholder, lang }) {
   }
   return (
     <input
-      className="w-full border border-slate-200 rounded-xl p-3 text-sm"
+      className="w-full border border-slate-200 rounded-md p-3 text-sm"
       type={
         field.type === 'datetime' ? 'datetime-local' : field.type === 'number' ? 'number' : field.type === 'time' ? 'time' : 'text'
       }
@@ -306,8 +306,8 @@ function DaysPicker({ value, onChange }) {
             type="button"
             aria-pressed={set.has(d)}
             onClick={() => toggle(d)}
-            className={`w-16 py-2 rounded-xl border text-sm font-semibold ${
-              set.has(d) ? 'bg-[#001d3a] border-[#001d3a] text-white' : 'bg-white border-slate-200 text-slate-700 hover:border-[#5fb9e2]'
+            className={`w-16 py-2 rounded-md border text-sm font-semibold ${
+              set.has(d) ? 'bg-ink border-ink text-white' : 'bg-white border-slate-200 text-slate-700 hover:border-gold'
             }`}
           >
             {en}

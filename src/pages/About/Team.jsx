@@ -31,7 +31,6 @@ function PastorCard({ member, lang, featured = false }) {
         <h2 className={`font-serif font-normal leading-[1.2] text-ink ${featured ? 'text-[1.9rem] md:text-[2.3rem]' : 'text-[1.1rem] md:text-[1.35rem]'}`}>
           {member.name}
         </h2>
-        {featured ? <span className="mt-5 block w-10 h-px bg-gold" aria-hidden="true" /> : null}
       </div>
     </article>
   );

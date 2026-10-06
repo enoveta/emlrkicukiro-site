@@ -82,18 +82,18 @@ export default function SettingsPage() {
 
   if (loading) return <Skeleton className="h-96" />;
 
-  const input = 'w-full border border-slate-200 rounded-xl p-3 text-sm';
+  const input = 'w-full border border-slate-200 rounded-md p-3 text-sm';
 
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-[#001d3a]">Site settings</h1>
+        <h1 className="text-3xl font-bold text-ink">Site settings</h1>
         <p className="text-slate-500 mt-1">Contact details, service times and home page options</p>
       </div>
       <form onSubmit={onSave} className="space-y-6">
         {SECTIONS.map((section) => (
-          <div key={section.title} className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-            <h2 className="font-semibold text-[#001d3a]">{section.title}</h2>
+          <div key={section.title} className="bg-white rounded-lg border border-slate-200 p-6 space-y-4">
+            <h2 className="font-semibold text-ink">{section.title}</h2>
             {section.hint ? <p className="text-xs text-slate-500">{section.hint}</p> : null}
             {(section.fields || []).map((field) => (
               <div key={field.key}>
@@ -115,8 +115,8 @@ export default function SettingsPage() {
           </div>
         ))}
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-6">
-          <h2 className="font-semibold text-[#001d3a] mb-3">Home page</h2>
+        <div className="bg-white rounded-lg border border-slate-200 p-6">
+          <h2 className="font-semibold text-ink mb-3">Home page</h2>
           <label className="flex items-start gap-3 text-sm">
             <input
               type="checkbox"
@@ -137,7 +137,7 @@ export default function SettingsPage() {
         <button
           type="submit"
           disabled={saving}
-          className="bg-[#001d3a] text-white px-5 py-2.5 rounded-xl hover:bg-[#5fb9e2] disabled:opacity-50 text-sm font-medium"
+          className="bg-ink text-white px-5 py-2.5 rounded-md hover:bg-ink-soft disabled:opacity-50 text-sm font-medium"
         >
           {saving ? 'Saving...' : 'Save settings'}
         </button>

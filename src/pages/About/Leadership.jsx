@@ -85,18 +85,6 @@ function Leadership() {
   return (
     <PageShell badge={s('badge')} title={s('title')} subtitle={s('intro')} tone="paper">
       <div>
-
-        <div className="flex flex-wrap gap-2 mb-6 md:mb-8 text-[13px] md:text-sm text-[#596c70]" aria-hidden="true">
-          <span className="inline-flex items-center gap-2.5 bg-white border border-line px-3.5 py-2">
-            <span className="w-6 border-t-2 border-[#c8b98e]" />
-            {s('legendLine')}
-          </span>
-          <span className="inline-flex items-center gap-2.5 bg-white border border-line px-3.5 py-2">
-            <span className="w-6 border-t-2 border-dashed border-[#c8b98e]" />
-            {s('legendSide')}
-          </span>
-        </div>
-
         <Level
           step="1"
           title={s('national')}

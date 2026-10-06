@@ -114,7 +114,7 @@ function MinistryDetail() {
               </p>
             ))}
             {scheduleLabel ? (
-              <p className="mt-4 border-l-2 border-gold bg-paper-featured px-5 py-4 text-[17px] font-semibold text-ink">{scheduleLabel}</p>
+              <p className="mt-4 bg-paper-featured px-5 py-4 text-[17px] font-semibold text-ink">{scheduleLabel}</p>
             ) : null}
           </div>
 

@@ -27,20 +27,20 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-[#001628]" />
-      <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, #5fb9e2 0, transparent 35%), radial-gradient(circle at 80% 70%, #fae924 0, transparent 25%)' }} />
-      <form onSubmit={onSubmit} className="relative bg-white/95 backdrop-blur rounded-3xl shadow-2xl p-8 w-full max-w-md space-y-5 border border-white/40">
+    <div className="admin-ui min-h-screen relative overflow-hidden flex items-center justify-center px-4">
+      <div className="absolute inset-0 bg-ink-deep" />
+      <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, #214f5b 0, transparent 40%), radial-gradient(circle at 80% 75%, #a77c38 0, transparent 30%)' }} />
+      <form onSubmit={onSubmit} className="relative bg-white/95 backdrop-blur rounded-lg shadow-2xl p-8 w-full max-w-md space-y-5 border border-white/40">
         <div className="text-center">
           <img src={logo} alt="" className="w-16 h-16 mx-auto object-contain" />
-          <div className="text-sm font-semibold text-[#1a6f99] mt-3">EMLR Kicukiro</div>
-          <h1 className="text-3xl font-bold text-[#001d3a] mt-1">Dashboard</h1>
+          <div className="text-sm font-semibold text-gold-text mt-3">EMLR Kicukiro</div>
+          <h1 className="text-3xl font-bold text-ink mt-1">Dashboard</h1>
           <p className="text-slate-500 text-sm mt-1">Sign in to manage the church website</p>
         </div>
         <div>
           <label className="block text-sm font-medium mb-1 text-slate-700">Email</label>
           <input
-            className="w-full border border-slate-200 rounded-xl p-3 text-sm"
+            className="w-full border border-slate-200 rounded-md p-3 text-sm"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -50,7 +50,7 @@ export default function AdminLogin() {
         <div>
           <label className="block text-sm font-medium mb-1 text-slate-700">Password</label>
           <input
-            className="w-full border border-slate-200 rounded-xl p-3 text-sm"
+            className="w-full border border-slate-200 rounded-md p-3 text-sm"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -61,7 +61,7 @@ export default function AdminLogin() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#001d3a] text-white py-3 rounded-xl hover:bg-[#5fb9e2] transition disabled:opacity-60 font-medium"
+          className="w-full bg-ink text-white py-3 rounded-md hover:bg-ink-soft transition disabled:opacity-60 font-medium"
         >
           {loading ? 'Signing in...' : 'Sign in'}
         </button>
