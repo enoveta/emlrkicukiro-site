@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { adminApi, mediaUrl } from '../../api/client';
 import { RESOURCE_CONFIG } from '../resourceConfig';
+import { FiPlus, FiEdit2, FiTrash2, FiCheck, FiSend, FiImage } from 'react-icons/fi';
 import { StatusPill, Skeleton } from '../ui/StatusPill';
+import { PageHeader, Segmented, SearchInput, EmptyState, ErrorNote } from '../ui/kit';
 import { useToast } from '../ui/Toast';
 
 export default function ContentList({ resourceKey }) {
@@ -56,110 +58,126 @@ export default function ContentList({ resourceKey }) {
     }
   };
 
+  const counts = useMemo(() => {
+    const c = { ALL: items.length, PUBLISHED: 0, DRAFT: 0, IN_REVIEW: 0 };
+    items.forEach((i) => {
+      if (c[i.status] !== undefined) c[i.status] += 1;
+    });
+    return c;
+  }, [items]);
+
+  const updated = (value) =>
+    value ? new Date(value).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-ink">{cfg.label}</h1>
-          <p className="text-slate-500 mt-1">{cfg.description || 'Manage and publish content'}</p>
+    <div>
+      <PageHeader
+        title={cfg.label}
+        description={cfg.description || 'Manage and publish content'}
+        actions={
+          <Link to={`/admin/${resourceKey}/new`} className="a-btn a-btn-primary">
+            <FiPlus aria-hidden="true" /> Add new
+          </Link>
+        }
+      />
+
+      <ErrorNote>{error}</ErrorNote>
+
+      <div className="a-card overflow-hidden">
+        <div className="flex flex-col gap-3 border-b border-[#f0ede6] p-4 md:flex-row md:items-center md:justify-between">
+          <Segmented
+            label="Status"
+            value={status}
+            onChange={setStatus}
+            options={[
+              { value: 'ALL', label: 'All', count: counts.ALL },
+              { value: 'PUBLISHED', label: 'Published', count: counts.PUBLISHED },
+              { value: 'DRAFT', label: 'Drafts', count: counts.DRAFT },
+              { value: 'IN_REVIEW', label: 'In review', count: counts.IN_REVIEW },
+            ]}
+          />
+          <SearchInput value={q} onChange={setQ} placeholder={`Search ${cfg.label.toLowerCase()}…`} className="md:w-72" />
         </div>
-        <Link
-          to={`/admin/${resourceKey}/new`}
-          className="inline-flex items-center justify-center px-4 py-2.5 rounded-md bg-ink text-white text-sm font-medium hover:bg-ink-soft transition"
-        >
-          + Add new
-        </Link>
-      </div>
 
-      <div className="flex flex-wrap gap-3 items-center">
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder={`Search ${cfg.label.toLowerCase()}...`}
-          className="border border-slate-200 rounded-md px-3 py-2 text-sm bg-white min-w-[220px]"
-        />
-        {['ALL', 'PUBLISHED', 'DRAFT', 'IN_REVIEW'].map((s) => (
-          <button
-            key={s}
-            type="button"
-            onClick={() => setStatus(s)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
-              status === s ? 'bg-ink text-white' : 'bg-white border border-slate-200 text-slate-600'
-            }`}
-          >
-            {s === 'ALL' ? 'All' : s.replace('_', ' ')}
-          </button>
-        ))}
-        <span className="text-xs text-slate-500 ml-auto">{filtered.length} items</span>
-      </div>
-
-      {error ? <p className="text-red-600 text-sm">{error}</p> : null}
-
-      {loading ? (
-        <div className="grid gap-3">
-          <Skeleton className="h-20" />
-          <Skeleton className="h-20" />
-          <Skeleton className="h-20" />
-        </div>
-      ) : (
-        <div className="grid gap-3">
-          {filtered.map((item) => {
-            const title = item[cfg.titleField] || item.id;
-            const image =
-              item.imageUrl || item.heroImageUrl || item.aboutImageUrl || null;
-            return (
-              <div
-                key={item.id}
-                className="bg-white rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center gap-4 hover:shadow-sm transition"
-              >
-                {cfg.noMedia ? null : image ? (
-                  <img src={mediaUrl(image)} alt="" className="w-full md:w-24 h-24 rounded-md object-cover bg-slate-100" />
-                ) : (
-                  <div className="w-full md:w-24 h-24 rounded-md bg-slate-100 flex items-center justify-center text-slate-400 text-xs">
-                    No media
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-semibold text-ink truncate">{title}</h3>
-                    <StatusPill status={item.status} />
-                  </div>
-                  {cfg.subtitle ? <p className="text-sm text-slate-600 mt-1">{cfg.subtitle(item)}</p> : null}
-                  <p className="text-xs text-slate-500 mt-1">
-                    Updated {item.updatedAt ? new Date(item.updatedAt).toLocaleString() : '-'}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <Link
-                    to={`/admin/${resourceKey}/${item.id}`}
-                    className="px-3 py-1.5 rounded-lg border border-slate-200 text-sm hover:bg-slate-50"
-                  >
-                    Edit
-                  </Link>
-                  {item.status === 'DRAFT' ? (
-                    <button type="button" onClick={() => runAction(item.id, 'request-review')} className="px-3 py-1.5 rounded-lg text-sm bg-amber-50 text-amber-800">
-                      Review
-                    </button>
-                  ) : null}
-                  {item.status !== 'PUBLISHED' ? (
-                    <button type="button" onClick={() => runAction(item.id, 'publish')} className="px-3 py-1.5 rounded-lg text-sm bg-emerald-50 text-emerald-800">
-                      Publish
-                    </button>
-                  ) : null}
-                  <button type="button" onClick={() => runAction(item.id, 'delete')} className="px-3 py-1.5 rounded-lg text-sm text-red-600 hover:bg-red-50">
-                    Delete
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-          {filtered.length === 0 ? (
-            <div className="bg-white rounded-lg border border-dashed border-slate-300 p-10 text-center text-slate-500">
-              No items found. Create your first {cfg.label.toLowerCase().slice(0, -1) || 'item'}.
+        {loading ? (
+          <div className="space-y-3 p-4">
+            <Skeleton className="h-16" />
+            <Skeleton className="h-16" />
+            <Skeleton className="h-16" />
+          </div>
+        ) : filtered.length === 0 ? (
+          <EmptyState
+            title={q || status !== 'ALL' ? 'Nothing matches' : `No ${cfg.label.toLowerCase()} yet`}
+            text={q || status !== 'ALL' ? 'Try another search or filter.' : 'Create the first one; it stays a draft until you publish it.'}
+            action={
+              <Link to={`/admin/${resourceKey}/new`} className="a-btn a-btn-primary">
+                <FiPlus aria-hidden="true" /> Add new
+              </Link>
+            }
+          />
+        ) : (
+          <>
+            <div className="hidden grid-cols-[minmax(0,1fr)_130px_130px_200px] gap-4 border-b border-[#f0ede6] bg-[#faf9f6] px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[#8a979a] md:grid">
+              <span>Item</span>
+              <span>Status</span>
+              <span>Updated</span>
+              <span className="text-right">Actions</span>
             </div>
-          ) : null}
-        </div>
-      )}
+            <ul className="divide-y divide-[#f0ede6]">
+              {filtered.map((item) => {
+                const title = item[cfg.titleField] || item.id;
+                const image = item.imageUrl || item.heroImageUrl || item.aboutImageUrl || null;
+                return (
+                  <li
+                    key={item.id}
+                    className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2.5 px-4 py-3.5 transition-colors hover:bg-[#fcfbf8] md:grid-cols-[minmax(0,1fr)_130px_130px_200px] md:gap-4 md:px-5"
+                  >
+                    <Link to={`/admin/${resourceKey}/${item.id}`} className="col-span-2 flex min-w-0 items-center gap-3.5 md:col-span-1">
+                      {cfg.noMedia ? null : image ? (
+                        <img src={mediaUrl(image)} alt="" className="h-12 w-16 flex-none rounded-lg border border-[#efebe3] bg-[#f3f1ec] object-cover" />
+                      ) : (
+                        <span className="grid h-12 w-16 flex-none place-items-center rounded-lg bg-[#f3f1ec] text-[#b6bfbf]">
+                          <FiImage aria-hidden="true" />
+                        </span>
+                      )}
+                      <span className="min-w-0">
+                        <span className="block truncate text-[14px] font-semibold text-ink hover:text-gold-dark">{title}</span>
+                        {cfg.subtitle ? <span className="mt-0.5 block truncate text-[13px] text-[#7b8a8c]">{cfg.subtitle(item)}</span> : null}
+                      </span>
+                    </Link>
+                    <div className="flex items-center gap-3 md:block">
+                      <StatusPill status={item.status} />
+                      <span className="hidden text-xs text-[#9aa6a7] sm:inline md:hidden">Updated {updated(item.updatedAt)}</span>
+                    </div>
+                    <span className="hidden text-[13px] text-[#66777a] md:block">{updated(item.updatedAt)}</span>
+                    <div className="flex items-center gap-1 md:justify-end">
+                      {item.status === 'DRAFT' ? (
+                        <button type="button" onClick={() => runAction(item.id, 'request-review')} className="a-btn a-btn-ghost a-btn-sm" title="Send for review">
+                          <FiSend aria-hidden="true" /> Review
+                        </button>
+                      ) : null}
+                      {item.status !== 'PUBLISHED' ? (
+                        <button type="button" onClick={() => runAction(item.id, 'publish')} className="a-btn a-btn-sm bg-[#ecfdf3] text-[#067647] hover:bg-[#dcfae6]">
+                          <FiCheck aria-hidden="true" /> Publish
+                        </button>
+                      ) : null}
+                      <Link to={`/admin/${resourceKey}/${item.id}`} className="a-icon-btn" aria-label="Edit" title="Edit">
+                        <FiEdit2 aria-hidden="true" />
+                      </Link>
+                      <button type="button" onClick={() => runAction(item.id, 'delete')} className="a-icon-btn hover:!bg-[#fef3f2] hover:!text-[#b42318]" aria-label="Delete" title="Delete">
+                        <FiTrash2 aria-hidden="true" />
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="border-t border-[#f0ede6] px-5 py-3 text-xs text-[#8a979a]">
+              Showing {filtered.length} of {items.length}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

@@ -18,15 +18,21 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className="fixed bottom-5 right-5 z-[100] space-y-2">
+      <div className="fixed bottom-5 right-5 z-[100] space-y-2" aria-live="polite">
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`min-w-[240px] max-w-sm px-4 py-3 rounded-md shadow-lg text-sm text-white ${
-              t.type === 'error' ? 'bg-red-600' : t.type === 'info' ? 'bg-ink' : 'bg-emerald-600'
-            }`}
+            className="admin-ui flex min-w-[260px] max-w-sm items-start gap-3 rounded-xl border border-[#e9e5dc] bg-white px-4 py-3 text-sm text-ink shadow-[0_12px_32px_rgba(20,54,66,.14)]"
           >
-            {t.message}
+            <span
+              className={`mt-0.5 grid h-5 w-5 flex-none place-items-center rounded-full text-[11px] font-bold text-white ${
+                t.type === 'error' ? 'bg-[#d92d20]' : t.type === 'info' ? 'bg-ink' : 'bg-[#17b26a]'
+              }`}
+              aria-hidden="true"
+            >
+              {t.type === 'error' ? '!' : t.type === 'info' ? 'i' : '✓'}
+            </span>
+            <span className="font-medium">{t.message}</span>
           </div>
         ))}
       </div>

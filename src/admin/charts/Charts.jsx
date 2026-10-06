@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-/* Validated categorical slots (light surface): blue, orange, aqua. Colour follows the entity, never its rank. */
-export const SERIES = ['#2a78d6', '#eb6834', '#1baf7a'];
-const GRID = '#e8e7e3';
+/* Validated categorical slots (light surface): teal, gold, violet (all checks pass). Colour follows the entity, never its rank. */
+export const SERIES = ['#1a7aa0', '#c9822a', '#7a5cc0'];
+const GRID = '#efebe3';
 const MUTED = '#8a8984';
-const INK = '#0b2540';
+const INK = '#143642';
 const SPARK = '#b9b8b3';
 
 const nf = new Intl.NumberFormat('en-US');
@@ -50,25 +50,36 @@ export function Sparkline({ values, color = SERIES[0], width = 120, height = 32 
 }
 
 /** KPI tile: label, value, delta vs previous period, optional sparkline. */
-export function StatTile({ label, value, previous, trend, upIsGood = true, periodLabel }) {
+export function StatTile({ label, value, previous, trend, upIsGood = true, periodLabel, icon: Icon }) {
   const delta = previous ? Math.round(((value - previous) / previous) * 100) : null;
   const good = delta === null || delta === 0 ? null : (delta > 0) === upIsGood;
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col gap-3">
-      <p className="text-sm text-slate-500">{label}</p>
+    <div className="a-card flex flex-col gap-4 p-5">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-[13px] font-semibold text-[#66777a]">{label}</p>
+        {Icon ? (
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-[#f3efe6] text-gold">
+            <Icon aria-hidden="true" />
+          </span>
+        ) : null}
+      </div>
       <div className="flex items-end justify-between gap-3">
-        <p className="text-3xl font-semibold text-[#0b2540] leading-none">{compact(value)}</p>
+        <p className="text-[2rem] font-bold leading-none tracking-[-0.02em] text-ink tabular-nums">{compact(value)}</p>
         {trend ? <Sparkline values={trend} /> : null}
       </div>
-      <p className="text-xs text-slate-500">
+      <p className="text-xs text-[#7b8a8c]">
         {delta === null ? (
           <span>No data for the previous {periodLabel}</span>
         ) : (
           <>
-            <span className={`font-semibold ${good === null ? 'text-slate-600' : good ? 'text-emerald-700' : 'text-red-700'}`}>
-              {delta > 0 ? '▲' : delta < 0 ? '▼' : '■'} {delta > 0 ? '+' : ''}
+            <span
+              className={`mr-1 inline-flex items-center rounded-full px-1.5 py-0.5 font-semibold ${
+                good === null ? 'bg-[#f2f4f7] text-[#475467]' : good ? 'bg-[#ecfdf3] text-[#067647]' : 'bg-[#fef3f2] text-[#b42318]'
+              }`}
+            >
+              {delta > 0 ? '↑' : delta < 0 ? '↓' : '•'} {delta > 0 ? '+' : ''}
               {delta}%
-            </span>{' '}
+            </span>
             vs previous {periodLabel}
           </>
         )}
@@ -117,7 +128,7 @@ export function TrendChart({ data, series, height = 260 }) {
 
   return (
     <div ref={ref} className="relative">
-      <div className="flex flex-wrap gap-4 mb-3 text-sm text-slate-600">
+      <div className="flex flex-wrap gap-4 mb-3 text-sm text-[#66777a]">
         {series.map((s) => (
           <span key={s.key} className="inline-flex items-center gap-2">
             <span className="w-4 h-0.5 rounded" style={{ background: s.color }} aria-hidden="true" />
@@ -169,27 +180,27 @@ export function TrendChart({ data, series, height = 260 }) {
       </svg>
       {hd ? (
         <div
-          className="pointer-events-none absolute z-10 bg-white border border-slate-200 shadow-lg rounded-lg px-3 py-2 text-sm"
+          className="pointer-events-none absolute z-10 bg-white border border-[#e9e5dc] shadow-lg rounded-xl px-3 py-2 text-sm"
           style={{
             left: Math.min(Math.max(x(hover) + 12, 0), width - 170),
             top: 34,
           }}
         >
-          <p className="text-xs text-slate-500 mb-1">{shortDate(hd.date)}</p>
+          <p className="text-xs text-[#7b8a8c] mb-1">{shortDate(hd.date)}</p>
           {series.map((s) => (
             <p key={s.key} className="flex items-center gap-2">
               <span className="w-3 h-0.5 rounded" style={{ background: s.color }} aria-hidden="true" />
-              <span className="font-semibold text-[#0b2540] tabular-nums">{nf.format(hd[s.key])}</span>
-              <span className="text-slate-500">{s.label}</span>
+              <span className="font-semibold text-ink tabular-nums">{nf.format(hd[s.key])}</span>
+              <span className="text-[#7b8a8c]">{s.label}</span>
             </p>
           ))}
         </div>
       ) : null}
       <details className="mt-2 text-sm">
-        <summary className="cursor-pointer text-slate-500 hover:text-slate-700">View as table</summary>
+        <summary className="cursor-pointer text-[#7b8a8c] hover:text-ink">View as table</summary>
         <div className="max-h-56 overflow-auto mt-2">
           <table className="w-full text-left">
-            <thead className="text-slate-500">
+            <thead className="text-[#7b8a8c]">
               <tr>
                 <th className="py-1 font-medium">Date</th>
                 {series.map((s) => (
@@ -201,7 +212,7 @@ export function TrendChart({ data, series, height = 260 }) {
             </thead>
             <tbody className="tabular-nums">
               {[...data].reverse().map((d) => (
-                <tr key={d.date} className="border-t border-slate-100">
+                <tr key={d.date} className="border-t border-[#f0ede6]">
                   <td className="py-1">{shortDate(d.date)}</td>
                   {series.map((s) => (
                     <td key={s.key} className="py-1 text-right">
@@ -221,17 +232,17 @@ export function TrendChart({ data, series, height = 260 }) {
 /** Horizontal bars, one colour, value at the tip. */
 export function BarList({ items, color = SERIES[0], empty = 'No data yet' }) {
   const max = Math.max(1, ...items.map((i) => i.count));
-  if (!items.length) return <p className="text-sm text-slate-500 py-6 text-center">{empty}</p>;
+  if (!items.length) return <p className="text-sm text-[#7b8a8c] py-6 text-center">{empty}</p>;
   return (
     <ul className="space-y-3">
       {items.map((item) => (
         <li key={item.key} title={`${item.label}: ${nf.format(item.count)}`}>
           <div className="flex justify-between gap-3 text-sm mb-1">
-            <span className="text-slate-700 truncate">{item.label}</span>
-            <span className="font-semibold text-[#0b2540] tabular-nums">{nf.format(item.count)}</span>
+            <span className="text-[#334c51] truncate">{item.label}</span>
+            <span className="font-semibold text-ink tabular-nums">{nf.format(item.count)}</span>
           </div>
-          <div className="h-2.5 rounded-r bg-transparent">
-            <div className="h-2.5 rounded-r-[4px]" style={{ width: `${(item.count / max) * 100}%`, background: color, minWidth: 4 }} />
+          <div className="h-2 rounded-full bg-[#f3f1ec]">
+            <div className="h-2 rounded-full" style={{ width: `${(item.count / max) * 100}%`, background: color, minWidth: 4 }} />
           </div>
         </li>
       ))}
@@ -242,7 +253,7 @@ export function BarList({ items, color = SERIES[0], empty = 'No data yet' }) {
 /** Part-to-whole in one bar: 2px surface gaps between segments, labelled legend (colour never alone). */
 export function ShareBar({ items, colors, empty = 'No data yet' }) {
   const total = items.reduce((s, i) => s + i.count, 0);
-  if (!total) return <p className="text-sm text-slate-500 py-6 text-center">{empty}</p>;
+  if (!total) return <p className="text-sm text-[#7b8a8c] py-6 text-center">{empty}</p>;
   return (
     <div>
       <div className="flex h-5 gap-[2px] rounded overflow-hidden" role="img" aria-label={items.map((i) => `${i.label} ${Math.round((i.count / total) * 100)}%`).join(', ')}>
@@ -257,13 +268,13 @@ export function ShareBar({ items, colors, empty = 'No data yet' }) {
       <ul className="mt-4 space-y-2">
         {items.map((i) => (
           <li key={i.key} className="flex items-center justify-between gap-3 text-sm">
-            <span className="inline-flex items-center gap-2 text-slate-700">
+            <span className="inline-flex items-center gap-2 text-[#334c51]">
               <span className="w-3 h-3 rounded-sm" style={{ background: colors[i.key] || SPARK }} aria-hidden="true" />
               {i.label}
             </span>
             <span className="tabular-nums">
-              <span className="font-semibold text-[#0b2540]">{Math.round((i.count / total) * 100)}%</span>
-              <span className="text-slate-500"> · {nf.format(i.count)}</span>
+              <span className="font-semibold text-ink">{Math.round((i.count / total) * 100)}%</span>
+              <span className="text-[#7b8a8c]"> · {nf.format(i.count)}</span>
             </span>
           </li>
         ))}

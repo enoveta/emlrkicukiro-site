@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { adminApi } from '../../api/client';
+import { FiKey, FiUserPlus } from 'react-icons/fi';
 import { useToast } from '../ui/Toast';
+import { PageHeader, Card, Field } from '../ui/kit';
 
-const input = 'w-full border border-slate-200 rounded-md p-3 text-sm';
+const input = 'a-input';
 
 function ChangePassword() {
   const { push } = useToast();
@@ -29,16 +31,25 @@ function ChangePassword() {
   };
 
   return (
-    <form onSubmit={onSubmit} className="bg-white rounded-lg border border-slate-200 p-6 space-y-4">
-      <h2 className="font-semibold text-ink">Change my password</h2>
-      <input className={input} type="password" autoComplete="current-password" placeholder="Current password" required value={form.currentPassword} onChange={(e) => setForm({ ...form, currentPassword: e.target.value })} />
-      <input className={input} type="password" autoComplete="new-password" placeholder="New password (min. 10 characters)" required value={form.newPassword} onChange={(e) => setForm({ ...form, newPassword: e.target.value })} />
-      <input className={input} type="password" autoComplete="new-password" placeholder="Repeat new password" required value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })} />
-      {error ? <p className="text-red-600 text-sm">{error}</p> : null}
-      <button type="submit" disabled={saving} className="bg-ink text-white px-5 py-2.5 rounded-md hover:bg-ink-soft disabled:opacity-50 text-sm font-medium">
-        {saving ? 'Saving...' : 'Change password'}
-      </button>
-    </form>
+    <Card title="Change my password" description="Use at least 10 characters.">
+      <form onSubmit={onSubmit} className="space-y-4">
+        <Field label="Current password">
+          <input className={input} type="password" autoComplete="current-password" required value={form.currentPassword} onChange={(e) => setForm({ ...form, currentPassword: e.target.value })} />
+        </Field>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Field label="New password">
+            <input className={input} type="password" autoComplete="new-password" required value={form.newPassword} onChange={(e) => setForm({ ...form, newPassword: e.target.value })} />
+          </Field>
+          <Field label="Repeat new password">
+            <input className={input} type="password" autoComplete="new-password" required value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })} />
+          </Field>
+        </div>
+        {error ? <p className="text-sm text-[#b42318]">{error}</p> : null}
+        <button type="submit" disabled={saving} className="a-btn a-btn-primary">
+          <FiKey aria-hidden="true" /> {saving ? 'Saving…' : 'Change password'}
+        </button>
+      </form>
+    </Card>
   );
 }
 
@@ -67,33 +78,41 @@ function Users() {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-slate-200 p-6 space-y-4">
-      <h2 className="font-semibold text-ink">Dashboard users</h2>
-      <p className="text-xs text-slate-500">
-        Content managers can write drafts; only admins can publish. Share the password privately and ask the person to
-        change it after first login.
-      </p>
-      <ul className="divide-y divide-slate-100 text-sm">
+    <Card title="Dashboard users" description="Content managers can write drafts; only admins can publish." padded={false}>
+      <ul className="divide-y divide-[#f0ede6]">
         {users.map((u) => (
-          <li key={u.id} className="py-2 flex justify-between">
-            <span>{u.email}</span>
-            <span className="text-slate-500">{u.role === 'ADMIN' ? 'Admin' : 'Content manager'}</span>
+          <li key={u.id} className="flex items-center gap-3 px-5 py-3 md:px-6">
+            <span className="grid h-9 w-9 flex-none place-items-center rounded-full bg-[#f3efe6] text-sm font-bold text-gold-dark">
+              {(u.email || '?').slice(0, 1).toUpperCase()}
+            </span>
+            <span className="min-w-0 flex-1 truncate text-sm font-medium text-ink">{u.email}</span>
+            <span
+              className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                u.role === 'ADMIN' ? 'bg-ink text-white' : 'bg-[#f2f4f7] text-[#475467]'
+              }`}
+            >
+              {u.role === 'ADMIN' ? 'Admin' : 'Content manager'}
+            </span>
           </li>
         ))}
       </ul>
-      <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-3 pt-2">
-        <input className={`${input} md:col-span-2`} type="email" placeholder="Email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-        <input className={input} type="text" placeholder="Temporary password" required minLength={10} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-        <select className={input} value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-          <option value="CONTENT_MANAGER">Content manager</option>
-          <option value="ADMIN">Admin</option>
-        </select>
-        <button type="submit" className="md:col-span-4 justify-self-start bg-ink text-white px-5 py-2.5 rounded-md hover:bg-ink-soft text-sm font-medium">
-          Add user
-        </button>
+      <form onSubmit={onSubmit} className="border-t border-[#f0ede6] bg-[#faf9f6] p-5 md:p-6">
+        <p className="a-h2 mb-1">Add a user</p>
+        <p className="mb-4 text-[13px] text-[#7b8a8c]">Share the temporary password privately and ask the person to change it after first login.</p>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,.9fr)_auto]">
+          <input className={input} type="email" placeholder="Email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          <input className={input} type="text" placeholder="Temporary password" required minLength={10} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+          <select className={input} value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
+            <option value="CONTENT_MANAGER">Content manager</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+          <button type="submit" className="a-btn a-btn-primary h-[42px]">
+            <FiUserPlus aria-hidden="true" /> Add
+          </button>
+        </div>
+        {error ? <p className="mt-3 text-sm text-[#b42318]">{error}</p> : null}
       </form>
-      {error ? <p className="text-red-600 text-sm">{error}</p> : null}
-    </div>
+    </Card>
   );
 }
 
@@ -105,13 +124,12 @@ export default function AccountPage() {
     /* ignore */
   }
   return (
-    <div className="max-w-3xl space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-ink">Account & users</h1>
-        <p className="text-slate-500 mt-1">Signed in as {user.email}</p>
+    <div className="max-w-4xl">
+      <PageHeader title="Account & users" description={`Signed in as ${user.email || ''}`} />
+      <div className="space-y-6">
+        <ChangePassword />
+        {user.role === 'ADMIN' ? <Users /> : null}
       </div>
-      <ChangePassword />
-      {user.role === 'ADMIN' ? <Users /> : null}
     </div>
   );
 }

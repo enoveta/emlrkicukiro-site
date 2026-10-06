@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { adminApi, mediaThumb, mediaUrl } from '../../api/client';
 import { useToast } from '../ui/Toast';
+import { FiCopy, FiTrash2, FiUploadCloud, FiFileText, FiPlay } from 'react-icons/fi';
 import { Skeleton } from '../ui/StatusPill';
+import { PageHeader, Segmented, SearchInput, EmptyState, ErrorNote } from '../ui/kit';
 
 function formatBytes(n) {
   if (!n) return '-';
@@ -86,25 +88,34 @@ export default function MediaLibraryPage() {
     }
   };
 
+  const counts = {
+    all: items.length,
+    image: items.filter((i) => i.type === 'image').length,
+    video: items.filter((i) => i.type === 'video').length,
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-ink">Media library</h1>
-          <p className="text-slate-500 mt-1">Upload once and reuse across slides, news, ministries, and gallery.</p>
-        </div>
-        <label className="inline-flex cursor-pointer items-center justify-center px-4 py-2.5 rounded-md bg-ink text-white text-sm font-medium hover:bg-ink-soft transition">
-          {uploading ? 'Uploading...' : 'Upload media'}
-          <input
-            type="file"
-            accept="image/*,video/*,application/pdf"
-            multiple
-            className="hidden"
-            disabled={uploading}
-            onChange={(e) => uploadFiles(e.target.files)}
-          />
-        </label>
-      </div>
+    <div>
+      <PageHeader
+        title="Media library"
+        description="Upload once and reuse across slides, news, ministries and the gallery."
+        actions={
+          <label className={`a-btn a-btn-primary cursor-pointer ${uploading ? 'opacity-60' : ''}`}>
+            <FiUploadCloud aria-hidden="true" />
+            {uploading ? 'Uploading…' : 'Upload files'}
+            <input
+              type="file"
+              accept="image/*,video/*,application/pdf"
+              multiple
+              className="hidden"
+              disabled={uploading}
+              onChange={(e) => uploadFiles(e.target.files)}
+            />
+          </label>
+        }
+      />
+
+      <ErrorNote>{error}</ErrorNote>
 
       <div
         onDragOver={(e) => {
@@ -117,74 +128,84 @@ export default function MediaLibraryPage() {
           setDragOver(false);
           uploadFiles(e.dataTransfer.files);
         }}
-        className={`rounded-lg border-2 border-dashed p-8 text-center transition ${
-          dragOver ? 'border-gold bg-paper-featured' : 'border-slate-300 bg-white'
+        className={`mb-6 flex flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-8 text-center transition-colors ${
+          dragOver ? 'border-gold bg-[#fbf7ee]' : 'border-[#ddd7ca] bg-white'
         }`}
       >
-        <p className="text-ink font-medium">Drag & drop images or videos here</p>
-        <p className="text-sm text-slate-500 mt-1">Supports JPG, PNG, WEBP, GIF, MP4 · up to 40MB each</p>
+        <span className="mb-3 grid h-11 w-11 place-items-center rounded-full bg-[#f3efe6] text-lg text-gold">
+          <FiUploadCloud aria-hidden="true" />
+        </span>
+        <p className="text-sm font-semibold text-ink">{uploading ? 'Uploading…' : 'Drag and drop files here'}</p>
+        <p className="mt-1 text-xs text-[#7b8a8c]">JPG, PNG, WEBP, GIF, MP4 or PDF · up to 40 MB each · images are optimised automatically</p>
       </div>
 
-      <div className="flex flex-wrap gap-3 items-center">
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search files..."
-          className="border border-slate-200 rounded-md px-3 py-2 text-sm bg-white min-w-[220px]"
-        />
-        {['all', 'image', 'video'].map((f) => (
-          <button
-            key={f}
-            type="button"
-            onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold capitalize ${
-              filter === f ? 'bg-ink text-white' : 'bg-white border border-slate-200 text-slate-600'
-            }`}
-          >
-            {f}
-          </button>
-        ))}
-        <span className="text-xs text-slate-500 ml-auto">{filtered.length} files</span>
-      </div>
-
-      {error ? <p className="text-red-600 text-sm">{error}</p> : null}
-      {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <Skeleton key={i} className="aspect-square" />
-          ))}
+      <div className="a-card overflow-hidden">
+        <div className="flex flex-col gap-3 border-b border-[#f0ede6] p-4 md:flex-row md:items-center md:justify-between">
+          <Segmented
+            label="Type"
+            value={filter}
+            onChange={setFilter}
+            options={[
+              { value: 'all', label: 'All', count: counts.all },
+              { value: 'image', label: 'Images', count: counts.image },
+              { value: 'video', label: 'Videos', count: counts.video },
+            ]}
+          />
+          <SearchInput value={q} onChange={setQ} placeholder="Search files…" className="md:w-72" />
         </div>
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-          {filtered.map((item) => (
-            <div key={item.url} className="bg-white rounded-lg border border-slate-200 overflow-hidden group">
-              <div className="aspect-square bg-slate-100 relative">
-                {item.type === 'video' ? (
-                  <video src={mediaUrl(item.url)} className="w-full h-full object-cover" muted preload="metadata" />
-                ) : item.type === 'document' ? (
-                  <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-red-600">PDF</div>
-                ) : (
-                  <img src={mediaThumb(item.url)} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
-                )}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition flex items-end justify-center opacity-0 group-hover:opacity-100 p-2 gap-1">
-                  <button type="button" onClick={() => copyUrl(item.url)} className="text-[11px] bg-white rounded-lg px-2 py-1">
-                    Copy
-                  </button>
-                  <button type="button" onClick={() => remove(item.url)} className="text-[11px] bg-white text-red-600 rounded-lg px-2 py-1">
-                    Delete
-                  </button>
-                </div>
-              </div>
-              <div className="p-2">
-                <p className="text-xs truncate font-medium text-slate-700">{item.name}</p>
-                <p className="text-[10px] text-slate-400">
-                  {item.type} · {formatBytes(item.size)}
-                </p>
-              </div>
+
+        <div className="p-4">
+          {loading ? (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <Skeleton key={i} className="aspect-square" />
+              ))}
             </div>
-          ))}
+          ) : filtered.length === 0 ? (
+            <EmptyState title="No files found" text="Upload images or videos to use them anywhere on the website." />
+          ) : (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
+              {filtered.map((item) => (
+                <div key={item.url} className="group overflow-hidden rounded-lg border border-[#efebe3] bg-white transition-shadow hover:shadow-[0_8px_24px_rgba(20,54,66,.10)]">
+                  <div className="relative aspect-square bg-[#f3f1ec]">
+                    {item.type === 'video' ? (
+                      <>
+                        <video src={mediaUrl(item.url)} className="h-full w-full object-cover" muted preload="metadata" />
+                        <span className="absolute left-2 top-2 grid h-6 w-6 place-items-center rounded-full bg-ink/75 text-[10px] text-white">
+                          <FiPlay aria-hidden="true" />
+                        </span>
+                      </>
+                    ) : item.type === 'document' ? (
+                      <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-[#b42318]">
+                        <FiFileText className="text-3xl" aria-hidden="true" />
+                        <span className="text-xs font-bold">PDF</span>
+                      </div>
+                    ) : (
+                      <img src={mediaThumb(item.url)} alt={item.name} className="h-full w-full object-cover" loading="lazy" />
+                    )}
+                    <div className="absolute inset-x-0 bottom-0 flex justify-end gap-1 bg-gradient-to-t from-ink-deep/70 to-transparent p-2 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+                      <button type="button" onClick={() => copyUrl(item.url)} className="grid h-8 w-8 place-items-center rounded-lg bg-white text-ink shadow" aria-label="Copy link" title="Copy link">
+                        <FiCopy aria-hidden="true" />
+                      </button>
+                      <button type="button" onClick={() => remove(item.url)} className="grid h-8 w-8 place-items-center rounded-lg bg-white text-[#b42318] shadow" aria-label="Delete" title="Delete">
+                        <FiTrash2 aria-hidden="true" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="px-2.5 py-2">
+                    <p className="truncate text-xs font-semibold text-ink" title={item.name}>
+                      {item.name}
+                    </p>
+                    <p className="text-[11px] capitalize text-[#9aa6a7]">
+                      {item.type} · {formatBytes(item.size)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

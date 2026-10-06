@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { adminApi } from '../../api/client';
 import { StatusPill, Skeleton } from '../ui/StatusPill';
+import { FiArchive, FiCheck, FiMail, FiPhone, FiHeart, FiUserPlus } from 'react-icons/fi';
 import { useToast } from '../ui/Toast';
+import { PageHeader, Segmented, EmptyState, ErrorNote } from '../ui/kit';
 
 export default function SubmissionsPage() {
   const { push } = useToast();
@@ -42,86 +44,102 @@ export default function SubmissionsPage() {
     }
   };
 
+  const list = tab === 'prayers' ? prayers : volunteers;
+  const type = tab === 'prayers' ? 'prayer-requests' : 'volunteers';
+  const when = (d) =>
+    new Date(d).toLocaleString(undefined, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-ink">Inbox</h1>
-        <p className="text-slate-500 mt-1">Prayer requests and volunteer applications from the website</p>
-      </div>
+    <div>
+      <PageHeader
+        title="Inbox"
+        description="Prayer requests and volunteer applications sent from the website."
+        actions={
+          <Segmented
+            label="Inbox"
+            value={tab}
+            onChange={setTab}
+            options={[
+              { value: 'prayers', label: 'Prayer requests', count: prayers.filter((p) => p.status === 'NEW').length },
+              { value: 'volunteers', label: 'Volunteers', count: volunteers.filter((p) => p.status === 'NEW').length },
+            ]}
+          />
+        }
+      />
 
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={() => setTab('prayers')}
-          className={`px-4 py-2 rounded-md text-sm font-medium ${tab === 'prayers' ? 'bg-ink text-white' : 'bg-white border border-slate-200'}`}
-        >
-          Prayers ({prayers.filter((p) => p.status === 'NEW').length} new)
-        </button>
-        <button
-          type="button"
-          onClick={() => setTab('volunteers')}
-          className={`px-4 py-2 rounded-md text-sm font-medium ${tab === 'volunteers' ? 'bg-ink text-white' : 'bg-white border border-slate-200'}`}
-        >
-          Volunteers ({volunteers.filter((p) => p.status === 'NEW').length} new)
-        </button>
-      </div>
+      <ErrorNote>{error}</ErrorNote>
 
-      {error ? <p className="text-red-600 text-sm">{error}</p> : null}
-      {loading ? <Skeleton className="h-48" /> : null}
-
-      {!loading && tab === 'prayers' ? (
+      {loading ? (
         <div className="space-y-3">
-          {prayers.map((item) => (
-            <div key={item.id} className="bg-white rounded-lg border border-slate-200 p-4">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <div className="font-semibold text-ink">{item.name}</div>
-                  <div className="text-xs text-slate-500">{item.email} · {new Date(item.createdAt).toLocaleString()}</div>
-                </div>
-                <StatusPill status={item.status} />
-              </div>
-              <p className="text-sm text-slate-700 mt-3 whitespace-pre-wrap">{item.request}</p>
-              <div className="flex gap-2 mt-3">
-                <button type="button" onClick={() => setStatus('prayer-requests', item.id, 'READ')} className="text-sm px-3 py-1.5 rounded-lg bg-sky-50 text-sky-800">
-                  Mark read
-                </button>
-                <button type="button" onClick={() => setStatus('prayer-requests', item.id, 'ARCHIVED')} className="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700">
-                  Archive
-                </button>
-              </div>
-            </div>
-          ))}
-          {prayers.length === 0 ? <p className="text-slate-500 text-sm">No prayer requests yet.</p> : null}
+          <Skeleton className="h-32" />
+          <Skeleton className="h-32" />
         </div>
-      ) : null}
-
-      {!loading && tab === 'volunteers' ? (
-        <div className="space-y-3">
-          {volunteers.map((item) => (
-            <div key={item.id} className="bg-white rounded-lg border border-slate-200 p-4">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <div className="font-semibold text-ink">{item.name}</div>
-                  <div className="text-xs text-slate-500">
-                    {item.email} · {item.phone} · {new Date(item.createdAt).toLocaleString()}
+      ) : list.length === 0 ? (
+        <div className="a-card">
+          <EmptyState
+            icon={tab === 'prayers' ? FiHeart : FiUserPlus}
+            title={tab === 'prayers' ? 'No prayer requests yet' : 'No volunteer applications yet'}
+            text="New messages from the website will appear here."
+          />
+        </div>
+      ) : (
+        <ul className="space-y-3">
+          {list.map((item) => (
+            <li key={item.id} className={`a-card p-5 ${item.status === 'NEW' ? 'border-l-[3px] border-l-gold' : ''}`}>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex min-w-0 items-start gap-3">
+                  <span className="grid h-10 w-10 flex-none place-items-center rounded-full bg-[#f3efe6] text-sm font-bold text-gold-dark">
+                    {(item.name || '?').slice(0, 1).toUpperCase()}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-semibold text-ink">{item.name}</p>
+                      <StatusPill status={item.status} />
+                    </div>
+                    <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-[#7b8a8c]">
+                      {item.email ? (
+                        <a href={`mailto:${item.email}`} className="inline-flex items-center gap-1.5 hover:text-ink">
+                          <FiMail aria-hidden="true" /> {item.email}
+                        </a>
+                      ) : null}
+                      {item.phone ? (
+                        <a href={`tel:${item.phone}`} className="inline-flex items-center gap-1.5 hover:text-ink">
+                          <FiPhone aria-hidden="true" /> {item.phone}
+                        </a>
+                      ) : null}
+                      <span>{when(item.createdAt)}</span>
+                    </div>
                   </div>
                 </div>
-                <StatusPill status={item.status} />
+                <div className="flex flex-none gap-1.5 sm:pl-4">
+                  {item.status !== 'READ' ? (
+                    <button type="button" onClick={() => setStatus(type, item.id, 'READ')} className="a-btn a-btn-secondary a-btn-sm">
+                      <FiCheck aria-hidden="true" /> Mark read
+                    </button>
+                  ) : null}
+                  {item.status !== 'ARCHIVED' ? (
+                    <button type="button" onClick={() => setStatus(type, item.id, 'ARCHIVED')} className="a-btn a-btn-ghost a-btn-sm">
+                      <FiArchive aria-hidden="true" /> Archive
+                    </button>
+                  ) : null}
+                </div>
               </div>
-              <p className="text-sm text-slate-700 mt-3">Interest: {item.areaOfInterest}</p>
-              <div className="flex gap-2 mt-3">
-                <button type="button" onClick={() => setStatus('volunteers', item.id, 'READ')} className="text-sm px-3 py-1.5 rounded-lg bg-sky-50 text-sky-800">
-                  Mark read
-                </button>
-                <button type="button" onClick={() => setStatus('volunteers', item.id, 'ARCHIVED')} className="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700">
-                  Archive
-                </button>
+              <div className="mt-4 rounded-lg bg-[#faf9f6] px-4 py-3 text-sm leading-relaxed text-[#334c51] sm:ml-[52px]">
+                {tab === 'prayers' ? (
+                  <p className="whitespace-pre-wrap">{item.request}</p>
+                ) : (
+                  <>
+                    <p>
+                      <span className="font-semibold text-ink">Area of interest:</span> {item.areaOfInterest}
+                    </p>
+                    {item.message ? <p className="mt-1 whitespace-pre-wrap">{item.message}</p> : null}
+                  </>
+                )}
               </div>
-            </div>
+            </li>
           ))}
-          {volunteers.length === 0 ? <p className="text-slate-500 text-sm">No volunteer applications yet.</p> : null}
-        </div>
-      ) : null}
+        </ul>
+      )}
     </div>
   );
 }

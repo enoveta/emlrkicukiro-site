@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { adminApi, mediaUrl } from '../../api/client';
 import MediaPicker from '../ui/MediaPicker';
 import { useToast } from '../ui/Toast';
+import { FiArrowDown, FiArrowUp, FiCheck, FiImage, FiPlus, FiSave, FiTrash2, FiUpload, FiVideo } from 'react-icons/fi';
 import { StatusPill, Skeleton } from '../ui/StatusPill';
+import { PageHeader, Card, ErrorNote, Field, Toggle } from '../ui/kit';
 
 const emptySlide = (order = 0) => ({
   imageUrl: '',
@@ -134,202 +136,231 @@ export default function HeroSlidesPage() {
 
   const current = slides[active] || slides[0];
 
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-ink">Home slides</h1>
-          <p className="text-slate-500 mt-1">
-            Manage the homepage hero carousel: media, titles, and buttons.
-          </p>
+  const input = (key, placeholder, extra = {}) => (
+    <input
+      className="a-input"
+      value={current?.[key] ?? ''}
+      placeholder={placeholder}
+      onChange={(e) => updateSlide(active, { [key]: e.target.value })}
+      {...extra}
+    />
+  );
+  const pair = (label, key, hint) => (
+    <Field label={label} hint={hint}>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div className="relative">
+          {input(key, 'English')}
+          <span className="pointer-events-none absolute right-2.5 top-2.5 rounded bg-[#f1ede4] px-1.5 py-0.5 text-[10px] font-bold text-[#7a5a22]">EN</span>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {banner?.status ? <StatusPill status={banner.status} /> : null}
-          <button
-            type="button"
-            disabled={saving}
-            onClick={() => save(false)}
-            className="px-4 py-2.5 rounded-md border border-slate-300 bg-white text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
-          >
-            Save draft
-          </button>
-          <button
-            type="button"
-            disabled={saving}
-            onClick={() => save(true)}
-            className="px-4 py-2.5 rounded-md bg-ink text-white text-sm font-medium hover:bg-ink-soft disabled:opacity-50"
-          >
-            {saving ? 'Saving...' : 'Save & publish'}
-          </button>
+        <div className="relative">
+          {input(`${key}Rw`, 'Ikinyarwanda', { lang: 'rw' })}
+          <span className="pointer-events-none absolute right-2.5 top-2.5 rounded bg-[#f1ede4] px-1.5 py-0.5 text-[10px] font-bold text-[#7a5a22]">RW</span>
         </div>
       </div>
+    </Field>
+  );
 
-      {error ? <p className="text-red-600 text-sm">{error}</p> : null}
-      {loading ? <Skeleton className="h-80" /> : null}
+  const thumb = (slide, className) =>
+    slide.imageUrl ? (
+      slide.mediaType === 'video' ? (
+        <video src={mediaUrl(slide.imageUrl)} className={`${className} object-cover`} muted />
+      ) : (
+        <img src={mediaUrl(slide.imageUrl)} alt="" className={`${className} object-cover`} />
+      )
+    ) : (
+      <span className={`${className} grid place-items-center bg-[#f3f1ec] text-[#c3cbcb]`}>
+        <FiImage aria-hidden="true" />
+      </span>
+    );
+
+  return (
+    <div>
+      <PageHeader
+        title="Home slides"
+        description="The large rotating banner at the top of the home page: media, titles and buttons in both languages."
+        badge={banner?.status ? <StatusPill status={banner.status} /> : null}
+        actions={
+          <>
+            <button type="button" disabled={saving} onClick={() => save(false)} className="a-btn a-btn-secondary">
+              <FiSave aria-hidden="true" /> Save draft
+            </button>
+            <button type="button" disabled={saving} onClick={() => save(true)} className="a-btn a-btn-primary">
+              <FiCheck aria-hidden="true" /> {saving ? 'Saving…' : 'Save & publish'}
+            </button>
+          </>
+        }
+      />
+
+      <ErrorNote>{error}</ErrorNote>
+      {loading ? (
+        <div className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
+          <Skeleton className="h-80" />
+          <Skeleton className="h-[520px]" />
+        </div>
+      ) : null}
 
       {!loading && (
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
-          <div className="xl:col-span-2 space-y-3">
-            {slides.map((slide, index) => (
+        <div className="grid items-start gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
+          <Card title="Slides" description={`${slides.length} in rotation`} padded={false} className="xl:sticky xl:top-24">
+            <ul className="space-y-1.5 p-3">
+              {slides.map((slide, index) => (
+                <li key={index}>
+                  <button
+                    type="button"
+                    onClick={() => setActive(index)}
+                    className={`flex w-full items-center gap-3 rounded-lg border p-2 text-left transition-colors ${
+                      active === index ? 'border-gold bg-[#fbf7ee]' : 'border-transparent hover:bg-[#faf9f6]'
+                    }`}
+                  >
+                    <span className="relative flex-none">
+                      {thumb(slide, 'h-12 w-[72px] rounded-md')}
+                      {slide.mediaType === 'video' ? (
+                        <span className="absolute bottom-1 right-1 grid h-4 w-4 place-items-center rounded bg-ink/80 text-[9px] text-white">
+                          <FiVideo aria-hidden="true" />
+                        </span>
+                      ) : null}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[11px] font-bold uppercase tracking-[0.08em] text-[#9aa6a7]">Slide {index + 1}</span>
+                      <span className="block truncate text-[13px] font-semibold text-ink">
+                        {slide.title} {slide.highlight}
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <div className="border-t border-[#f0ede6] p-3">
               <button
-                key={index}
                 type="button"
-                onClick={() => setActive(index)}
-                className={`w-full text-left rounded-lg border p-3 flex gap-3 transition ${
-                  active === index ? 'border-gold bg-paper-featured shadow-sm' : 'border-slate-200 bg-white hover:border-slate-300'
-                }`}
+                onClick={() => {
+                  setSlides([...slides, emptySlide(slides.length)]);
+                  setActive(slides.length);
+                }}
+                className="a-btn a-btn-secondary w-full border-dashed"
               >
-                <div className="w-20 h-14 rounded-lg overflow-hidden bg-slate-100 shrink-0">
-                  {slide.imageUrl ? (
-                    slide.mediaType === 'video' ? (
-                      <video src={mediaUrl(slide.imageUrl)} className="w-full h-full object-cover" muted />
-                    ) : (
-                      <img src={mediaUrl(slide.imageUrl)} alt="" className="w-full h-full object-cover" />
-                    )
-                  ) : null}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-sm font-semibold text-ink truncate">
-                    {slide.title} {slide.highlight}
-                  </div>
-                  <div className="text-xs text-slate-500 truncate">{slide.subtitle || 'No subtitle'}</div>
-                </div>
+                <FiPlus aria-hidden="true" /> Add slide
               </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => {
-                setSlides([...slides, emptySlide(slides.length)]);
-                setActive(slides.length);
-              }}
-              className="w-full py-3 rounded-lg border border-dashed border-slate-300 text-sm text-ink hover:bg-white"
-            >
-              + Add slide
-            </button>
-          </div>
-
-          <div className="xl:col-span-3 space-y-4">
-            <div
-              className="relative rounded-lg overflow-hidden min-h-[280px] bg-ink text-white flex items-end"
-              style={
-                current?.mediaType !== 'video' && current?.imageUrl
-                  ? {
-                      backgroundImage: `linear-gradient(rgba(0,51,102,.35), rgba(0,51,102,.7)), url(${mediaUrl(current.imageUrl)})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                    }
-                  : undefined
-              }
-            >
-              {current?.mediaType === 'video' && current?.imageUrl ? (
-                <video
-                  src={mediaUrl(current.imageUrl)}
-                  className="absolute inset-0 w-full h-full object-cover"
-                  muted
-                  autoPlay
-                  loop
-                  playsInline
-                />
-              ) : null}
-              <div className="relative z-10 p-8 max-w-xl">
-                <div className="text-xs uppercase tracking-wider text-white/70 mb-2">Live preview</div>
-                <h2 className="text-3xl font-bold leading-tight">
-                  {current?.title} <span className="text-gold-light">{current?.highlight}</span>
-                </h2>
-                <p className="text-white/85 mt-3">{current?.subtitle}</p>
-                <div className="flex gap-2 mt-5">
-                  <span className="px-3 py-1.5 rounded-lg bg-ink text-xs">{current?.cta1 || 'CTA 1'}</span>
-                  <span className="px-3 py-1.5 rounded-lg border border-white/40 text-xs">{current?.cta2 || 'CTA 2'}</span>
-                </div>
-              </div>
             </div>
+          </Card>
 
-            {current ? (
-              <div className="bg-white rounded-lg border border-slate-200 p-5 space-y-4">
-                <div className="flex flex-wrap gap-2 justify-between">
-                  <h3 className="font-semibold text-ink">Edit slide {active + 1}</h3>
-                  <div className="flex gap-2">
-                    <button type="button" className="text-xs px-2 py-1 border rounded-lg" onClick={() => moveSlide(active, -1)}>
-                      ↑ Move up
+          {current ? (
+            <div className="space-y-6">
+              {/* Preview in the website's own style */}
+              <div className="a-card overflow-hidden">
+                <div className="flex items-center justify-between border-b border-[#f0ede6] px-5 py-3">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#9aa6a7]">Preview · slide {active + 1}</span>
+                  <div className="flex items-center gap-1">
+                    <button type="button" className="a-icon-btn" onClick={() => moveSlide(active, -1)} disabled={active === 0} aria-label="Move up" title="Move up">
+                      <FiArrowUp aria-hidden="true" />
                     </button>
-                    <button type="button" className="text-xs px-2 py-1 border rounded-lg" onClick={() => moveSlide(active, 1)}>
-                      ↓ Move down
+                    <button type="button" className="a-icon-btn" onClick={() => moveSlide(active, 1)} disabled={active === slides.length - 1} aria-label="Move down" title="Move down">
+                      <FiArrowDown aria-hidden="true" />
                     </button>
                     <button
                       type="button"
-                      className="text-xs px-2 py-1 border rounded-lg text-red-600"
+                      className="a-icon-btn hover:!bg-[#fef3f2] hover:!text-[#b42318]"
+                      disabled={slides.length <= 1}
+                      aria-label="Remove slide"
+                      title="Remove slide"
                       onClick={() => {
-                        if (slides.length <= 1) return;
-                        const next = slides.filter((_, i) => i !== active);
-                        setSlides(next);
+                        if (slides.length <= 1 || !window.confirm('Remove this slide?')) return;
+                        setSlides(slides.filter((_, i) => i !== active));
                         setActive(Math.max(0, active - 1));
                       }}
                     >
-                      Remove
+                      <FiTrash2 aria-hidden="true" />
                     </button>
                   </div>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {[
-                    ['title', 'Title (EN)'],
-                    ['titleRw', 'Title (RW)'],
-                    ['highlight', 'Highlight (EN)'],
-                    ['highlightRw', 'Highlight (RW)'],
-                    ['subtitle', 'Subtitle (EN)'],
-                    ['subtitleRw', 'Subtitle (RW)'],
-                    ['cta1', 'Primary button (EN)'],
-                    ['cta1Rw', 'Primary button (RW)'],
-                    ['cta2', 'Secondary button (EN)'],
-                    ['cta2Rw', 'Secondary button (RW)'],
-                    ['cta1Link', 'Primary link'],
-                    ['cta2Link', 'Secondary link'],
-                    ['duration', 'Duration (ms)'],
-                  ].map(([key, label]) => (
-                    <div key={key}>
-                      <label className="block text-xs font-medium text-slate-600 mb-1">{label}</label>
-                      <input
-                        className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm"
-                        value={current[key] ?? ''}
-                        onChange={(e) => updateSlide(active, { [key]: e.target.value })}
-                      />
+                <div className="relative grid items-center gap-6 bg-paper p-6 md:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)] md:p-8">
+                  <span className="absolute inset-y-0 right-0 hidden w-[42%] bg-paper-tint md:block" aria-hidden="true" />
+                  <div className="relative">
+                    <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-gold-text">EMLR Kicukiro Parish</p>
+                    <h2 className="font-serif text-[2rem] leading-[1.02] tracking-[-0.02em] text-ink md:text-[2.4rem]">
+                      {current.title} <em className="text-gold">{current.highlight}</em>
+                    </h2>
+                    {current.subtitle ? <p className="mt-3 text-sm leading-relaxed text-[#435b60]">{current.subtitle}</p> : null}
+                    <div className="mt-5 flex flex-wrap items-center gap-4">
+                      <span className="inline-flex h-9 items-center bg-ink px-4 text-xs font-bold text-white">{current.cta1 || 'Button 1'} ↗</span>
+                      <span className="border-b border-ink/30 pb-1 text-xs font-bold text-ink">{current.cta2 || 'Button 2'} →</span>
                     </div>
-                  ))}
+                  </div>
+                  <div className="relative pb-2.5 pr-2.5">
+                    <span className="absolute bottom-0 right-0 h-1/2 w-1/2 bg-gold-light" aria-hidden="true" />
+                    {thumb(current, 'relative block aspect-[16/11] w-full')}
+                  </div>
                 </div>
-
-                <div className="flex flex-wrap items-center gap-3">
-                  <select
-                    className="border border-slate-200 rounded-md px-3 py-2 text-sm"
-                    value={current.mediaType}
-                    onChange={(e) => updateSlide(active, { mediaType: e.target.value })}
-                  >
-                    <option value="image">Image</option>
-                    <option value="video">Video</option>
-                  </select>
-                  <button
-                    type="button"
-                    onClick={() => setPickerOpen(true)}
-                    className="px-4 py-2 rounded-md bg-paper-featured text-ink text-sm font-medium hover:bg-ink-soft hover:text-white transition"
-                  >
-                    Choose media
-                  </button>
-                  <label className="text-sm text-slate-600 flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={current.hasBlur}
-                      onChange={(e) => updateSlide(active, { hasBlur: e.target.checked })}
-                    />
-                    Soft overlay
-                  </label>
-                </div>
-                {current.imageUrl ? (
-                  <p className="text-xs text-slate-500 break-all">{current.imageUrl}</p>
-                ) : (
-                  <p className="text-xs text-amber-700">No media selected for this slide.</p>
-                )}
               </div>
-            ) : null}
-          </div>
+
+              <Card title="Media">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                  {thumb(current, 'h-24 w-full flex-none rounded-lg border border-[#efebe3] sm:w-40')}
+                  <div className="min-w-0 flex-1 space-y-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="inline-flex rounded-lg border border-[#e3ded3] bg-white p-1">
+                        {[
+                          ['image', 'Image', FiImage],
+                          ['video', 'Video', FiVideo],
+                        ].map(([v, label, Icon]) => (
+                          <button
+                            key={v}
+                            type="button"
+                            onClick={() => updateSlide(active, { mediaType: v })}
+                            className={`inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-[13px] font-semibold ${
+                              current.mediaType === v ? 'bg-ink text-white' : 'text-[#4b5d61] hover:bg-[#f6f5f1]'
+                            }`}
+                          >
+                            <Icon aria-hidden="true" /> {label}
+                          </button>
+                        ))}
+                      </div>
+                      <button type="button" onClick={() => setPickerOpen(true)} className="a-btn a-btn-secondary">
+                        <FiUpload aria-hidden="true" /> {current.imageUrl ? 'Change media' : 'Choose media'}
+                      </button>
+                    </div>
+                    {current.imageUrl ? (
+                      <p className="truncate text-xs text-[#9aa6a7]">{current.imageUrl}</p>
+                    ) : (
+                      <p className="text-xs font-medium text-[#b54708]">No media selected for this slide yet.</p>
+                    )}
+                  </div>
+                </div>
+              </Card>
+
+              <Card title="Text">
+                <div className="space-y-5">
+                  {pair('Title', 'title')}
+                  {pair('Highlighted words', 'highlight', 'Shown in gold italic after the title.')}
+                  {pair('Subtitle', 'subtitle')}
+                </div>
+              </Card>
+
+              <Card title="Buttons">
+                <div className="space-y-5">
+                  {pair('Main button', 'cta1')}
+                  {pair('Second link', 'cta2')}
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                    <Field label="Main button goes to" hint="A page like /amatangazo or a full https:// link">
+                      {input('cta1Link', '/about')}
+                    </Field>
+                    <Field label="Second link goes to">{input('cta2Link', '/about/location')}</Field>
+                  </div>
+                </div>
+              </Card>
+
+              <Card title="Display">
+                <div className="grid grid-cols-1 items-start gap-5 md:grid-cols-2">
+                  <Field label="Time on screen" hint="In milliseconds: 8000 = 8 seconds">
+                    {input('duration', '8000', { type: 'number', min: 2000, step: 500 })}
+                  </Field>
+                  <div className="rounded-lg border border-[#e3ded3] bg-[#fcfbf8] px-4 py-3 md:mt-7">
+                    <Toggle checked={current.hasBlur} onChange={(v) => updateSlide(active, { hasBlur: v })} label="Soft overlay" />
+                  </div>
+                </div>
+              </Card>
+            </div>
+          ) : null}
         </div>
       )}
 

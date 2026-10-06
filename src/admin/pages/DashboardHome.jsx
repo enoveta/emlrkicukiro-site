@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { adminApi } from '../../api/client';
+import { FiEye, FiUsers, FiHeart, FiUserPlus, FiImage, FiFolder, FiClock, FiBell, FiCalendar, FiFileText, FiGrid, FiInbox, FiArrowRight } from 'react-icons/fi';
 import { Skeleton, StatusPill } from '../ui/StatusPill';
+import { PageHeader, Card, Segmented, ErrorNote, EmptyState } from '../ui/kit';
 import { BarList, SERIES, ShareBar, StatTile, TrendChart } from '../charts/Charts';
 
 const PERIODS = [7, 30, 90];
@@ -33,23 +35,15 @@ const LANG_LABELS = { en: 'English', rw: 'Kinyarwanda' };
 const DEVICE_COLORS = { mobile: SERIES[0], desktop: SERIES[1], tablet: SERIES[2] };
 const DEVICE_LABELS = { mobile: 'Phone', desktop: 'Computer', tablet: 'Tablet' };
 
-const Card = ({ title, subtitle, children, className = '' }) => (
-  <section className={`bg-white rounded-lg border border-slate-200 p-5 md:p-6 ${className}`}>
-    <h2 className="font-semibold text-ink">{title}</h2>
-    {subtitle ? <p className="text-sm text-slate-500 mt-0.5">{subtitle}</p> : null}
-    <div className="mt-5">{children}</div>
-  </section>
-);
-
 const QUICK = [
-  { to: '/admin/hero', title: 'Home slides', desc: 'Edit hero carousel media & CTAs', tone: 'from-ink to-ink-soft' },
-  { to: '/admin/media', title: 'Media library', desc: 'Upload images & videos once, reuse everywhere', tone: 'from-ink-deep to-ink' },
-  { to: '/admin/schedule', title: 'Weekly programme', desc: 'Services, prayer, choir practice: days & hours', tone: 'from-[#725322] to-gold' },
-  { to: '/admin/notices', title: 'Amatangazo', desc: 'Weekly / daily church announcements', tone: 'from-ink to-ink-soft' },
-  { to: '/admin/events', title: 'Events (Ibikorwa)', desc: 'Upcoming church events', tone: 'from-ink-deep to-ink' },
-  { to: '/admin/announcements', title: 'News (Amakuru)', desc: 'News stories with photos', tone: 'from-[#725322] to-gold' },
-  { to: '/admin/ministries', title: 'Ministries', desc: 'Pages & home featured cards', tone: 'from-ink to-ink-soft' },
-  { to: '/admin/submissions', title: 'Inbox', desc: 'Prayer & volunteer requests', tone: 'from-ink-deep to-ink' },
+  { to: '/admin/notices', title: 'Amatangazo', desc: 'Church announcements', icon: FiBell },
+  { to: '/admin/schedule', title: 'Weekly programme', desc: 'Days and hours', icon: FiClock },
+  { to: '/admin/events', title: 'Events', desc: 'Ibikorwa', icon: FiCalendar },
+  { to: '/admin/announcements', title: 'News', desc: 'Amakuru with photos', icon: FiFileText },
+  { to: '/admin/hero', title: 'Home slides', desc: 'Hero images & text', icon: FiImage },
+  { to: '/admin/ministries', title: 'Ministries', desc: 'Pages & home cards', icon: FiGrid },
+  { to: '/admin/media', title: 'Media library', desc: 'Upload once, reuse', icon: FiFolder },
+  { to: '/admin/submissions', title: 'Inbox', desc: 'Prayer & volunteers', icon: FiInbox },
 ];
 
 export default function DashboardHome() {
@@ -101,49 +95,46 @@ export default function DashboardHome() {
   const periodLabel = `${days} days`;
   const series = stats?.daily || [];
 
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-ink tracking-tight">Dashboard</h1>
-          <p className="text-slate-500 mt-1">Website visits, requests and content at a glance.</p>
-        </div>
-        <div className="inline-flex bg-white border border-slate-200 rounded-md p-1 self-start" role="tablist" aria-label="Period">
-          {PERIODS.map((p) => (
-            <button
-              key={p}
-              type="button"
-              role="tab"
-              aria-selected={days === p}
-              onClick={() => setDays(p)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                days === p ? 'bg-ink text-white' : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              Last {p} days
-            </button>
-          ))}
-        </div>
-      </div>
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const recent = [
+    ...(data?.recent?.prayers || []).slice(0, 4).map((i) => ({ ...i, kind: 'Prayer request', text: i.request })),
+    ...(data?.recent?.volunteers || []).slice(0, 3).map((i) => ({ ...i, kind: 'Volunteer', text: i.areaOfInterest })),
+  ].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
 
-      {error ? <p className="text-red-600 text-sm">{error}</p> : null}
+  return (
+    <div>
+      <PageHeader
+        title={greeting}
+        description="Website visits, requests and content at a glance."
+        actions={
+          <Segmented
+            label="Period"
+            value={days}
+            onChange={setDays}
+            options={PERIODS.map((p) => ({ value: p, label: `${p} days` }))}
+          />
+        }
+      />
+
+      <ErrorNote>{error}</ErrorNote>
 
       <div className={`space-y-6 transition-opacity ${statsLoading && stats ? 'opacity-60' : ''}`}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {!stats ? (
-            [0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-36" />)
+            [0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-[150px]" />)
           ) : (
             <>
-              <StatTile label="Page views" value={stats.totals.views} previous={stats.previous.views} trend={series.map((d) => d.views)} periodLabel={periodLabel} />
-              <StatTile label="Visitors" value={stats.totals.visitors} previous={stats.previous.visitors} trend={series.map((d) => d.visitors)} periodLabel={periodLabel} />
-              <StatTile label="Prayer requests" value={stats.totals.prayers} previous={stats.previous.prayers} trend={series.map((d) => d.prayers)} periodLabel={periodLabel} />
-              <StatTile label="Volunteer applications" value={stats.totals.volunteers} previous={stats.previous.volunteers} trend={series.map((d) => d.volunteers)} periodLabel={periodLabel} />
+              <StatTile icon={FiEye} label="Page views" value={stats.totals.views} previous={stats.previous.views} trend={series.map((d) => d.views)} periodLabel={periodLabel} />
+              <StatTile icon={FiUsers} label="Visitors" value={stats.totals.visitors} previous={stats.previous.visitors} trend={series.map((d) => d.visitors)} periodLabel={periodLabel} />
+              <StatTile icon={FiHeart} label="Prayer requests" value={stats.totals.prayers} previous={stats.previous.prayers} trend={series.map((d) => d.prayers)} periodLabel={periodLabel} />
+              <StatTile icon={FiUserPlus} label="Volunteers" value={stats.totals.volunteers} previous={stats.previous.volunteers} trend={series.map((d) => d.volunteers)} periodLabel={periodLabel} />
             </>
           )}
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <Card title="Website visits" subtitle={`Per day, last ${periodLabel}`} className="xl:col-span-2">
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+          <Card title="Website visits" description={`Per day, last ${periodLabel}`} className="xl:col-span-2">
             {stats ? (
               <TrendChart
                 data={series}
@@ -156,102 +147,110 @@ export default function DashboardHome() {
               <Skeleton className="h-64" />
             )}
           </Card>
-          <Card title="Most visited pages" subtitle="Page views in this period">
+          <Card title="Most visited pages" description="Page views in this period">
             {stats ? (
-              <BarList items={(stats.topPages || []).map((p) => ({ key: p.key, label: pageName(p.key), count: p.count }))} empty="No visits recorded yet" />
+              <BarList items={(stats.topPages || []).slice(0, 8).map((p) => ({ key: p.key, label: pageName(p.key), count: p.count }))} empty="No visits recorded yet" />
             ) : (
               <Skeleton className="h-64" />
             )}
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          <Card title="Language" subtitle="Language visitors read in">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <Card title="Language" description="Language visitors read in">
             {stats ? (
               <ShareBar items={(stats.languages || []).map((l) => ({ key: l.key, label: LANG_LABELS[l.key] || l.key, count: l.count }))} colors={LANG_COLORS} empty="No visits recorded yet" />
             ) : (
               <Skeleton className="h-28" />
             )}
           </Card>
-          <Card title="Devices" subtitle="What visitors use">
+          <Card title="Devices" description="What visitors use">
             {stats ? (
               <ShareBar items={(stats.devices || []).map((d) => ({ key: d.key, label: DEVICE_LABELS[d.key] || d.key, count: d.count }))} colors={DEVICE_COLORS} empty="No visits recorded yet" />
             ) : (
               <Skeleton className="h-28" />
             )}
           </Card>
-          <Card title="Website content" subtitle="Published and waiting">
+          <Card title="Website content" description="Published and waiting">
             {loading ? (
               <Skeleton className="h-28" />
             ) : (
-              <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="rounded-md bg-slate-50 py-4">
-                  <p className="text-2xl font-semibold text-ink">{publishedTotal}</p>
-                  <p className="text-xs text-slate-500 mt-1">Published</p>
-                </div>
-                <div className="rounded-md bg-slate-50 py-4">
-                  <p className="text-2xl font-semibold text-ink">{draftTotal}</p>
-                  <p className="text-xs text-slate-500 mt-1">Drafts</p>
-                </div>
-                <div className="rounded-md bg-slate-50 py-4">
-                  <p className="text-2xl font-semibold text-ink">{(data?.inbox?.prayerNew || 0) + (data?.inbox?.volunteerNew || 0)}</p>
-                  <p className="text-xs text-slate-500 mt-1">New in inbox</p>
-                </div>
+              <div className="grid grid-cols-3 divide-x divide-[#f0ede6] rounded-lg border border-[#f0ede6]">
+                {[
+                  ['Published', publishedTotal, 'text-[#067647]'],
+                  ['Drafts', draftTotal, 'text-ink'],
+                  ['New in inbox', (data?.inbox?.prayerNew || 0) + (data?.inbox?.volunteerNew || 0), 'text-gold-dark'],
+                ].map(([label, n, cls]) => (
+                  <div key={label} className="px-2 py-5 text-center">
+                    <p className={`text-[1.7rem] font-bold leading-none tabular-nums ${cls}`}>{n}</p>
+                    <p className="mt-2 text-xs font-medium text-[#7b8a8c]">{label}</p>
+                  </div>
+                ))}
               </div>
             )}
           </Card>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-        {QUICK.map((item) => (
-          <Link
-            key={item.to}
-            to={item.to}
-            className={`rounded-lg p-5 text-white bg-gradient-to-br ${item.tone} shadow-sm hover:shadow-md hover:-translate-y-0.5 transition`}
-          >
-            <div className="text-lg font-semibold">{item.title}</div>
-            <p className="text-sm text-white/80 mt-1">{item.desc}</p>
-          </Link>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 gap-6">
-        <section className="bg-white rounded-lg border border-slate-200 p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-ink">Recent inbox</h2>
-            <Link to="/admin/submissions" className="text-sm text-gold hover:underline">
-              View all
-            </Link>
+      <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <Card title="Quick actions" description="Jump to what you update most" className="xl:col-span-2" padded={false}>
+          <div className="grid grid-cols-1 gap-px overflow-hidden rounded-b-xl bg-[#f0ede6] sm:grid-cols-2 lg:grid-cols-4">
+            {QUICK.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="group flex items-center gap-3 bg-white p-4 transition-colors hover:bg-[#faf9f6]"
+                >
+                  <span className="grid h-10 w-10 flex-none place-items-center rounded-lg bg-[#f3efe6] text-gold transition-colors group-hover:bg-ink group-hover:text-gold-light">
+                    <Icon aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-semibold text-ink">{item.title}</span>
+                    <span className="block truncate text-xs text-[#7b8a8c]">{item.desc}</span>
+                  </span>
+                </Link>
+              );
+            })}
           </div>
+        </Card>
+
+        <Card
+          title="Recent inbox"
+          padded={false}
+          action={
+            <Link to="/admin/submissions" className="inline-flex items-center gap-1 text-[13px] font-semibold text-gold-dark hover:text-ink">
+              View all <FiArrowRight aria-hidden="true" />
+            </Link>
+          }
+        >
           {loading ? (
-            <Skeleton className="h-40" />
-          ) : (
-            <div className="space-y-3">
-              {(data?.recent?.prayers || []).slice(0, 3).map((item) => (
-                <div key={item.id} className="border border-slate-100 rounded-md p-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="font-medium text-sm text-ink">{item.name}</div>
-                    <StatusPill status={item.status} />
-                  </div>
-                  <p className="text-xs text-slate-500 mt-1 line-clamp-2">{item.request}</p>
-                </div>
-              ))}
-              {(data?.recent?.volunteers || []).slice(0, 2).map((item) => (
-                <div key={item.id} className="border border-slate-100 rounded-md p-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="font-medium text-sm text-ink">{item.name} · Volunteer</div>
-                    <StatusPill status={item.status} />
-                  </div>
-                  <p className="text-xs text-slate-500 mt-1">{item.areaOfInterest}</p>
-                </div>
-              ))}
-              {!data?.recent?.prayers?.length && !data?.recent?.volunteers?.length ? (
-                <p className="text-sm text-slate-500">No submissions yet.</p>
-              ) : null}
+            <div className="p-5">
+              <Skeleton className="h-40" />
             </div>
+          ) : recent.length ? (
+            <ul className="divide-y divide-[#f0ede6]">
+              {recent.slice(0, 5).map((item) => (
+                <li key={`${item.kind}-${item.id}`} className="flex items-start gap-3 px-5 py-3.5">
+                  <span className="grid h-8 w-8 flex-none place-items-center rounded-full bg-[#f3efe6] text-xs font-bold text-gold-dark">
+                    {(item.name || '?').slice(0, 1).toUpperCase()}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="truncate text-sm font-semibold text-ink">{item.name}</p>
+                      <StatusPill status={item.status} />
+                    </div>
+                    <p className="text-xs text-[#9aa6a7]">{item.kind}</p>
+                    <p className="mt-0.5 line-clamp-1 text-[13px] text-[#66777a]">{item.text}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyState title="No submissions yet" text="Prayer requests and volunteer applications appear here." />
           )}
-        </section>
+        </Card>
       </div>
     </div>
   );
