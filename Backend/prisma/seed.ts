@@ -94,10 +94,10 @@ const slides = [
 ];
 
 const events = [1, 2, 3].map((day) => ({
-  title: "Conference General Assembly",
-  titleRw: "Inama Nkuru ya Konferanse",
-  description: "Three-day General Assembly of the Conference.",
-  descriptionRw: "Inama Nkuru ya Konferanse y’iminsi itatu.",
+  title: "Kigali Annual Conference Meeting",
+  titleRw: "Inama y’umwaka ya Konferanse Kigali",
+  description: "Three-day Kigali Annual Conference Meeting.",
+  descriptionRw: "Inama y’umwaka ya Konferanse Kigali y’iminsi itatu.",
   date: new Date(`2026-10-${24 + day}T00:00:00.000Z`),
   time: `Day ${day} of 3`,
   timeRw: `Umunsi wa ${day} muri 3`,
